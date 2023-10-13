@@ -15,14 +15,14 @@ ffibuilder.set_source("_libmceliece6960119f", """
 
 
 ffibuilder.cdef("""
-extern "Python" {
+extern "Python+C" {
 	void shake256(
 		uint8_t *output,
 		size_t outlen,
 		const uint8_t *input,
 		size_t inlen
 	);
-	int randombytes(
+	int PQCLEAN_randombytes(
 		uint8_t *output,
 		size_t n
 	);
@@ -54,20 +54,20 @@ if __name__ == "__main__":
 	
 	ffibuilder.compile(verbose=True)
 
+	from _libmceliece6960119f import lib as libmceliece6960119f, ffi as ffi
 
-	@ffibuilder.def_extern(name="shake256")  # Crashes on this line
+
+	@ffi.def_extern(name="shake256")  # Crashes on this line
 	def _impl_shake256(output, outlen, input_, inlen):
 		input_buf = ffi.buffer(input_, inlen)
 		h = hashlib_shake_256(input_buf).digest(outlen)
 		ffi.memmove(output, h, outlen)
 
 
-	@ffibuilder.def_extern(name="randombytes")
+	@ffi.def_extern(name="PQCLEAN_randombytes")
 	def _impl_randombytes(output, n):
 		tmp = urandom(n)
 		ffi.memmove(output, tmp, n)
 		return n
-
-	from _libmceliece6960119f import lib as libmceliece6960119f, ffi as ffi
 
 	...
