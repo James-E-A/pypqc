@@ -22,6 +22,7 @@ extern "Python+C" {
 		const uint8_t *input,
 		size_t inlen
 	);
+
 	int PQCLEAN_randombytes(
 		uint8_t *output,
 		size_t n
