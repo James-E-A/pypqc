@@ -60,14 +60,15 @@ if __name__ == "__main__":
 	@ffi.def_extern(name="shake256")  # Crashes on this line
 	def _impl_shake256(output, outlen, input_, inlen):
 		input_buf = ffi.buffer(input_, inlen)
-		h = hashlib_shake_256(input_buf).digest(outlen)
-		ffi.memmove(output, h, outlen)
+		h = hashlib_shake_256(input_buf)
+		tmp = h.digest(outlen)
+		ffi.memmove(output, tmp, len(tmp))
 
 
 	@ffi.def_extern(name="PQCLEAN_randombytes")
 	def _impl_randombytes(output, n):
 		tmp = urandom(n)
-		ffi.memmove(output, tmp, n)
+		ffi.memmove(output, tmp, len(tmp))
 		return n
 
 	...
