@@ -22,18 +22,36 @@ _mceliece6960119f.ffi.def_extern(name="shake256")(_impl_shake256)
 _mceliece6960119f.ffi.def_extern(name="PQCLEAN_randombytes")(_impl_randombytes)
 
 
-def mceliece6960119f_keypair():
-	pk = ffi.from_buffer(bytearray(_mceliece6960119f.lib.PQCLEAN_MCELIECE6960119F_CLEAN_CRYPTO_PUBLICKEYBYTES))
-	sk = ffi.from_buffer(bytearray(_mceliece6960119f.lib.PQCLEAN_MCELIECE6960119F_CLEAN_CRYPTO_SECRETKEYBYTES))
+def demo_keypair():
+	"""MCELIECE6960119F - Returns *publickey*, *secretkey*.
+	"""
+	pk = bytearray(_mceliece6960119f.lib.PQCLEAN_MCELIECE6960119F_CLEAN_CRYPTO_PUBLICKEYBYTES)
+	sk = bytearray(_mceliece6960119f.lib.PQCLEAN_MCELIECE6960119F_CLEAN_CRYPTO_SECRETKEYBYTES)
 
-	_mceliece6960119f.lib.PQCLEAN_MCELIECE6960119F_CLEAN_crypto_kem_keypair(pk, sk)
+	_mceliece6960119f.lib.PQCLEAN_MCELIECE6960119F_CLEAN_crypto_kem_keypair(_mceliece6960119f.ffi.from_buffer(pk), _mceliece6960119f.ffi.from_buffer(sk))
 
-	return ffi.buffer(pk)[:], ffi.buffer(sk)[:]
-
-
-def mceliece6960119f_enc(pk, data):
-        ...
+	return bytes(pk), bytes(sk)
 
 
-def mceliece6960119f_dec(sk, data):
-        ...
+def demo_kem_enc(pk, data):
+	"""MCELIECE6960119F - Accepts *publickey*, *shared_secret*; returns *kem_ciphertext*.
+	"""
+	assert len(data) == _mceliece6960119f.lib.PQCLEAN_MCELIECE6960119F_CLEAN_CRYPTO_BYTES
+	assert len(pk) == _mceliece6960119f.lib.PQCLEAN_MCELIECE6960119F_CLEAN_CRYPTO_PUBLICKEYBYTES
+	ciphertext = bytearray(_mceliece6960119f.lib.PQCLEAN_MCELIECE6960119F_CLEAN_CRYPTO_CIPHERTEXTBYTES)
+
+	_mceliece6960119f.lib.PQCLEAN_MCELIECE6960119F_CLEAN_crypto_kem_enc(_mceliece6960119f.ffi.from_buffer(ciphertext), _mceliece6960119f.ffi.from_buffer(data), _mceliece6960119f.ffi.from_buffer(pk))
+
+	return bytes(ciphertext)
+
+
+def demo_kem_dec(sk, data):
+	"""MCELIECE6960119F - Accepts *privatekey*, *kem_ciphertext*; returns *shared_secret*.
+	"""
+	assert len(data) == _mceliece6960119f.lib.PQCLEAN_MCELIECE6960119F_CLEAN_CRYPTO_CIPHERTEXTBYTES
+	assert len(sk) == _mceliece6960119f.lib.PQCLEAN_MCELIECE6960119F_CLEAN_CRYPTO_SECRETKEYBYTES
+	plaintext = bytearray(_mceliece6960119f.lib.PQCLEAN_MCELIECE6960119F_CLEAN_CRYPTO_BYTES)
+
+	_mceliece6960119f.lib.PQCLEAN_MCELIECE6960119F_CLEAN_crypto_kem_dec(_mceliece6960119f.ffi.from_buffer(plaintext), _mceliece6960119f.ffi.from_buffer(data), _mceliece6960119f.ffi.from_buffer(sk))
+
+	return bytes(plaintext)
