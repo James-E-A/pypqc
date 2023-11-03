@@ -16,9 +16,9 @@ Dependencies:
 
 Getting started:
 
-0. Maybe [use a venv](https://www.bitecode.dev/p/relieving-your-python-packaging-pain) or whatever if you
+0. Maybe `use a venv <https://www.bitecode.dev/p/relieving-your-python-packaging-pain>`_ or whatever if you
 1. Run ``cffi_compile.py``
-2. Run ``main.py`` and check out the ``demo_*`` functions
+2. Run ``python -m pqc.demo``
 
 .. _cffi: https://cffi.readthedocs.io/en/release-1.16/
 .. _asn1: https://github.com/andrivet/python-asn1

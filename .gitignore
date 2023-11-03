@@ -1,11 +1,12 @@
 # Standard Python excludes
 __pycache__/
-*.pyd
 
 # https://web.archive.org/web/20200518192427/www.devever.net/~hl/normativitymanifesto
+*.py[cdo]
+*.obj
 *.c
 !/Lib/**/*.c
 
 # CFFI seemingly generates this folder ONLY on Windows;
 # I can't find any documentation about it...
-Release/
+/Release/
