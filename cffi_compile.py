@@ -39,10 +39,14 @@ extern "Python+C" {
 	);
 }"""
 
+_CDEF_RE = re.compile(r'(?ms)^\s*(?:#define\s+\w+ \d+|\w[\w ]*\s(\w+)\s*\(.*?\);)$')
+_NAMESPACE_RE = re.compile(r'(?ms)^#define\s+(CRYPTO_NAMESPACE)\s*\(\s*(\w+)\s*\)\s+(\w+)\s+##\s*\2\s*$')
+
 
 def main(src='Lib/PQClean'):
-	COMMON_INCLUDE = Path(src) / 'common'
-	for kem_alg in (Path(src) / 'crypto_kem').iterdir():
+	src = Path(src)
+	COMMON_INCLUDE = src / 'common'
+	for kem_alg in (src / 'crypto_kem').iterdir():
 		alg_name = kem_alg.name
 		if alg_name.startswith('hqc-rmrs'):
 			continue  # TODO
@@ -74,26 +78,64 @@ def main(src='Lib/PQClean'):
 			else:
 				module_name = f'pqc.crypto_kem._{alg_name}'
 
+			extra_compile_args = []
+			if _IS_WINDOWS:
+				# https://www.reddit.com/r/learnpython/comments/175js2u/def_extern_says_im_not_using_it_in_api_mode/k4qit36/
+				extra_compile_args.append('/TC')
+
+			object_names = parse_makefile(BUILD_ROOT / 'Makefile')['OBJECTS'].split()
+			object_names = [fn for fn in object_names if not fn.startswith('aes')]  # Not sure why this is necessary
+
+			objects = [(BUILD_ROOT / fn) for fn in object_names]
+
+			sources = [p.with_suffix('.c') for p in objects]
+
+			include = [COMMON_INCLUDE, (BUILD_ROOT / 'api.h'), (BUILD_ROOT / 'params.h')]
+			include_dirs=list({PurePosixPath(p.parent if not p.is_dir() else p) for p in include})
+			c_header_source = "\n".join(f"#include <{p.name}>" for p in include if not p.is_dir())
+
 			ffibuilder = FFI()
 
-			objects = [PurePosixPath(BUILD_ROOT / fname) for fname in parse_makefile(BUILD_ROOT / 'Makefile')['OBJECTS'].split()]
-			sources = [p.with_suffix('.c') for p in objects if not p.name.startswith('aes')]
-			include_dirs = [PurePosixPath(BUILD_ROOT), PurePosixPath(COMMON_INCLUDE)]
-			ffibuilder.set_source(module_name, """
-				#include "api.h"
-			""",
+			ffibuilder.set_source(module_name, c_header_source,
 				include_dirs=include_dirs,
 				sources=sources,
-				extra_compile_args=(["/TC"] if os.name == 'nt' else None),  # https://www.reddit.com/r/learnpython/comments/175js2u/def_extern_says_im_not_using_it_in_api_mode/k4qit36/
+				extra_compile_args=extra_compile_args
 			)
 
-			api_source = BUILD_ROOT / 'api.h'
-			for c_src in re.findall(r'(?ms)^(#define \w+ \d+|[\w ]+\s*\(.*?\);)$', api_source.read_text()):
-				ffibuilder.cdef(c_src)
+			# SYS_N
+			# SYS_T
+			c_header_source = (BUILD_ROOT / 'params.h').read_text()
+			c_header_source = "\n".join(m[0] for m in _CDEF_RE.finditer(c_header_source))
+			ffibuilder.cdef(c_header_source)
+
+			pfxsentinel, _, pfx = _NAMESPACE_RE.search((BUILD_ROOT / 'namespace.h').read_text()).groups()
+
+			# crypto_kem_enc
+			# crypto_kem_dec
+			# crypto_kem_keypair
+			c_header_source = (BUILD_ROOT / 'crypto_kem.h').read_text()
+			func_names = [m[1] for m in re.finditer(fr'(?ms)^#define\s+(\w+)\s+{re.escape(pfxsentinel)}\s*\(\s*\1\s*\)\s*$', c_header_source)]
+			c_header_source = (BUILD_ROOT / 'operations.h').read_text()
+			c_header_source = "\n".join(m[0] for m in _CDEF_RE.finditer(c_header_source))
+			c_header_source = re.sub(fr'({"|".join(map(re.escape, func_names))})', lambda m: pfx + m[1], c_header_source)
+			ffibuilder.cdef(c_header_source)
+
+			# encrypt
+			# decrypt
+			# pk_gen
+			for fn in ['encrypt', 'decrypt', 'pk_gen']:
+				c_header_source = (BUILD_ROOT / f"{fn}.h").read_text()
+				func_name, = re.search(fr'(?ms)^#define\s+(\w+)\s+{re.escape(pfxsentinel)}\s*\(\s*\1\s*\)\s*$', c_header_source).groups()
+				c_header_source = "\n".join(m[0] for m in _CDEF_RE.finditer(c_header_source))
+				c_header_source = re.sub(re.escape(func_name), lambda m: pfx + m[0], c_header_source)
+				ffibuilder.cdef(c_header_source)
 
 			ffibuilder.cdef(_CDEF_EXTRA)
 
-			ffibuilder.compile(verbose=True, parallel=True)
+			ffibuilder.compile(verbose=True, parallel=True)  # https://github.com/python-cffi/cffi/pull/30.diff
+
+	for kem_alg in (src / 'crypto_sign').iterdir():
+		continue  # TODO
 
 
 if __name__ == "__main__":
