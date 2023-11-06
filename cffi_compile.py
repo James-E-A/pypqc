@@ -117,7 +117,7 @@ def main(src='Lib/PQClean'):
 			func_names = [m[1] for m in re.finditer(fr'(?ms)^#define\s+(\w+)\s+{re.escape(pfxsentinel)}\s*\(\s*\1\s*\)\s*$', c_header_source)]
 			c_header_source = (BUILD_ROOT / 'operations.h').read_text()
 			c_header_source = "\n".join(m[0] for m in _CDEF_RE.finditer(c_header_source))
-			c_header_source = re.sub(fr'({"|".join(map(re.escape, func_names))})', lambda m: pfx + m[1], c_header_source)
+			c_header_source = re.sub(fr'(?:{"|".join(map(re.escape, func_names))})', lambda m: pfx + m[0], c_header_source)
 			ffibuilder.cdef(c_header_source)
 
 			# encrypt
@@ -125,7 +125,7 @@ def main(src='Lib/PQClean'):
 			# pk_gen
 			for fn in ['encrypt', 'decrypt', 'pk_gen']:
 				c_header_source = (BUILD_ROOT / f"{fn}.h").read_text()
-				func_name, = re.search(fr'(?ms)^#define\s+(\w+)\s+{re.escape(pfxsentinel)}\s*\(\s*\1\s*\)\s*$', c_header_source).groups()
+				func_name = re.search(fr'(?ms)^#define\s+(\w+)\s+{re.escape(pfxsentinel)}\s*\(\s*\1\s*\)\s*$', c_header_source)[1]
 				c_header_source = "\n".join(m[0] for m in _CDEF_RE.finditer(c_header_source))
 				c_header_source = re.sub(re.escape(func_name), lambda m: pfx + m[0], c_header_source)
 				ffibuilder.cdef(c_header_source)
