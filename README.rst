@@ -14,6 +14,8 @@ Dependencies:
 
     - Linux users may also not have got the `Python Headers`_ free with their xbox and will have to go beg on the streets to get them before cffi will work
 
+  - haven't tested it, but if you're allergic to installing things outside the venv you might be able to use `this C compiler <https://pypi.org/project/ziglang/>`
+
 Getting started:
 
 0. Maybe `use a venv <https://www.bitecode.dev/p/relieving-your-python-packaging-pain>`_ or whatever if you
