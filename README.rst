@@ -55,4 +55,4 @@ At this time, ONLY the McEliece 6960,119 KEM is exposed. If this displeases you,
     k, ek = mceliece6960119.kem_enc(pk)
     # ct = MY_SYMMETRIC_CRYPTOSYSTEM.enc(m, key=k)
     k_result = mceliece6960119.kem_dec(ek, sk); assert k == k_result
-    # m_result = MY_SYMMETRIC_CRYPTOSYSTEM.dec(ct, key=k_result)
+    # m_result = MY_SYMMETRIC_CRYPTOSYSTEM.dec(ct, key=k_result); assert m == m_result
