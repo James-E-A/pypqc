@@ -1,5 +1,7 @@
 # Standard Python excludes
 __pycache__/
+/*.egg-info/
+/dist/
 
 # https://web.archive.org/web/20200518192427/www.devever.net/~hl/normativitymanifesto
 *.py[cdo]

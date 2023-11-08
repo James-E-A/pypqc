@@ -1,5 +1,5 @@
-# https://foss.heptapod.net/pypy/cffi/-/issues/441
+from setuptools import setup, Extension
 
-from setuptools import setup
+from _build_pep517 import make_ext_modules
 
-setup(cffi_modules=["cffi_compile.py:_setuptools_thing"])
+setup(ext_modules=make_ext_modules())

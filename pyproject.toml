@@ -7,12 +7,17 @@ dependencies = [
     'cryptography'
 ]
 
-[tool.setuptools]
-py-modules = ["pqc"]
+[tool.setuptools.packages.find]
+include = ["pqc"]
+namespaces = false
+
+[tool.setuptools.exclude-package-data]
+"pypqc" = ["/_build_pep517.py", "*.c"]
 
 [build-system]
 requires = [
     'setuptools',
     'cffi',
 ]
-build-backend = "setuptools.build_meta"
+build-backend = "_build_pep517"
+backend-path = ["."]

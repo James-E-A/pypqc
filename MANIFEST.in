@@ -1,0 +1,4 @@
+include _build_pep517.py
+recursive-include pqc *
+recursive-exclude pqc *.py[cdo] *.lib *.c
+recursive-include Lib *TODO_AFTER_EXCLUDING_GENERATED_c_UNDER_pqc

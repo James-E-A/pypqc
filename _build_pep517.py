@@ -1,11 +1,15 @@
 from cffi import FFI
 
+from collections import deque
 from distutils.sysconfig import parse_makefile
 import hashlib
 import os
 from pathlib import Path, PurePosixPath
 import platform
 import re
+from setuptools import build_meta as _orig_setuptools_backend
+from setuptools.build_meta import *
+from setuptools import Extension
 
 
 _IS_WINDOWS = (platform.system() == 'Windows')
@@ -17,27 +21,6 @@ if (_IS_WINDOWS) and (((_IS_x86_64) and (not _IN_x86_64_VSCMD)) or ((_IS_x86) an
 	# Painful-to-debug problems for the caller arise if this is neglected
 	raise AssertionError("Call this script from *within* \"Developer Command Prompt for VS 2022\"\nhttps://visualstudio.microsoft.com/visual-cpp-build-tools/")
 
-
-_CDEF_EXTRA = """
-extern "Python+C" {
-	void shake256(
-		uint8_t *output,
-		size_t outlen,
-		const uint8_t *input,
-		size_t inlen
-	);
-
-	int PQCLEAN_randombytes(
-		uint8_t *output,
-		size_t n
-	);
-
-	void sha512(
-		uint8_t *out,
-		const uint8_t *in,
-		size_t inlen
-	);
-}"""
 
 _CDEF_RE = re.compile(r'(?ms)^\s*(#define\s+\w+ \d+|\w[\w ]*\s(\w+)\s*\(.*?\);)$')
 _NAMESPACE_RE = re.compile(r'(?ms)^#define\s+(CRYPTO_NAMESPACE)\s*\(\s*(\w+)\s*\)\s+(\w+)\s+##\s*\2\s*$')
@@ -85,13 +68,13 @@ def _main(src='Lib/PQClean'):
 				# https://learn.microsoft.com/en-us/cpp/build/reference/tc-tp-tc-tp-specify-source-file-type?view=msvc-170
 				extra_compile_args.append('/TC')
 
-			ffibuilder = FFI()
+			cdefs = []
 
 			namespace = _NAMESPACE_RE.search((BUILD_ROOT / 'namespace.h').read_text()).group(3)
 
 			# PQClean-provided interface
-			ffibuilder.cdef(fr"""
-				const char {namespace}CRYPTO_ALGNAME[...];
+			cdefs.append(fr"""
+				static const char {namespace}CRYPTO_ALGNAME[...];
 				int {namespace}pk_gen(unsigned char *pk, unsigned char *sk, const uint32_t *perm, int16_t *pi, uint64_t *pivots);
 				void {namespace}encrypt(unsigned char *s, const unsigned char *pk, unsigned char *e);
 				int {namespace}decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c);
@@ -101,8 +84,8 @@ def _main(src='Lib/PQClean'):
 			""")
 
 			# Our internal interface
-			ffibuilder.cdef(fr"""
-				const char _NAMESPACE[...];
+			cdefs.append(fr"""
+				static const char _NAMESPACE[...];
 				typedef uint8_t _{namespace}CRYPTO_SECRETKEY[...];
 				typedef uint8_t _{namespace}CRYPTO_PUBLICKEY[...];
 				typedef uint8_t _{namespace}CRYPTO_KEM_PLAINTEXT[...];
@@ -116,10 +99,30 @@ def _main(src='Lib/PQClean'):
 			"""
 
 			# Our injected dependencies
-			ffibuilder.cdef(_CDEF_EXTRA)
+			cdefs.append("""
+				extern "Python+C" {
+					void shake256(
+						uint8_t *output,
+						size_t outlen,
+						const uint8_t *input,
+						size_t inlen
+					);
+
+					int PQCLEAN_randombytes(
+						uint8_t *output,
+						size_t n
+					);
+
+					void sha512(
+						uint8_t *out,
+						const uint8_t *in,
+						size_t inlen
+					);
+				}
+			""")
 
 			# PQClean McEliece-specific
-			ffibuilder.cdef(fr"""
+			cdefs.append(fr"""
 				const int GFBITS;
 				const int SYS_N;
 				const int SYS_T;
@@ -135,42 +138,46 @@ def _main(src='Lib/PQClean'):
 			include_h = '\n'.join(f'#include "{p.name}"' for p in include if not p.is_dir())
 			include_dirs = list({PurePosixPath(p.parent if not p.is_dir() else p) for p in include})
 
-			ffibuilder.set_source(module_name, fr"""
+			csource = fr"""
 				{include_h}
 				// low-priority semantics quibble: escaping
 				// https://stackoverflow.com/posts/comments/136533801
 				static const char _NAMESPACE[] = "{namespace}";
 				{bonus_csource}
-				""",
-				include_dirs=include_dirs,
-				sources=sources,
-				extra_compile_args=extra_compile_args
-			)
+			"""
 
-			yield ffibuilder
+			yield module_name, csource, cdefs, {'sources': sources, 'include_dirs': include_dirs, 'extra_compile_args': extra_compile_args}
 
 	for sign_alg_src in (src / 'crypto_sign').iterdir():
 		continue  # TODO
 
+def _mkffi(spec):
+	module_name, csource, cdefs, kwargs = spec
+	ffibuilder = FFI()
+	ffibuilder.set_source(module_name, csource, **kwargs)
+	deque(map(ffibuilder.cdef, cdefs), 0)
+	return ffibuilder
 
-def main():
-	for ffibuilder in _main():
-		# TODO https://github.com/python-cffi/cffi/pull/30.diff
+
+def _compile_all():
+	for ffibuilder in map(_mkffi, _main()):
 		ffibuilder.compile(verbose=True)
 
 
-def _setuptools_thing():
-	# HOW THE HECK IS THIS SUPPOSED TO WORK
-	# I DON'T GET THIS INTERFACE AT ALL
-	# WHY CAN'T I RETURN A LIST??? :(
-	for ffibuilder in _main():
-		if ffibuilder._assigned_source[0] == 'pqc.kem._mceliece6960119':
-			print("RETURNING", ffibuilder)
-			return ffibuilder
-	else:
-		raise RuntimeError()
-
+def make_ext_modules():
+	# https://stackoverflow.com/a/66479252/1874170
+	ext_modules = []
+	from pprint import pprint
+	for spec in _main():
+		module_name, csource, cdefs, kwargs = spec
+		ffibuilder = _mkffi(spec)
+		sources = kwargs.pop('sources')
+		p = Path(*module_name.split('.')).with_suffix('.c')
+		ffibuilder.emit_c_code(str(p))
+		sources.append(str(PurePosixPath(p)))
+		ext_modules.append(Extension(module_name, sources, **kwargs))
+	return ext_modules
 
 
 if __name__ == "__main__":
-	main()
+	_compile_all()
