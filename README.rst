@@ -4,9 +4,10 @@ Development
 Dependencies:
 
 - Python 3 (tested mainly on 3.10, 3.11, and 3.12)
-- asn1_ (from PyPI)
-- cryptography_ (from PyPI)
+- asn1_ (from PyPI; run-time dependency only)
+- cryptography_ (from PyPI; run-time dependency only)
 - cffi_ (from PyPI; build-time dependency only)
+- setuptools_ (from PyPI; build-time dependency only)
 - a C compiler (build-time dependency only)
 
   - If you're on Windows, https://visualstudio.microsoft.com/visual-cpp-build-tools/ AND THEN make sure you launch "Developer Command Prompt for VS 2022" or whatever
@@ -18,11 +19,24 @@ Dependencies:
 
 Getting started:
 
-0. Maybe `use a venv <https://www.bitecode.dev/p/relieving-your-python-packaging-pain>`_ or whatever if you
-1. Run ``cffi_compile.py``
-2. Run ``python -m pqc.demo``
+0. Maybe `use a venv <https://www.bitecode.dev/p/relieving-your-python-packaging-pain>`_ or whatever if you want to
+
+   - tldr: ``python3 -m venv .venv; . .venv/bin/activate`` on Linux (`install it <https://packages.ubuntu.com/jammy/python/python3-venv>` if needed); ``py -m venv .venv && .venv\bin\activate.bat`` on Windows
+
+1. Run ``python -m pip install -r requirements-dev.txt`` to get CFFI and setuptools
+
+   - if on Windows, make sure you're running (somehow) from an environment that gives you access to your C compiler and ISN'T in cross-compile mode (unless that's what you meant to do)
+
+2. Run ``python -m pip install -e .`` to get the rest of the build-time dependencies
+
+   - I can't friggin figure out setuptools X cffi, pls halp (the code "works" as-written, but is BAD BAD BAD BAD BAD)
+
+   - If you make any changes that implicate the C library or CFFI, you will need to re-run the command; OTHERWISE, your changes should apply basically live
+
+3. Run ``python -m pqc.demo`` to test it (run this from a DIFFERENT directory, such as your home folder, so you can be sure it's being imported properly)
 
 .. _cffi: https://cffi.readthedocs.io/en/release-1.16/
+.. _setuptools: https://setuptools.pypa.io/en/stable/
 .. _asn1: https://github.com/andrivet/python-asn1
 .. _cryptography: https://github.com/pyca/cryptography
 .. _`Python Headers`: https://packages.ubuntu.com/jammy/python3-dev
@@ -32,4 +46,13 @@ Getting started:
 Usage
 =====
 
-(TODO, not user-facing at this time)
+At this time, ONLY the McEliece 6960,119 KEM is exposed. If this displeases you, I beg and solicit (either publicly or privately; e-mail is great!) free advice on CFFI and setuptools.
+
+::
+
+    from pqc.kem import mceliece6960119
+    pk, sk = mceliece6960119.kem_keypair()  # WARNING these are some chonky keys (1MiB public, 13.6KiB private); consider using base64.encode() to print them
+    k, ek = mceliece6960119.kem_enc(pk)
+    # ct = MY_SYMMETRIC_CRYPTOSYSTEM.enc(m, key=k)
+    k_result = mceliece6960119.kem_dec(ek, sk); assert k == k_result
+    # m_result = MY_SYMMETRIC_CRYPTOSYSTEM.dec(ct, key=k_result)

@@ -39,21 +39,22 @@ extern "Python+C" {
 	);
 }"""
 
-_CDEF_RE = re.compile(r'(?ms)^\s*(?:#define\s+\w+ \d+|\w[\w ]*\s(\w+)\s*\(.*?\);)$')
+_CDEF_RE = re.compile(r'(?ms)^\s*(#define\s+\w+ \d+|\w[\w ]*\s(\w+)\s*\(.*?\);)$')
 _NAMESPACE_RE = re.compile(r'(?ms)^#define\s+(CRYPTO_NAMESPACE)\s*\(\s*(\w+)\s*\)\s+(\w+)\s+##\s*\2\s*$')
+_NAMESPACED_RE = re.compile(r'(?ms)^#define\s+(\w+)\s+CRYPTO_NAMESPACE\s*\(\s*\1\s*\)\s*$')
 
 
-def main(src='Lib/PQClean'):
+def _main(src='Lib/PQClean'):
 	src = Path(src)
 	COMMON_INCLUDE = src / 'common'
-	for kem_alg in (src / 'crypto_kem').iterdir():
-		alg_name = kem_alg.name
+	for kem_alg_src in (src / 'crypto_kem').iterdir():
+		alg_name = kem_alg_src.name
 		if alg_name.startswith('hqc-rmrs'):
 			continue  # TODO
 		if alg_name.startswith('kyber'):
 			continue  # TODO needs miscellaneous shake256_* suite functions
 
-		for BUILD_ROOT in (p for p in kem_alg.iterdir() if p.is_dir()):
+		for BUILD_ROOT in (p for p in kem_alg_src.iterdir() if p.is_dir()):
 			variant = BUILD_ROOT.name
 			if variant == 'clean':
 				variant = None
@@ -66,76 +67,109 @@ def main(src='Lib/PQClean'):
 
 			if alg_name.startswith('mceliece'):
 				if alg_name.endswith('f'):
+					# "fast" key generation
 					alg_name = alg_name[:-1]
 				else:
-					if variant is None:
-						variant = 'ref'
-					else:
-						variant = f'{variant}_ref'
+					# "simple" key generation
+					# (unclear if this has any
+					# use beyond the existence
+					# of the source code itself)
+					variant = f'{f"{variant}_" if variant else ""}ref'
 
-			if variant is not None:
-				module_name = f'pqc.crypto_kem._{alg_name}_{variant}'
-			else:
-				module_name = f'pqc.crypto_kem._{alg_name}'
+			module_name = f'pqc.kem._{alg_name}{f"_{variant}" if variant else ""}'
 
 			extra_compile_args = []
 			if _IS_WINDOWS:
-				# https://www.reddit.com/r/learnpython/comments/175js2u/def_extern_says_im_not_using_it_in_api_mode/k4qit36/
+				# https://foss.heptapod.net/pypy/cffi/-/issues/516
+				# https://www.reddit.com/r/learnpython/comments/175js2u/def_extern_says_im_not_using_it_in_api_mode/
+				# https://learn.microsoft.com/en-us/cpp/build/reference/tc-tp-tc-tp-specify-source-file-type?view=msvc-170
 				extra_compile_args.append('/TC')
-
-			object_names = parse_makefile(BUILD_ROOT / 'Makefile')['OBJECTS'].split()
-			object_names = [fn for fn in object_names if not fn.startswith('aes')]  # Not sure why this is necessary
-
-			objects = [(BUILD_ROOT / fn) for fn in object_names]
-
-			sources = [p.with_suffix('.c') for p in objects]
-
-			include = [COMMON_INCLUDE, (BUILD_ROOT / 'api.h'), (BUILD_ROOT / 'params.h')]
-			include_dirs=list({PurePosixPath(p.parent if not p.is_dir() else p) for p in include})
-			c_header_source = "\n".join(f"#include <{p.name}>" for p in include if not p.is_dir())
 
 			ffibuilder = FFI()
 
-			ffibuilder.set_source(module_name, c_header_source,
+			namespace = _NAMESPACE_RE.search((BUILD_ROOT / 'namespace.h').read_text()).group(3)
+
+			# PQClean-provided interface
+			ffibuilder.cdef(fr"""
+				const char {namespace}CRYPTO_ALGNAME[...];
+				int {namespace}pk_gen(unsigned char *pk, unsigned char *sk, const uint32_t *perm, int16_t *pi, uint64_t *pivots);
+				void {namespace}encrypt(unsigned char *s, const unsigned char *pk, unsigned char *e);
+				int {namespace}decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c);
+				int {namespace}crypto_kem_keypair(unsigned char *pk, unsigned char *sk);
+				int {namespace}crypto_kem_enc(unsigned char *c, unsigned char *key, const unsigned char *pk);
+				int {namespace}crypto_kem_dec(unsigned char *key, const unsigned char *c, const unsigned char *sk);
+			""")
+
+			# Our internal interface
+			ffibuilder.cdef(fr"""
+				const char _NAMESPACE[...];
+				typedef uint8_t _{namespace}CRYPTO_SECRETKEY[...];
+				typedef uint8_t _{namespace}CRYPTO_PUBLICKEY[...];
+				typedef uint8_t _{namespace}CRYPTO_KEM_PLAINTEXT[...];
+				typedef uint8_t _{namespace}CRYPTO_KEM_CIPHERTEXT[...];
+			""")
+			bonus_csource = fr"""
+				typedef uint8_t _{namespace}CRYPTO_SECRETKEY[{namespace}CRYPTO_SECRETKEYBYTES];
+				typedef uint8_t _{namespace}CRYPTO_PUBLICKEY[{namespace}CRYPTO_PUBLICKEYBYTES];
+				typedef uint8_t _{namespace}CRYPTO_KEM_PLAINTEXT[{namespace}CRYPTO_BYTES];
+				typedef uint8_t _{namespace}CRYPTO_KEM_CIPHERTEXT[{namespace}CRYPTO_CIPHERTEXTBYTES];
+			"""
+
+			# Our injected dependencies
+			ffibuilder.cdef(_CDEF_EXTRA)
+
+			# PQClean McEliece-specific
+			ffibuilder.cdef(fr"""
+				const int GFBITS;
+				const int SYS_N;
+				const int SYS_T;
+			""")
+
+			# Actual source
+			object_names = parse_makefile(BUILD_ROOT / 'Makefile')['OBJECTS'].split()
+			object_names = [fn for fn in object_names if not fn.startswith('aes')]  # Not sure why this is necessary
+			objects = [(BUILD_ROOT / fn) for fn in object_names]
+			sources = [str(p.with_suffix('.c')) for p in objects]
+
+			include = [COMMON_INCLUDE, (BUILD_ROOT / 'api.h'), (BUILD_ROOT / 'params.h')]
+			include_h = '\n'.join(f'#include "{p.name}"' for p in include if not p.is_dir())
+			include_dirs = list({PurePosixPath(p.parent if not p.is_dir() else p) for p in include})
+
+			ffibuilder.set_source(module_name, fr"""
+				{include_h}
+				// low-priority semantics quibble: escaping
+				// https://stackoverflow.com/posts/comments/136533801
+				static const char _NAMESPACE[] = "{namespace}";
+				{bonus_csource}
+				""",
 				include_dirs=include_dirs,
 				sources=sources,
 				extra_compile_args=extra_compile_args
 			)
 
-			# SYS_N
-			# SYS_T
-			c_header_source = (BUILD_ROOT / 'params.h').read_text()
-			c_header_source = "\n".join(m[0] for m in _CDEF_RE.finditer(c_header_source))
-			ffibuilder.cdef(c_header_source)
+			yield ffibuilder
 
-			pfxsentinel, _, pfx = _NAMESPACE_RE.search((BUILD_ROOT / 'namespace.h').read_text()).groups()
-
-			# crypto_kem_enc
-			# crypto_kem_dec
-			# crypto_kem_keypair
-			c_header_source = (BUILD_ROOT / 'crypto_kem.h').read_text()
-			func_names = [m[1] for m in re.finditer(fr'(?ms)^#define\s+(\w+)\s+{re.escape(pfxsentinel)}\s*\(\s*\1\s*\)\s*$', c_header_source)]
-			c_header_source = (BUILD_ROOT / 'operations.h').read_text()
-			c_header_source = "\n".join(m[0] for m in _CDEF_RE.finditer(c_header_source))
-			c_header_source = re.sub(fr'(?:{"|".join(map(re.escape, func_names))})', lambda m: pfx + m[0], c_header_source)
-			ffibuilder.cdef(c_header_source)
-
-			# encrypt
-			# decrypt
-			# pk_gen
-			for fn in ['encrypt', 'decrypt', 'pk_gen']:
-				c_header_source = (BUILD_ROOT / f"{fn}.h").read_text()
-				func_name = re.search(fr'(?ms)^#define\s+(\w+)\s+{re.escape(pfxsentinel)}\s*\(\s*\1\s*\)\s*$', c_header_source)[1]
-				c_header_source = "\n".join(m[0] for m in _CDEF_RE.finditer(c_header_source))
-				c_header_source = re.sub(re.escape(func_name), lambda m: pfx + m[0], c_header_source)
-				ffibuilder.cdef(c_header_source)
-
-			ffibuilder.cdef(_CDEF_EXTRA)
-
-			ffibuilder.compile(verbose=True, parallel=True)  # https://github.com/python-cffi/cffi/pull/30.diff
-
-	for kem_alg in (src / 'crypto_sign').iterdir():
+	for sign_alg_src in (src / 'crypto_sign').iterdir():
 		continue  # TODO
+
+
+def main():
+	for ffibuilder in _main():
+		# TODO https://github.com/python-cffi/cffi/pull/30.diff
+		ffibuilder.compile(verbose=True)
+
+
+def _setuptools_thing():
+	# HOW THE HECK IS THIS SUPPOSED TO WORK
+	# I DON'T GET THIS INTERFACE AT ALL
+	# WHY CAN'T I RETURN A LIST??? :(
+	for ffibuilder in _main():
+		if ffibuilder._assigned_source[0] == 'pqc.kem._mceliece6960119':
+			print("RETURNING", ffibuilder)
+			return ffibuilder
+	else:
+		raise RuntimeError()
+
 
 
 if __name__ == "__main__":

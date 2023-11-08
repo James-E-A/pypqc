@@ -1,0 +1,18 @@
+
+[project]
+name = "pypqc"
+version = "0.0.0.1"
+dependencies = [
+    'asn1',
+    'cryptography'
+]
+
+[tool.setuptools]
+py-modules = ["pqc"]
+
+[build-system]
+requires = [
+    'setuptools',
+    'cffi',
+]
+build-backend = "setuptools.build_meta"
