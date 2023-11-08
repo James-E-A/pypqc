@@ -15,13 +15,13 @@ Dependencies:
 
     - Linux users may also not have got the `Python Headers`_ free with their xbox and will have to go beg on the streets to get them before cffi will work
 
-  - haven't tested it, but if you're allergic to installing things outside the venv you might be able to use `this C compiler <https://pypi.org/project/ziglang/>`
+  - haven't tested it, but if you're allergic to installing things outside the venv you might be able to use `this C compiler <https://pypi.org/project/ziglang/>`_
 
 Getting started:
 
 0. Maybe `use a venv <https://www.bitecode.dev/p/relieving-your-python-packaging-pain>`_ or whatever if you want to
 
-   - tldr: ``python3 -m venv .venv; . .venv/bin/activate`` on Linux (`install it <https://packages.ubuntu.com/jammy/python/python3-venv>` if needed); ``py -m venv .venv && .venv\bin\activate.bat`` on Windows
+   - tldr: ``python3 -m venv .venv; . .venv/bin/activate`` on Linux (`install it <https://packages.ubuntu.com/jammy/python/python3-venv>`_ if needed); ``py -m venv .venv && .venv\bin\activate.bat`` on Windows
 
 1. Run ``python -m pip install -r requirements-dev.txt`` to get CFFI and setuptools
 
