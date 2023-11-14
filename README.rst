@@ -3,7 +3,7 @@ Development
 
 Dependencies:
 
-- Python 3 (tested mainly on 3.10, 3.11, and 3.12)
+- Python 3 (tested mainly on CPython 3.10, 3.11, and 3.12; and on PyPy 7.3.12)
 - asn1_ (from PyPI; run-time dependency only)
 - cryptography_ (from PyPI; run-time dependency only)
 - cffi_ (from PyPI; build-time dependency only)

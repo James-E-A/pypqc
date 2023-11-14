@@ -4,7 +4,7 @@ from collections import deque
 from distutils.sysconfig import parse_makefile
 import hashlib
 import os
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 import platform
 import re
 from setuptools import build_meta as _orig_setuptools_backend
@@ -27,10 +27,10 @@ _NAMESPACE_RE = re.compile(r'(?ms)^#define\s+(CRYPTO_NAMESPACE)\s*\(\s*(\w+)\s*\
 _NAMESPACED_RE = re.compile(r'(?ms)^#define\s+(\w+)\s+CRYPTO_NAMESPACE\s*\(\s*\1\s*\)\s*$')
 
 
-def _main(src='Lib/PQClean'):
-	src = Path(src)
-	COMMON_INCLUDE = src / 'common'
-	for kem_alg_src in (src / 'crypto_kem').iterdir():
+def _main(src='.'):
+	pqc_root = Path(src) / 'Lib/PQClean'
+	COMMON_INCLUDE = pqc_root / 'common'
+	for kem_alg_src in (pqc_root / 'crypto_kem').iterdir():
 		alg_name = kem_alg_src.name
 		if alg_name.startswith('hqc-rmrs'):
 			continue  # TODO
@@ -136,7 +136,7 @@ def _main(src='Lib/PQClean'):
 
 			include = [COMMON_INCLUDE, (BUILD_ROOT / 'api.h'), (BUILD_ROOT / 'params.h')]
 			include_h = '\n'.join(f'#include "{p.name}"' for p in include if not p.is_dir())
-			include_dirs = list({PurePosixPath(p.parent if not p.is_dir() else p) for p in include})
+			include_dirs = list({(p.parent if not p.is_dir() else p).as_posix() for p in include})
 
 			csource = fr"""
 				{include_h}
@@ -146,37 +146,40 @@ def _main(src='Lib/PQClean'):
 				{bonus_csource}
 			"""
 
-			yield module_name, csource, cdefs, {'sources': sources, 'include_dirs': include_dirs, 'extra_compile_args': extra_compile_args}
+			yield module_name, {'csource': csource, 'cdefs': cdefs, 'sources': sources, 'include_dirs': include_dirs, 'extra_compile_args': extra_compile_args}
 
-	for sign_alg_src in (src / 'crypto_sign').iterdir():
+	for sign_alg_src in (pqc_root / 'crypto_sign').iterdir():
 		continue  # TODO
 
+
+def _make_ext_modules():
+	# https://stackoverflow.com/a/66479252/1874170
+	ext_modules = []
+	for module_name, opts in _main():
+		opts.pop('csource')
+		opts.pop('cdefs')
+		p = Path(*module_name.split('.')).with_suffix('.c')
+		sources = [p.as_posix()]
+		sources += opts.pop('sources')
+		ext_module = Extension(module_name, sources, **opts)
+		ext_modules.append(ext_module)
+	return ext_modules
+
+
 def _mkffi(spec):
-	module_name, csource, cdefs, kwargs = spec
+	module_name, opts = spec
 	ffibuilder = FFI()
-	ffibuilder.set_source(module_name, csource, **kwargs)
+	csource = opts.pop('csource')
+	cdefs = opts.pop('cdefs')
+	ffibuilder.set_source(module_name, csource, **opts)
 	deque(map(ffibuilder.cdef, cdefs), 0)
 	return ffibuilder
 
 
-def _compile_all():
+def build_wheel(wheel_directory, config_settings=None, metadata_directory=None):
 	for ffibuilder in map(_mkffi, _main()):
 		ffibuilder.compile(verbose=True)
-
-
-def make_ext_modules():
-	# https://stackoverflow.com/a/66479252/1874170
-	ext_modules = []
-	from pprint import pprint
-	for spec in _main():
-		module_name, csource, cdefs, kwargs = spec
-		ffibuilder = _mkffi(spec)
-		sources = kwargs.pop('sources')
-		p = Path(*module_name.split('.')).with_suffix('.c')
-		ffibuilder.emit_c_code(str(p))
-		sources.append(str(PurePosixPath(p)))
-		ext_modules.append(Extension(module_name, sources, **kwargs))
-	return ext_modules
+	return _orig_setuptools_backend.build_wheel(wheel_directory, config_settings=config_settings, metadata_directory=metadata_directory)
 
 
 if __name__ == "__main__":
