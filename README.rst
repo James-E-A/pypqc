@@ -46,7 +46,7 @@ Getting started:
 
 1. Run ``python -m pip install -r requirements-dev.txt`` to get CFFI and setuptools
 
-   - if on Windows, make sure you're running (somehow) from an environment that gives you access to your C compiler and ISN'T in cross-compile mode (unless that's what you meant to do)
+   - if on Linux, you may have to `get an arbitrary version of pip <https://packages.ubuntu.com/jammy/python/python3-pip>`_ first.
 
 2. Run any PEP 517 compliant build tooling of your choice, for example:
 
