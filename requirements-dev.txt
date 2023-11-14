@@ -1,2 +1,3 @@
+pip >= 19.0
 cffi >= 1.15.0
-setuptools
+setuptools >= 49.5.0

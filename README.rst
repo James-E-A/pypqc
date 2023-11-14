@@ -21,19 +21,19 @@ Getting started:
 
 0. Maybe `use a venv <https://www.bitecode.dev/p/relieving-your-python-packaging-pain>`_ or whatever if you want to
 
-   - tldr: ``python3 -m venv .venv; . .venv/bin/activate`` on Linux (`install it <https://packages.ubuntu.com/jammy/python/python3-venv>`_ if needed); ``py -m venv .venv && .venv\bin\activate.bat`` on Windows
+   - for Linux: ``python3 -m venv .venv; . .venv/bin/activate`` (`install it <https://packages.ubuntu.com/jammy/python/python3-venv>`_ if needed)
+   - for Windows: ``py -m venv .venv & .venv\bin\activate.bat``
 
 1. Run ``python -m pip install -r requirements-dev.txt`` to get CFFI and setuptools
 
    - if on Windows, make sure you're running (somehow) from an environment that gives you access to your C compiler and ISN'T in cross-compile mode (unless that's what you meant to do)
 
-2. Run ``python -m pip install -e .`` to get the rest of the build-time dependencies
+2. Run any PEP 517 compliant build tooling of your choice, for example:
 
-   - I can't friggin figure out setuptools X cffi, pls halp (the code "works" as-written, but is BAD BAD BAD BAD BAD)
+   - ``python -m pip install -e .``
+   - ``python -m build .`` (only after ``python -m pip install build``)
 
-   - If you make any changes that implicate the C library or CFFI, you will need to re-run the command; OTHERWISE, your changes should apply basically live
-
-3. Run ``python -m pqc.demo`` to test it (run this from a DIFFERENT directory, such as your home folder, so you can be sure it's being imported properly)
+3. Run ``python -m pqc.demo`` to test it. If it prints "OK" and exits, the functions are almost certainly not broken. (Ideally, run this from a DIFFERENT directory, such as your home folder, so you can be sure it's being imported properly)
 
 .. _cffi: https://cffi.readthedocs.io/en/release-1.16/
 .. _setuptools: https://setuptools.pypa.io/en/stable/
