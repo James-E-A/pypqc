@@ -42,7 +42,7 @@ Getting started:
 0. Maybe `use a venv <https://www.bitecode.dev/p/relieving-your-python-packaging-pain>`_ or whatever if you want to
 
    - for Linux: ``python3 -m venv .venv; . .venv/bin/activate`` (`install it <https://packages.ubuntu.com/jammy/python/python3-venv>`_ if needed)
-   - for Windows: ``py -m venv .venv & .venv\bin\activate.bat``
+   - for Windows: ``py -m venv .venv & .venv\Scripts\activate.bat``
 
 1. Run ``python -m pip install -r requirements-dev.txt`` to get CFFI and setuptools
 
