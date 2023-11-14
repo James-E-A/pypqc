@@ -27,13 +27,14 @@ Dependencies:
 - asn1_ (from PyPI; run-time dependency only)
 - cryptography_ (from PyPI; run-time dependency only)
 - cffi_ (from PyPI; build-time dependency only)
+
+  - Linux users may not have got the `Python Headers`_ included with their Python installation; cffi requires them
+
 - setuptools_ (from PyPI; build-time dependency only)
 - a C compiler (build-time dependency only)
 
   - If you're on Windows, https://visualstudio.microsoft.com/visual-cpp-build-tools/ AND THEN make sure you enter the appropriate environment (for AMD64, "x64 Native Tools Command Prompt for VS 2022"; for 32-bit x86, "Developer Command Prompt for VS 2022"; for other situations, see `the documentation <https://learn.microsoft.com/en-us/cpp/build/building-on-the-command-line?view=msvc-170>`_.)
   - If you're on Linux, install build-essential_ or `"Development Tools"`_ or something like that
-
-    - Linux users may also not have got the `Python Headers`_ free with their xbox and will have to go beg on the streets to get them before cffi will work
 
   - haven't tested it, but if you're allergic to installing things outside the venv you might be able to use `this C compiler <https://pypi.org/project/ziglang/>`_
 
