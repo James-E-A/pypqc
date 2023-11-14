@@ -1,5 +1,25 @@
+Usage
+=====
+
+::
+
+    from pqc.kem import mceliece6960119
+    pk, sk = mceliece6960119.kem_keypair()
+    # WARNING these^ are some chonky keys, 1MiB public, 13.6KiB private; if you must display them, use base64.encode(...)
+    k, ek = mceliece6960119.kem_enc(pk)
+    # ct = MY_SYMMETRIC_CRYPTOSYSTEM.enc(m, key=k)
+    # SEND_TO_RECIPIENT([ek, ct])
+    k_result = mceliece6960119.kem_dec(ek, sk); assert k == k_result
+    # m_result = MY_SYMMETRIC_CRYPTOSYSTEM.dec(ct, key=k_result); assert m == m_result
+
+Currently, only the McEliece 6960,119 KEM is exposed; the rest of PQClean is coming up next.
+
+Capabilities *not* included in PQClean, such as `McEliece signatures`_, `Hybrid Encryption`_, and `message encapsulation`_, are *not* going to be implemented in this library.
+
 Development
 ===========
+
+(if you know what PEP 517 is, you don't need to read this; just go get 'em)
 
 Dependencies:
 
@@ -43,16 +63,6 @@ Getting started:
 .. _build-essential: https://packages.ubuntu.com/jammy/build-essential
 .. _`"Development Tools"`: https://git.rockylinux.org/rocky/comps/-/blob/e6c8f29a7686326a731ea72b6caa06dabc7801b5/comps-rocky-9-lh.xml#L2169
 
-Usage
-=====
-
-At this time, ONLY the McEliece 6960,119 KEM is exposed. If this displeases you, I beg and solicit (either publicly or privately; e-mail is great!) free advice on CFFI and setuptools.
-
-::
-
-    from pqc.kem import mceliece6960119
-    pk, sk = mceliece6960119.kem_keypair()  # WARNING these are some chonky keys (1MiB public, 13.6KiB private); consider using base64.encode() to print them
-    k, ek = mceliece6960119.kem_enc(pk)
-    # ct = MY_SYMMETRIC_CRYPTOSYSTEM.enc(m, key=k)
-    k_result = mceliece6960119.kem_dec(ek, sk); assert k == k_result
-    # m_result = MY_SYMMETRIC_CRYPTOSYSTEM.dec(ct, key=k_result); assert m == m_result
+.. _`McEliece Signatures`: https://inria.hal.science/inria-00072511
+.. _`Hybrid Encryption`: https://en.wikipedia.org/wiki/Hybrid_encryption
+.. _`message encapsulation`: https://en.wikipedia.org/wiki/Cryptographic_Message_Syntax
