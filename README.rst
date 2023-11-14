@@ -10,7 +10,7 @@ Dependencies:
 - setuptools_ (from PyPI; build-time dependency only)
 - a C compiler (build-time dependency only)
 
-  - If you're on Windows, https://visualstudio.microsoft.com/visual-cpp-build-tools/ AND THEN make sure you launch "Developer Command Prompt for VS 2022" or whatever
+  - If you're on Windows, https://visualstudio.microsoft.com/visual-cpp-build-tools/ AND THEN make sure you enter the appropriate environment (for AMD64, "x64 Native Tools Command Prompt for VS 2022"; for 32-bit x86, "Developer Command Prompt for VS 2022"; for other situations, see `the documentation <https://learn.microsoft.com/en-us/cpp/build/building-on-the-command-line?view=msvc-170>`_.)
   - If you're on Linux, install build-essential_ or `"Development Tools"`_ or something like that
 
     - Linux users may also not have got the `Python Headers`_ free with their xbox and will have to go beg on the streets to get them before cffi will work
@@ -41,7 +41,7 @@ Getting started:
 .. _cryptography: https://github.com/pyca/cryptography
 .. _`Python Headers`: https://packages.ubuntu.com/jammy/python3-dev
 .. _build-essential: https://packages.ubuntu.com/jammy/build-essential
-.. _`"Development Tools"`: https://git.rockylinux.org/rocky/comps/-/blob/e6c8f29a7686326a731ea72b6caa06dabc7801b5/comps-rocky-9-lh.xml#L1768
+.. _`"Development Tools"`: https://git.rockylinux.org/rocky/comps/-/blob/e6c8f29a7686326a731ea72b6caa06dabc7801b5/comps-rocky-9-lh.xml#L2169
 
 Usage
 =====
