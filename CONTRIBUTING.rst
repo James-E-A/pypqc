@@ -13,13 +13,13 @@ same).
 Legal
 =====
 
-Any "pull request" includes a non-exclusive assignment of copyright to the
-holders named in "COPYRIGHT" in the root of this repository, unless
-explicitly stated otherwise.
+Unless explicitly stated otherwise, each request to merge changes includes
+a non-exclusive assignment of copyright on the contributions to the
+holder(s) named in "COPYING".
 
-Obviously, any "pull request" also includes a release of the contributions
-under the text of "LICENSE" in the root of this repository, unless
-explicitly stated otherwise.
+Obviously, unless explicitly stated otherwise, each request to merge
+changes also includes a release of the contributions under the text of
+"LICENSE".
 
-Exceptions to each of these will be recorded in "COPYRIGHT" in the root of
+Exceptions to each of these will be recorded in "COPYING" in the root of
 this repository.
