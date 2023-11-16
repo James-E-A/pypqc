@@ -1,21 +1,15 @@
-# Do NOT import these functions into general-purpose Python code!
-# They are C API dependencies for PQClean speciically!
-
-# Currently, monkey-patching this module will *NOT* work as expected;
-# graceful monkey-patching support is TODO.
-
-from hashlib import shake_256 as _shake_256
-from os import urandom as _urandom
+from hashlib import shake_256
+from os import urandom as randombytes
 
 
-def shake256(output, outlen, input_, inlen, *, ffi):
-	result = _shake_256(ffi.buffer(input_, inlen)).digest(outlen)
-	assert len(result) <= outlen
+def _impl_shake256(output, outlen, input_, inlen, *, ffi):
+	result = shake_256(ffi.buffer(input_, inlen)).digest(outlen)
+	assert len(result) <= outlen  # TODO check if FFI needs this or is already memory-safe
 	ffi.memmove(output, result, len(result))
 
 
-def PQCLEAN_randombytes(output, n, *, ffi):
-	result = _urandom(n)
-	assert len(result) <= n
+def _impl_randombytes(output, n, *, ffi):
+	result = randombytes(n)
+	assert len(result) <= n  # TODO check if FFI needs this or is already memory-safe
 	ffi.memmove(output, result, len(result))
 	return len(result)

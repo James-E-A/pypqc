@@ -130,7 +130,7 @@ def _main(src='.'):
 
 			# Actual source
 			object_names = parse_makefile(BUILD_ROOT / 'Makefile')['OBJECTS'].split()
-			object_names = [fn for fn in object_names if not fn.startswith('aes')]  # Not sure why this is necessary
+			object_names.remove('aes256ctr.o')  # Test infrastructure only
 			objects = [(BUILD_ROOT / fn) for fn in object_names]
 			sources = [str(p.with_suffix('.c')) for p in objects]
 
@@ -148,8 +148,8 @@ def _main(src='.'):
 
 			yield module_name, {'csource': csource, 'cdefs': cdefs, 'sources': sources, 'include_dirs': include_dirs, 'extra_compile_args': extra_compile_args}
 
-	for sign_alg_src in (pqc_root / 'crypto_sign').iterdir():
-		continue  # TODO
+	#for sign_alg_src in (pqc_root / 'crypto_sign').iterdir():
+	#	...  # TODO
 
 
 def _make_ext_modules():
@@ -158,7 +158,7 @@ def _make_ext_modules():
 	for module_name, opts in _main():
 		opts.pop('csource')
 		opts.pop('cdefs')
-		p = Path(*module_name.split('.')).with_suffix('.c')
+		p = Path('.', *module_name.split('.')).with_suffix('.c')
 		sources = [p.as_posix()]
 		sources += opts.pop('sources')
 		ext_module = Extension(module_name, sources, **opts)
@@ -181,6 +181,3 @@ def build_wheel(wheel_directory, config_settings=None, metadata_directory=None):
 		ffibuilder.compile(verbose=True)
 	return _orig_setuptools_backend.build_wheel(wheel_directory, config_settings=config_settings, metadata_directory=metadata_directory)
 
-
-if __name__ == "__main__":
-	_compile_all()

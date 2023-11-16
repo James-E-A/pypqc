@@ -1,7 +1,7 @@
 
 [project]
 name = "pypqc"
-version = "0.0.0.1"
+version = "0.0.0.2"
 
 [tool.setuptools.packages.find]
 include = ["pqc"]

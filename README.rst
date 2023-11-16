@@ -5,14 +5,15 @@ Usage
 
     from pqc.kem import mceliece6960119
     pk, sk = mceliece6960119.kem_keypair()
-    # WARNING these^ are some chonky keys, 1MiB public, 13.6KiB private; if you must display them, use base64.encode(...)
+    # WARNING these^ are some chonky keys (1MiB public, 13.6KiB private)
+    # if you must display them, use base64.encode(...)
     k, ek = mceliece6960119.kem_enc(pk)
     # ct = MY_SYMMETRIC_CRYPTOSYSTEM.enc(m, key=k)
-    # SEND_TO_RECIPIENT([ek, ct])
+    # SEND_TO(pk, (ek, ct))
     k_result = mceliece6960119.kem_dec(ek, sk); assert k == k_result
     # m_result = MY_SYMMETRIC_CRYPTOSYSTEM.dec(ct, key=k_result); assert m == m_result
 
-Currently, only the McEliece 6960,119 KEM is exposed; the rest of PQClean is coming up next.
+Currently, only the McEliece KEM (with parameter sets 3488,64; 4608,96; 6688,128; 6960,119; 8192,128) is exposed; the rest of PQClean is coming up next.
 
 Capabilities *not* included in PQClean, such as `McEliece signatures`_, `Hybrid Encryption`_, and `message encapsulation`_, are *not* going to be implemented in this library.
 
@@ -32,7 +33,7 @@ Dependencies:
 - a C compiler (build-time dependency only)
 
   - If you're on Windows, https://visualstudio.microsoft.com/visual-cpp-build-tools/ AND THEN make sure you enter the appropriate environment (for AMD64, "x64 Native Tools Command Prompt for VS 2022"; for 32-bit x86, "Developer Command Prompt for VS 2022"; for other situations, see `the documentation <https://learn.microsoft.com/en-us/cpp/build/building-on-the-command-line?view=msvc-170>`_.)
-  - If you're on Linux, install build-essential_ or `"Development Tools"`_ or something like that
+  - If you're on Linux, install build-essential_ or `group "Development Tools"`_ or something like that
 
   - haven't tested it, but if you're allergic to installing things outside the venv you might be able to use `this C compiler <https://pypi.org/project/ziglang/>`_
 
@@ -49,7 +50,7 @@ Getting started:
 
 2. Run any PEP 517 compliant build tooling of your choice, for example:
 
-   - ``python -m pip install -e .``
+   - ``python -m pip install .`` (editable `not supported currently <https://github.com/pypa/pip/issues/6314#issuecomment-469176276>`)
    - ``python -m build .`` (only after ``python -m pip install build``)
 
 3. Run ``python -m pqc.demo`` to test it. If it prints "OK" and exits, the functions are almost certainly not broken. (Ideally, run this from a DIFFERENT directory, such as your home folder, so you can be sure it's being imported properly)
@@ -58,7 +59,7 @@ Getting started:
 .. _setuptools: https://setuptools.pypa.io/en/stable/
 .. _`Python Headers`: https://packages.ubuntu.com/jammy/python3-dev
 .. _build-essential: https://packages.ubuntu.com/jammy/build-essential
-.. _`"Development Tools"`: https://git.rockylinux.org/rocky/comps/-/blob/e6c8f29a7686326a731ea72b6caa06dabc7801b5/comps-rocky-9-lh.xml#L2169
+.. _`group "Development Tools"`: https://git.rockylinux.org/rocky/comps/-/blob/e6c8f29a7686326a731ea72b6caa06dabc7801b5/comps-rocky-9-lh.xml#L2169
 
 .. _`McEliece Signatures`: https://inria.hal.science/inria-00072511
 .. _`Hybrid Encryption`: https://en.wikipedia.org/wiki/Hybrid_encryption

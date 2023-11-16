@@ -1,3 +1,4 @@
 recursive-include pqc *.py
-recursive-include Lib/PQClean *
+recursive-include Lib/PQClean/crypto_kem *
+recursive-include Lib/PQClean/common *.h
 include _build_pep517.py
