@@ -2,10 +2,6 @@
 [project]
 name = "pypqc"
 version = "0.0.0.1"
-dependencies = [
-    'asn1',
-    'cryptography'
-]
 
 [tool.setuptools.packages.find]
 include = ["pqc"]

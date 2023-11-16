@@ -24,8 +24,6 @@ Development
 Dependencies:
 
 - Python 3 (tested mainly on CPython 3.10, 3.11, and 3.12; and on PyPy 7.3.12)
-- asn1_ (from PyPI; run-time dependency only)
-- cryptography_ (from PyPI; run-time dependency only)
 - cffi_ (from PyPI; build-time dependency only)
 
   - Linux users may not have got the `Python Headers`_ included with their Python installation; cffi requires them
@@ -58,8 +56,6 @@ Getting started:
 
 .. _cffi: https://cffi.readthedocs.io/en/release-1.16/
 .. _setuptools: https://setuptools.pypa.io/en/stable/
-.. _asn1: https://github.com/andrivet/python-asn1
-.. _cryptography: https://github.com/pyca/cryptography
 .. _`Python Headers`: https://packages.ubuntu.com/jammy/python3-dev
 .. _build-essential: https://packages.ubuntu.com/jammy/build-essential
 .. _`"Development Tools"`: https://git.rockylinux.org/rocky/comps/-/blob/e6c8f29a7686326a731ea72b6caa06dabc7801b5/comps-rocky-9-lh.xml#L2169
