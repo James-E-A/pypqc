@@ -9,13 +9,16 @@ Usage
     # if you must display them, use base64.encode(...)
     k, ek = mceliece6960119.kem_enc(pk)
     # ct = MY_SYMMETRIC_CRYPTOSYSTEM.enc(m, key=k)
-    # SEND_TO(pk, (ek, ct))
+    # SEND_MESSAGE([ek, ct], MY_RECIPIENTS.index(pk))
     k_result = mceliece6960119.kem_dec(ek, sk); assert k == k_result
     # m_result = MY_SYMMETRIC_CRYPTOSYSTEM.dec(ct, key=k_result); assert m == m_result
 
-Currently, only the McEliece KEM (with parameter sets 3488,64; 4608,96; 6688,128; 6960,119; 8192,128) is exposed; the rest of PQClean is coming up next.
+Currently, only the McEliece KEM is exposed. Kyber and HQC are planned
+next; after them will be the signature algorithms.
 
-Capabilities *not* included in PQClean, such as `McEliece signatures`_, `Hybrid Encryption`_, and `message encapsulation`_, are *not* going to be implemented in this library.
+Capabilities *not* included in PQClean, such as `McEliece signatures`_,
+`Hybrid Encryption`_, and `message encapsulation`_, are *not* going to be
+implemented in this library.
 
 Development
 ===========
@@ -54,6 +57,7 @@ Getting started:
    - ``python -m build .`` (only after ``python -m pip install build``)
 
 3. Run ``python -m pqc.demo`` to test it. If it prints "OK" and exits, the functions are almost certainly not broken. (Ideally, run this from a DIFFERENT directory, such as your home folder, so you can be sure it's being imported properly)
+
 
 .. _cffi: https://cffi.readthedocs.io/en/release-1.16/
 .. _setuptools: https://setuptools.pypa.io/en/stable/
