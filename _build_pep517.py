@@ -133,7 +133,7 @@ def _main(src='.'):
 			"""))
 
 			# PQClean McEliece-specific
-			cdefs.append(dedent(f"""\
+			cdefs.append(dedent("""\
 				const int GFBITS;
 				const int SYS_N;
 				const int SYS_T;
