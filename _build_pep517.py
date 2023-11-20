@@ -12,15 +12,7 @@ from setuptools.build_meta import *
 from setuptools import Extension
 from textwrap import dedent
 
-
-_IS_WINDOWS = (platform.system() == 'Windows')
-_IS_x86_64 = (platform.machine() == 'AMD64')
-_IS_x86 = (platform.machine() in {'i386', 'i686', 'x86'})
-_IN_x86_64_VSCMD = ('x64' == os.environ.get('VSCMD_ARG_TGT_ARCH'))
-_IN_x86_VSCMD = ('x32' == os.environ.get('VSCMD_ARG_TGT_ARCH'))
-if (_IS_WINDOWS) and (((_IS_x86_64) and (not _IN_x86_64_VSCMD)) or ((_IS_x86) and (not _IN_x86_VSCMD))):
-	# Painful-to-debug problems for the caller arise if this is neglected
-	raise AssertionError("Call this script from *within* \"Developer Command Prompt for VS 2022\"\nhttps://visualstudio.microsoft.com/visual-cpp-build-tools/")
+from pqc._util import partition_list
 
 
 _CDEF_RE = re.compile(r'(?ms)^\s*(#define\s+\w+ \d+|\w[\w ]*\s(\w+)\s*\(.*?\);)$')
@@ -44,15 +36,28 @@ def _main(src='.'):
 				variant = ''
 
 			if variant == 'avx2':
-				# TODO
+				# FIXME
 				# mceliece348864\avx2\util.h(110): error C2440: 'type cast': cannot convert from 'vec128' to 'vec128'
+				# mceliece348864f\avx2\util.h(110): error C2440: 'type cast': cannot convert from 'vec128' to 'vec128'
+				# mceliece460896\avx2\vec128.h(129): error C2440: 'type cast': cannot convert from 'vec128' to 'vec128'
+				# mceliece460896f\avx2\vec128.h(129): error C2440: 'type cast': cannot convert from 'vec128' to 'vec128'
+				# mceliece6688128\avx2\vec128.h(105): error C2440: 'type cast': cannot convert from 'vec128' to 'vec128'
+				# mceliece6688128f\avx2\vec128.h(105): error C2440: 'type cast': cannot convert from 'vec128' to 'vec128'
+				# mceliece6960119\avx2\util.h(105): error C2440: 'type cast': cannot convert from 'vec128' to 'vec128'
+				# mceliece6960119f\avx2\util.h(105): error C2440: 'type cast': cannot convert from 'vec128' to 'vec128'
+				# mceliece8192128\avx2\util.h(91): error C2440: 'type cast': cannot convert from 'vec128' to 'vec128'
+				# mceliece8192128\avx2\util.h(91): error C2440: 'type cast': cannot convert from 'vec128' to 'vec128'
 				continue
 
-				if not (_IS_x86_64 or _IS_x86):
+				if platform.machine() not in {'AMD64', 'i386', 'i686', 'x86'}:
+					# FIXME check the *build target* with an actual distutils API or something
 					continue
 
 			if variant == 'aarch64':
-				continue  # TODO figure out cross-compiling
+				if platform.machine() in {'aarch64', 'arm64'}:
+					# FIXME check the *build target* with an actual distutils API or something
+					continue
+				# TODO figure out cross-compiling
 
 			if alg_name.startswith('mceliece'):
 				if alg_name.endswith('f'):
@@ -68,7 +73,7 @@ def _main(src='.'):
 			module_name = f'pqc.kem._{alg_name}{f"_{variant}" if variant else ""}'
 
 			extra_compile_args = []
-			if _IS_WINDOWS:
+			if platform.system() == 'Windows':
 				# https://foss.heptapod.net/pypy/cffi/-/issues/516
 				# https://www.reddit.com/r/learnpython/comments/175js2u/def_extern_says_im_not_using_it_in_api_mode/
 				# https://learn.microsoft.com/en-us/cpp/build/reference/tc-tp-tc-tp-specify-source-file-type?view=msvc-170
@@ -135,29 +140,30 @@ def _main(src='.'):
 			"""))
 
 			# Actual source
-			object_names = parse_makefile(BUILD_ROOT / 'Makefile')['OBJECTS'].split()
-			object_names.remove('aes256ctr.o')  # Test infrastructure only
-			objects = [(BUILD_ROOT / fn) for fn in object_names]
-			sources = [str(p.with_suffix('.c')) for p in objects]
+			source_names = parse_makefile(BUILD_ROOT / 'Makefile')['SOURCES'].split()
+			source_names.remove('aes256ctr.c')  # Test infrastructure only
+			sources = [(BUILD_ROOT / fn) for fn in source_names]
+
+			sources, extra_objects = partition_list(lambda p: p.suffix == '.c', sources)
 
 			include = [COMMON_INCLUDE, (BUILD_ROOT / 'api.h'), (BUILD_ROOT / 'params.h')]
-			if 'avx2' in variant.split('_'):
-				include += [(BUILD_ROOT / 'vec128.h'), (BUILD_ROOT / 'vec256.h')]
 			include_h = '\n'.join(f'#include "{p.name}"' for p in include if not p.is_dir())
-			include_dirs = list({(p.parent if not p.is_dir() else p).as_posix() for p in include})
+			include_dirs = list({(p.parent if not p.is_dir() else p) for p in include})
 
-			csource = (
-				include_h +
-				dedent(f"""
-				// low-priority semantics quibble: escaping
-				// https://stackoverflow.com/posts/comments/136533801
+			csource = '\n'.join([
+				include_h,
+				dedent(f"""\
 				static const char _NAMESPACE[] = "{namespace}";
-				""") +
+				"""),
 				bonus_csource
-			)
+			])
 
-			from pprint import pprint; print(pprint(locals()))
-			yield module_name, {'csource': csource, 'cdefs': cdefs, 'sources': sources, 'include_dirs': include_dirs, 'extra_compile_args': extra_compile_args}
+			yield module_name, {'csource': csource,
+			                    'cdefs': cdefs,
+			                    'sources': [p.as_posix() for p in sources],
+			                    'include_dirs': [p.as_posix() for p in include_dirs],
+			                    'extra_compile_args': extra_compile_args,
+			                    'extra_objects': [p.as_posix() for p in extra_objects]}
 
 	#for sign_alg_src in (pqc_root / 'crypto_sign').iterdir():
 	#	...  # TODO
@@ -190,5 +196,6 @@ def _mkffi(spec):
 def build_wheel(wheel_directory, config_settings=None, metadata_directory=None):
 	for ffibuilder in map(_mkffi, _main()):
 		ffibuilder.compile(verbose=True)
+	from pprint import pprint; print(pprint(locals()))
 	return _orig_setuptools_backend.build_wheel(wheel_directory, config_settings=config_settings, metadata_directory=metadata_directory)
 
