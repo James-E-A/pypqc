@@ -41,10 +41,15 @@ def _main(src='.'):
 		for BUILD_ROOT in (p for p in kem_alg_src.iterdir() if p.is_dir()):
 			variant = BUILD_ROOT.name
 			if variant == 'clean':
-				variant = None
+				variant = ''
 
 			if variant == 'avx2':
-				continue  # TODO this raises "too few actual parameters for intrinsic function"
+				# TODO
+				# mceliece348864\avx2\util.h(110): error C2440: 'type cast': cannot convert from 'vec128' to 'vec128'
+				continue
+
+				if not (_IS_x86_64 or _IS_x86):
+					continue
 
 			if variant == 'aarch64':
 				continue  # TODO figure out cross-compiling
@@ -136,17 +141,22 @@ def _main(src='.'):
 			sources = [str(p.with_suffix('.c')) for p in objects]
 
 			include = [COMMON_INCLUDE, (BUILD_ROOT / 'api.h'), (BUILD_ROOT / 'params.h')]
+			if 'avx2' in variant.split('_'):
+				include += [(BUILD_ROOT / 'vec128.h'), (BUILD_ROOT / 'vec256.h')]
 			include_h = '\n'.join(f'#include "{p.name}"' for p in include if not p.is_dir())
 			include_dirs = list({(p.parent if not p.is_dir() else p).as_posix() for p in include})
 
-			csource = dedent(f"""\
-				{include_h}
+			csource = (
+				include_h +
+				dedent(f"""
 				// low-priority semantics quibble: escaping
 				// https://stackoverflow.com/posts/comments/136533801
 				static const char _NAMESPACE[] = "{namespace}";
-				{bonus_csource}
-			""")
+				""") +
+				bonus_csource
+			)
 
+			from pprint import pprint; print(pprint(locals()))
 			yield module_name, {'csource': csource, 'cdefs': cdefs, 'sources': sources, 'include_dirs': include_dirs, 'extra_compile_args': extra_compile_args}
 
 	#for sign_alg_src in (pqc_root / 'crypto_sign').iterdir():
