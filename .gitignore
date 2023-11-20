@@ -3,6 +3,7 @@
 __pycache__/
 /.*venv*/
 /dist/
+/build/
 
 # CFFI seemingly generates this folder ONLY on Windows;
 # I can't find any documentation about it...

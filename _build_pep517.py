@@ -10,6 +10,7 @@ import re
 from setuptools import build_meta as _orig_setuptools_backend
 from setuptools.build_meta import *
 from setuptools import Extension
+from textwrap import dedent
 
 
 _IS_WINDOWS = (platform.system() == 'Windows')
@@ -73,7 +74,7 @@ def _main(src='.'):
 			namespace = _NAMESPACE_RE.search((BUILD_ROOT / 'namespace.h').read_text()).group(3)
 
 			# PQClean-provided interface
-			cdefs.append(fr"""
+			cdefs.append(dedent(f"""\
 				static const char {namespace}CRYPTO_ALGNAME[...];
 				int {namespace}pk_gen(unsigned char *pk, unsigned char *sk, const uint32_t *perm, int16_t *pi, uint64_t *pivots);
 				void {namespace}encrypt(unsigned char *s, const unsigned char *pk, unsigned char *e);
@@ -81,25 +82,25 @@ def _main(src='.'):
 				int {namespace}crypto_kem_keypair(unsigned char *pk, unsigned char *sk);
 				int {namespace}crypto_kem_enc(unsigned char *c, unsigned char *key, const unsigned char *pk);
 				int {namespace}crypto_kem_dec(unsigned char *key, const unsigned char *c, const unsigned char *sk);
-			""")
+			"""))
 
 			# Our internal interface
-			cdefs.append(fr"""
+			cdefs.append(dedent(f"""\
 				static const char _NAMESPACE[...];
 				typedef uint8_t _{namespace}CRYPTO_SECRETKEY[...];
 				typedef uint8_t _{namespace}CRYPTO_PUBLICKEY[...];
 				typedef uint8_t _{namespace}CRYPTO_KEM_PLAINTEXT[...];
 				typedef uint8_t _{namespace}CRYPTO_KEM_CIPHERTEXT[...];
-			""")
-			bonus_csource = fr"""
+			"""))
+			bonus_csource = dedent(f"""\
 				typedef uint8_t _{namespace}CRYPTO_SECRETKEY[{namespace}CRYPTO_SECRETKEYBYTES];
 				typedef uint8_t _{namespace}CRYPTO_PUBLICKEY[{namespace}CRYPTO_PUBLICKEYBYTES];
 				typedef uint8_t _{namespace}CRYPTO_KEM_PLAINTEXT[{namespace}CRYPTO_BYTES];
 				typedef uint8_t _{namespace}CRYPTO_KEM_CIPHERTEXT[{namespace}CRYPTO_CIPHERTEXTBYTES];
-			"""
+			""")
 
 			# Our injected dependencies
-			cdefs.append("""
+			cdefs.append(dedent("""\
 				extern "Python+C" {
 					void shake256(
 						uint8_t *output,
@@ -119,14 +120,14 @@ def _main(src='.'):
 						size_t inlen
 					);
 				}
-			""")
+			"""))
 
 			# PQClean McEliece-specific
-			cdefs.append(fr"""
+			cdefs.append(dedent(f"""\
 				const int GFBITS;
 				const int SYS_N;
 				const int SYS_T;
-			""")
+			"""))
 
 			# Actual source
 			object_names = parse_makefile(BUILD_ROOT / 'Makefile')['OBJECTS'].split()
@@ -138,13 +139,13 @@ def _main(src='.'):
 			include_h = '\n'.join(f'#include "{p.name}"' for p in include if not p.is_dir())
 			include_dirs = list({(p.parent if not p.is_dir() else p).as_posix() for p in include})
 
-			csource = fr"""
+			csource = dedent(f"""\
 				{include_h}
 				// low-priority semantics quibble: escaping
 				// https://stackoverflow.com/posts/comments/136533801
 				static const char _NAMESPACE[] = "{namespace}";
 				{bonus_csource}
-			"""
+			""")
 
 			yield module_name, {'csource': csource, 'cdefs': cdefs, 'sources': sources, 'include_dirs': include_dirs, 'extra_compile_args': extra_compile_args}
 
