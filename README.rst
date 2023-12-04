@@ -4,14 +4,31 @@ Usage
 ::
 
     from pqc.kem import mceliece6960119
+    
+    
+    # 1. Keypair generation
     pk, sk = mceliece6960119.kem_keypair()
+    
     # WARNING these^ are some chonky keys (1MiB public, 13.6KiB private)
     # if you must display them, use base64.encode(...)
-    k, ek = mceliece6960119.kem_enc(pk)
-    # ct = MY_SYMMETRIC_CRYPTOSYSTEM.enc(m, key=k)
-    # SEND_MESSAGE([ek, ct], MY_RECIPIENTS.index(pk))
-    k_result = mceliece6960119.kem_dec(ek, sk); assert k == k_result
-    # m_result = MY_SYMMETRIC_CRYPTOSYSTEM.dec(ct, key=k_result); assert m == m_result
+    
+    
+    # 2. Key encapsulation
+    ss, kem_ct = mceliece6960119.kem_enc(pk)
+    
+    cek = urandom(32)
+    ct = MY_SYMMETRIC_CRYPTOSYSTEM.enc(message_plaintext, key=cek)
+    kek = MY_KDF(ss)
+    wk = MY_KEYWRAP.enc(cek, key=kek)
+    SEND_MESSAGE([wk, kem_ct, ct])
+    
+    
+    # 3. Key de-encapsulation
+    ss = mceliece6960119.kem_dec(kem_ct, sk)
+    
+    kek = MY_KDF(ss)
+    cek = MY_KEYWRAP.dec(wk, key=kek)
+    message_result = MY_SYMMETRIC_CRYPTOSYSTEM.dec(ct, key=cek)
 
 Currently, only the McEliece KEM is exposed. Kyber and HQC are planned
 next; after them will be the signature algorithms.
