@@ -17,25 +17,25 @@ Usage
     ss, kem_ct = mceliece6960119.kem_enc(pk)
     
     cek = urandom(32)
-    ct = MY_SYMMETRIC_CRYPTOSYSTEM.enc(message_plaintext, key=cek)
-    kek = MY_KDF(ss)
+    symm_ct = MY_SYMMETRIC_CRYPTOSYSTEM.enc(message_plaintext, key=cek)
+    kek = MY_KDF(ss, target=MY_KEYWRAP)
     wk = MY_KEYWRAP.enc(cek, key=kek)
-    SEND_MESSAGE([wk, kem_ct, ct])
+    SEND_MESSAGE([kem_ct, wk, symm_ct])
     
     
     # 3. Key de-encapsulation
     ss = mceliece6960119.kem_dec(kem_ct, sk)
     
-    kek = MY_KDF(ss)
+    kek = MY_KDF(sstarget=MY_KEYWRAP)
     cek = MY_KEYWRAP.dec(wk, key=kek)
-    message_result = MY_SYMMETRIC_CRYPTOSYSTEM.dec(ct, key=cek)
+    message_result = MY_SYMMETRIC_CRYPTOSYSTEM.dec(symm_ct, key=cek)
 
 Currently, only the McEliece KEM is exposed. Kyber and HQC are planned
 next; after them will be the signature algorithms.
 
 Capabilities *not* included in PQClean, such as `McEliece signatures`_,
-`Hybrid Encryption`_, and `message encapsulation`_, are *not* going to be
-implemented in this library.
+`Hybrid Encryption`_ (depicted above), and `message encapsulation`_, are
+*not* going to be implemented in this library.
 
 Development
 ===========
