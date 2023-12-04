@@ -26,7 +26,7 @@ Usage
     # 3. Key de-encapsulation
     ss = mceliece6960119.kem_dec(kem_ct, sk)
     
-    kek = MY_KDF(sstarget=MY_KEYWRAP)
+    kek = MY_KDF(ss, target=MY_KEYWRAP)
     cek = MY_KEYWRAP.dec(wk, key=kek)
     message_result = MY_SYMMETRIC_CRYPTOSYSTEM.dec(symm_ct, key=cek)
 
