@@ -24,9 +24,10 @@ Usage
     
     
     # 3. Key de-encapsulation
-    ss = mceliece6960119.kem_dec(kem_ct, sk)
+    ss_result = mceliece6960119.kem_dec(kem_ct, sk)
+    assert ss_result == ss
     
-    kek = MY_KDF(ss, target=MY_KEYWRAP)
+    kek = MY_KDF(ss_result, target=MY_KEYWRAP)
     cek = MY_KEYWRAP.dec(wk, key=kek)
     message_result = MY_SYMMETRIC_CRYPTOSYSTEM.dec(symm_ct, key=cek)
 
@@ -35,16 +36,21 @@ next; after them will be the signature algorithms.
 
 Capabilities *not* included in PQClean, such as `McEliece signatures`_,
 `Hybrid Encryption`_ (depicted above), and `message encapsulation`_, are
-*not* going to be implemented in this library.
+*not* going to be implemented in this library. (Exception: `Plaintext
+Confirmation <https://www.github.com/thomwiggers/mceliece-clean/issues/3>`_
+is on the agenda for inclusion even if upstream ultimately decides to exclude
+it.)
+
 
 Development
 ===========
 
-(if you know what PEP 517 is, you don't need to read this; just go get 'em)
-
 Dependencies:
 
 - Python 3 (tested mainly on CPython 3.10, 3.11, and 3.12; and on PyPy 7.3.12)
+
+  - TBD: fix an oldest supported Python version / test on versions older than 3.10
+
 - cffi_ (from PyPI; build-time dependency only)
 
   - Linux users may not have got the `Python Headers`_ included with their Python installation; cffi requires them
@@ -64,14 +70,13 @@ Getting started:
    - for Linux: ``python3 -m venv .venv; . .venv/bin/activate`` (`install it <https://packages.ubuntu.com/jammy/python/python3-venv>`_ if needed)
    - for Windows: ``py -m venv .venv & .venv\Scripts\activate.bat``
 
-1. Run ``python -m pip install -r requirements-dev.txt`` to get CFFI and setuptools
+1. Run ``python -m pip install -r requirements-dev.txt``
 
-   - if on Linux, you may have to `get an arbitrary version of pip <https://packages.ubuntu.com/jammy/python/python3-pip>`_ first.
+2. Run ``python -m pip install .``
 
-2. Run any PEP 517 compliant build tooling of your choice, for example:
+     - editable not supported currently (CFFI will have to `support this https://setuptools.pypa.io/en/latest/userguide/extension.html#setuptools.command.build.SubCommand.editable_mode`_ before it's even on the table)
 
-   - ``python -m pip install .`` (editable `not supported currently <https://github.com/pypa/pip/issues/6314#issuecomment-469176276>`)
-   - ``python -m build .`` (only after ``python -m pip install build``)
+   - Alternatively: cleaner building with ``python -m build .`` (only after ``python -m pip install build``)
 
 3. Run ``python -m pqc.demo`` to test it. If it prints "OK" and exits, the functions are almost certainly not broken. (Ideally, run this from a DIFFERENT directory, such as your home folder, so you can be sure it's being imported properly)
 

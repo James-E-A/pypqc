@@ -1,27 +1,22 @@
-from functools import partial
+from .._lib.mceliece480896f_clean import ffi, lib
 
 from .._impl_extern import _impl_shake256, _impl_randombytes
-from .._util import using_avx2
-
-if using_avx2():
-	from ._mceliece460896_avx2 import ffi, lib
-else:
-	from ._mceliece460896 import ffi, lib
+from .._util import using_avx2, do_def_extern
 
 __all__ = ['kem_keypair', 'kem_enc', 'kem_dec']
 
-ffi.def_extern(name='shake256')(partial(_impl_shake256, ffi=ffi))
-ffi.def_extern(name='PQCLEAN_randombytes')(partial(_impl_randombytes, ffi=ffi))
+do_def_extern(ffi, 'shake256', _impl_shake256)
+do_def_extern(ffi, 'PQCLEAN_randombytes', _impl_randombytes)
 
-_NAMESPACE = ffi.string(lib._NAMESPACE).decode('ascii')
-_T_PUBLICKEY = f'_{_NAMESPACE}CRYPTO_PUBLICKEY'
-_T_SECRETKEY = f'_{_NAMESPACE}CRYPTO_SECRETKEY'
-_T_KEM_PLAINTEXT = f'_{_NAMESPACE}CRYPTO_KEM_PLAINTEXT'
-_T_KEM_CIPHERTEXT = f'_{_NAMESPACE}CRYPTO_KEM_CIPHERTEXT'
+_LIB_NAMESPACE = ffi.string(lib._NAMESPACE).decode('ascii')
+_T_PUBLICKEY = f'{_LIB_NAMESPACE}crypto_publickey'
+_T_SECRETKEY = f'{_LIB_NAMESPACE}crypto_secretkey'
+_T_KEM_PLAINTEXT = f'{_LIB_NAMESPACE}crypto_kem_plaintext'
+_T_KEM_CIPHERTEXT = f'{_LIB_NAMESPACE}crypto_kem_ciphertext'
 
-_crypto_kem_keypair = getattr(lib, f'{_NAMESPACE}crypto_kem_keypair')
-_crypto_kem_enc = getattr(lib, f'{_NAMESPACE}crypto_kem_enc')
-_crypto_kem_dec = getattr(lib, f'{_NAMESPACE}crypto_kem_dec')
+_crypto_kem_keypair = getattr(lib, f'{_LIB_NAMESPACE}crypto_kem_keypair')
+_crypto_kem_enc = getattr(lib, f'{_LIB_NAMESPACE}crypto_kem_enc')
+_crypto_kem_dec = getattr(lib, f'{_LIB_NAMESPACE}crypto_kem_dec')
 
 
 def kem_keypair():
@@ -31,7 +26,7 @@ def kem_keypair():
 	errno = _crypto_kem_keypair(ffi.cast('char*', pk), ffi.cast('char*', sk))
 
 	if errno:
-		raise RuntimeError(f"{_NAMESPACE}crypto_kem_keypair returned error code {errno}")
+		raise RuntimeError(f"{_LIB_NAMESPACE}crypto_kem_keypair returned error code {errno}")
 	return bytes(pk), bytes(sk)
 
 
@@ -43,7 +38,7 @@ def kem_enc(pk):
 	errno = _crypto_kem_enc(ffi.cast('char*', ciphertext), ffi.cast('char*', key), ffi.cast('char*', pk))
 
 	if errno:
-		raise RuntimeError(f"{_NAMESPACE}crypto_kem_enc returned error code {errno}")
+		raise RuntimeError(f"{_LIB_NAMESPACE}crypto_kem_enc returned error code {errno}")
 
 	return bytes(key), bytes(ciphertext)
 
@@ -56,7 +51,7 @@ def kem_dec(ciphertext, sk):
 	errno = _crypto_kem_dec(ffi.cast('char*', key), ffi.cast('char*', ciphertext), ffi.cast('char*', sk))
 
 	if errno:
-		raise RuntimeError(f"{_NAMESPACE}crypto_kem_dec returned error code {errno}")
+		raise RuntimeError(f"{_LIB_NAMESPACE}crypto_kem_dec returned error code {errno}")
 
 	return bytes(key)
 

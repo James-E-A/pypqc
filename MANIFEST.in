@@ -2,7 +2,7 @@ recursive-include pqc *.py
 recursive-include Lib/PQClean/crypto_* *
 recursive-include Lib/PQClean/common *.h
 include Lib/PQClean/README*
-include _build_pep517.py
+include cffi_modules/*
 
 #TODO
 recursive-exclude Lib/PQClean/crypto_sign *
