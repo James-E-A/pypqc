@@ -10,6 +10,5 @@ in this folder.
 Exceptions:
 ===========
 
-* ``Lib/PQClean/``: assorted copyright holders; assorted licenses
-  (generally Public-Domain and OSI-Approved Permissive; SEE DIRECTORY
-  FOR DETAILS.)
+* ``Lib/PQClean/``: Assorted licenses; mostly Public Domain and MIT.
+  **See directory for details.**
