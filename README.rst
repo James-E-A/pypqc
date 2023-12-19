@@ -77,7 +77,7 @@ Getting started:
 
 2. Run ``python -m pip install .``
 
-   - editable not supported currently (CFFI will have to `support this https://setuptools.pypa.io/en/latest/userguide/extension.html#setuptools.command.build.SubCommand.editable_mode`_ before it's even on the table)
+   - editable not supported currently (CFFI will have to `support this <https://setuptools.pypa.io/en/latest/userguide/extension.html#setuptools.command.build.SubCommand.editable_mode>`_ before it's even on the table)
 
    - Alternatively: cleaner building with ``python -m build .`` (only after ``python -m pip install build``)
 
