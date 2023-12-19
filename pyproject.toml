@@ -1,6 +1,6 @@
 [project]
 name = "pypqc"
-version = "0.0.0.7"
+version = "0.0.0.8"
 
 [tool.setuptools.packages.find]
 include = ["pqc"]
@@ -11,6 +11,6 @@ namespaces = false
 
 [build-system]
 requires = [
-    'cffi >= 1.15.0',
+    'cffi >= 1.14.5',
     'setuptools >= 49.5.0',
 ]
