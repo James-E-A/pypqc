@@ -9,13 +9,15 @@ Usage
     # 1. Keypair generation
     pk, sk = mceliece6960119.kem_keypair()
     
-    # WARNING these^ are some chonky keys (1MiB public, 13.6KiB private)
-    # if you must display them, use base64.encode(...)
+    # WARNING these^ are some heavy keys
+    # (1MiB public, 13.6KiB private)
+    # if you must display them, consider base64.encode(...)
     
     
     # 2. Key encapsulation
     ss, kem_ct = mceliece6960119.kem_enc(pk)
     
+    # 2(a). Hybrid KEM-Wrap
     cek = urandom(32)
     symm_ct = MY_SYMMETRIC_CRYPTOSYSTEM.enc(message_plaintext, key=cek)
     kek = MY_KDF(ss, target=MY_KEYWRAP)
@@ -27,6 +29,7 @@ Usage
     ss_result = mceliece6960119.kem_dec(kem_ct, sk)
     assert ss_result == ss
     
+    # 3(a) Hybrid KEM Unwrap
     kek = MY_KDF(ss_result, target=MY_KEYWRAP)
     cek = MY_KEYWRAP.dec(wk, key=kek)
     message_result = MY_SYMMETRIC_CRYPTOSYSTEM.dec(symm_ct, key=cek)
@@ -74,7 +77,7 @@ Getting started:
 
 2. Run ``python -m pip install .``
 
-     - editable not supported currently (CFFI will have to `support this https://setuptools.pypa.io/en/latest/userguide/extension.html#setuptools.command.build.SubCommand.editable_mode`_ before it's even on the table)
+   - editable not supported currently (CFFI will have to `support this https://setuptools.pypa.io/en/latest/userguide/extension.html#setuptools.command.build.SubCommand.editable_mode`_ before it's even on the table)
 
    - Alternatively: cleaner building with ``python -m build .`` (only after ``python -m pip install build``)
 
