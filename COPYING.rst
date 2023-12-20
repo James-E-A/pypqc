@@ -16,7 +16,7 @@ Exceptions:
 
 * ``Lib/PQClean/common/keccak4x``: From Gilles Van Assche and Ronny Van Keer; public domain (CC0).
 
-* ``Lib/PQClean/common/nistseedexpander.*``: Copyright © 2017 Bassham, Lawrence E (Fed), with contributions from Sebastian Verschoor; **ambiguously licensed!** ⚠️
+* ``Lib/PQClean/common/nistseedexpander.*``: Copyright (c) 2017 Lawrence E. Bassham, with contributions from Sebastian Verschoor; **ambiguously licensed!** ⚠️
 
 * ``Lib/PQClean/common/randombytes.*``: Copyright (c) 2017 Daan Sprenkels; provided under MIT license.
 
@@ -28,7 +28,7 @@ Exceptions:
 
 * ``Lib/PQClean/crypto_kem/kyber*``: Public domain (CC0).
 
-* ``Lib/PQClean/crypto_kem/mceliece**``: Public domain.
+* ``Lib/PQClean/crypto_kem/mceliece*``: Public domain.
 
 * ``Lib/PQClean/crypto_sign/dilithium*``: Public domain.
 
