@@ -10,19 +10,19 @@ copyright James Edington Administrator.
 Exceptions:
 ===========
 
-* ``Lib/PQClean/common/aes.*``: Copyright (c) 2016 Thomas Pornin; provided under MIT license.
+* ``Lib/PQClean/common/aes.*``: Provided under The MIT License; Copyright (c) 2016 Thomas Pornin.
 
-* ``Lib/PQClean/common/fips202.*``: From Ronny Van Keer, Gilles Van Assche, Daniel J. Bernstein, and Peter Schwabe; public domain.
+* ``Lib/PQClean/common/fips202.*``: Public domain; from Ronny Van Keer, Gilles Van Assche, Daniel J. Bernstein, and Peter Schwabe.
 
-* ``Lib/PQClean/common/keccak4x``: From Gilles Van Assche and Ronny Van Keer; public domain (CC0).
+* ``Lib/PQClean/common/keccak4x``: Public domain (CC0); from Gilles Van Assche and Ronny Van Keer.
 
-* ``Lib/PQClean/common/nistseedexpander.*``: Copyright (c) 2017 Lawrence E. Bassham, with contributions from Sebastian Verschoor; **ambiguously licensed!** ⚠️
+* ``Lib/PQClean/common/nistseedexpander.*``: ⚠️ **Ambiguously licensed!** Copyright (c) 2017 Lawrence E. Bassham, with contributions from Sebastian Verschoor.
 
-* ``Lib/PQClean/common/randombytes.*``: Copyright (c) 2017 Daan Sprenkels; provided under MIT license.
+* ``Lib/PQClean/common/randombytes.*``: Provided under The MIT License; Copyright (c) 2017 Daan Sprenkels.
 
 * ``Lib/PQClean/common/sha2.*``: Public domain.
 
-* ``Lib/PQClean/common/sp800-185.*``: From Ko Stoffelen; public domain (CC0).
+* ``Lib/PQClean/common/sp800-185.*``: Public domain (CC0); from Ko Stoffelen.
 
 * ``Lib/PQClean/crypto_kem/hqc-rmrs*``: Public domain.
 
@@ -32,7 +32,7 @@ Exceptions:
 
 * ``Lib/PQClean/crypto_sign/dilithium*``: Public domain.
 
-* ``Lib/PQClean/crypto_sign/falcon*``: Copyright (c) 2017-2019 Falcon Project; provided under MIT license. **May be patent-encumbered!** ⚠️
+* ``Lib/PQClean/crypto_sign/falcon*``: ⚠️ **May be patent-encumbered in the United States!** Provided under The MIT License; Copyright (c) 2017-2019 Falcon Project.
 
 * ``Lib/PQClean/crypto_sign/sphincs*``: Public domain (CC0).
 
