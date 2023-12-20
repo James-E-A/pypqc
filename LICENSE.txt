@@ -1,5 +1,17 @@
 SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+You may, at your option, receive this Work under the terms of either, or
+both, of These licenses.
+
+Additionally, whenever both of These licenses would simultaneously permit You
+to sublicense this Work under the same terms, and whenever You are not
+otherwise forbidden to sublicense this Work under different terms, You may
+sublicense this Work under the terms of This license. (This license does not
+affect your ability to sublicense this Work under either of These licenses
+separately.)
+
+https://opensource.stackexchange.com/q/14490/18552
+
 -------------------------
                                  Apache License
                            Version 2.0, January 2004
