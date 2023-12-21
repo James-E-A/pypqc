@@ -1,9 +1,7 @@
-from setuptools import setup, Extension
-
-# TODO allow editable install?
+# https://foss.heptapod.net/pypy/cffi/-/issues/441
 # https://github.com/pypa/setuptools/issues/1040
-# I'm not sure if "cffi_modules" supports deferring generation of C sources
-# to compile-time...
+
+from setuptools import setup
 
 setup(
     cffi_modules=[

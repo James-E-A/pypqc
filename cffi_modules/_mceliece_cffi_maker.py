@@ -6,109 +6,84 @@ import platform
 import re
 from textwrap import dedent
 
-from pqc._util import partition_list, map_immed
+from pqc._util import partition_list, map_immed, fix_compile_args
 
 _NAMESPACE_RE = re.compile(r'(?ms)^#define\s+(CRYPTO_NAMESPACE)\s*\(\s*(\w+)\s*\)\s+(\w+)\s+##\s*\2\s*$')
 
-def make_ffi(build_root):
+def make_ffi(build_root, *, parent_module='pqc._lib'):
 	build_root = Path(build_root)
-	lib_name = build_root.parent.name
-	variant = build_root.name
-	assert lib_name.startswith('mceliece')
-	module_name = f'pqc._lib.{lib_name}_{variant}'
+	makefile_parsed = parse_makefile(build_root / 'Makefile')
+	common_dir = build_root / '..' / '..' / '..' / 'common'
+
+	lib_name = Path(makefile_parsed['LIB']).stem
+	assert lib_name.startswith('libmceliece')
+	module_name = f'{parent_module}.{lib_name}'
 	namespace = _NAMESPACE_RE.search((build_root / 'namespace.h').read_text()).group(3)
 
-	ffibuilder = FFI()
+	included_ffis = []
 	extra_compile_args = []
-	csources = []
+	libraries = []
+	c_header_sources = []
 	cdefs = []
 
-	# Public Interface
 
-	source_names = parse_makefile(build_root / 'Makefile')['SOURCES'].split()
-	source_names.remove('aes256ctr.c')  # Test infrastructure only
-	sources = [(build_root / fn) for fn in source_names]
+	source_names = makefile_parsed['SOURCES'].split()
+	source_names.remove('aes256ctr.c')  # Upstream test infrastructure
+	sources, extra_objects = partition_list(
+	    lambda p: p.suffix == '.c',
+	    ((build_root / fn) for fn in source_names)
+	)
 
-	sources, extra_objects = partition_list(lambda p: p.suffix == '.c', sources)
-
-	include = [(build_root / '../../../common'), (build_root / 'api.h'), (build_root / 'params.h')]
+	include = [(common_dir), (build_root / 'api.h'), (build_root / 'params.h')]
 	include_h = [p.name for p in include if not p.is_dir()]
 	include_dirs = list({(p.parent if not p.is_dir() else p) for p in include})
 
-	csources.append('\n'.join(f'#include "{h}"' for h in include_h))
+	cdefs.append(dedent(f"""\
+	static const char {namespace}CRYPTO_ALGNAME[...];
+	int {namespace}crypto_kem_keypair(unsigned char *pk, unsigned char *sk);
+	int {namespace}crypto_kem_enc(unsigned char *c, unsigned char *key, const unsigned char *pk);
+	int {namespace}crypto_kem_dec(unsigned char *key, const unsigned char *c, const unsigned char *sk);
+	"""))
+
+	c_header_sources.extend(f'#include "{h}"' for h in include_h)
 
 	cdefs.append(dedent(f"""\
-		static const char {namespace}CRYPTO_ALGNAME[...];
-		int {namespace}pk_gen(unsigned char *pk, unsigned char *sk, const uint32_t *perm, int16_t *pi, uint64_t *pivots);
-		void {namespace}encrypt(unsigned char *s, const unsigned char *pk, unsigned char *e);
-		int {namespace}decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c);
-		int {namespace}crypto_kem_keypair(unsigned char *pk, unsigned char *sk);
-		int {namespace}crypto_kem_enc(unsigned char *c, unsigned char *key, const unsigned char *pk);
-		int {namespace}crypto_kem_dec(unsigned char *key, const unsigned char *c, const unsigned char *sk);
+	// Site interface
+	static const char _NAMESPACE[...];
+	typedef uint8_t {namespace}crypto_secretkey[...];
+	typedef uint8_t {namespace}crypto_publickey[...];
+	typedef uint8_t {namespace}crypto_kem_plaintext[...];
+	typedef uint8_t {namespace}crypto_kem_ciphertext[...];
+	#define GFBITS ...
+	#define SYS_N ...
+	#define SYS_T ...
 	"""))
 
-	# Platform-specific
-
-	if platform.system() == 'Windows':
-		# https://foss.heptapod.net/pypy/cffi/-/issues/516
-		# https://www.reddit.com/r/learnpython/comments/175js2u/def_extern_says_im_not_using_it_in_api_mode/
-		# https://learn.microsoft.com/en-us/cpp/build/reference/tc-tp-tc-tp-specify-source-file-type?view=msvc-170
-		extra_compile_args.append('/TC')
-
-	# Site Interface
-
-	cdefs.append('static const char _NAMESPACE[...];',)
-	csources.append(f'static const char _NAMESPACE[] = "{namespace}";',)
-
-	cdefs.append(dedent(f"""\
-		typedef uint8_t {namespace}crypto_secretkey[...];
-		typedef uint8_t {namespace}crypto_publickey[...];
-		typedef uint8_t {namespace}crypto_kem_plaintext[...];
-		typedef uint8_t {namespace}crypto_kem_ciphertext[...];
-		const int GFBITS;
-		const int SYS_N;
-		const int SYS_T;
-	"""))
-	csources.append(dedent(f"""\
-		typedef uint8_t {namespace}crypto_secretkey[{namespace}CRYPTO_SECRETKEYBYTES];
-		typedef uint8_t {namespace}crypto_publickey[{namespace}CRYPTO_PUBLICKEYBYTES];
-		typedef uint8_t {namespace}crypto_kem_plaintext[{namespace}CRYPTO_BYTES];
-		typedef uint8_t {namespace}crypto_kem_ciphertext[{namespace}CRYPTO_CIPHERTEXTBYTES];
+	c_header_sources.append(dedent(f"""\
+	// Site interface
+	static const char _NAMESPACE[] = "{namespace}";
+	typedef uint8_t {namespace}crypto_secretkey[{namespace}CRYPTO_SECRETKEYBYTES];
+	typedef uint8_t {namespace}crypto_publickey[{namespace}CRYPTO_PUBLICKEYBYTES];
+	typedef uint8_t {namespace}crypto_kem_plaintext[{namespace}CRYPTO_BYTES];
+	typedef uint8_t {namespace}crypto_kem_ciphertext[{namespace}CRYPTO_CIPHERTEXTBYTES];
 	"""))
 
 
-	# Injected Dependencies
-
-	cdefs.append(dedent("""\
-		extern "Python+C" {
-			void shake256(
-				uint8_t *output,
-				size_t outlen,
-				const uint8_t *input,
-				size_t inlen
-			);
-
-			int PQCLEAN_randombytes(
-				uint8_t *output,
-				size_t n
-			);
-
-			void sha512(
-				uint8_t *out,
-				const uint8_t *in,
-				size_t inlen
-			);
-		}
-	"""))
+	sources.append((common_dir / 'fips202.c'))
+	sources.append((common_dir / 'randombytes.c'))
 
 
+	ffibuilder = FFI()
+	map_immed(ffibuilder.include, included_ffis)
+	map_immed(ffibuilder.cdef, cdefs)
+	fix_compile_args(extra_compile_args)
 	ffibuilder.set_source(
 		module_name,
-		'\n'.join(csources),
+		'\n'.join(c_header_sources),
 		sources=[p.as_posix() for p in sources],
 		include_dirs=[p.as_posix() for p in include_dirs],
 		extra_objects=extra_objects,
 		extra_compile_args=extra_compile_args,
+		libraries=libraries,
 	)
-	map_immed(ffibuilder.cdef, cdefs)
 	return ffibuilder

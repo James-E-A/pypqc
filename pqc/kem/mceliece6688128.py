@@ -1,12 +1,6 @@
 from .._lib.mceliece6688128f_clean import ffi, lib
 
-from .._impl_extern import _impl_shake256, _impl_randombytes
-from .._util import using_avx2, do_def_extern
-
 __all__ = ['kem_keypair', 'kem_enc', 'kem_dec']
-
-do_def_extern(ffi, 'shake256', _impl_shake256)
-do_def_extern(ffi, 'PQCLEAN_randombytes', _impl_randombytes)
 
 _LIB_NAMESPACE = ffi.string(lib._NAMESPACE).decode('ascii')
 _T_PUBLICKEY = f'{_LIB_NAMESPACE}crypto_publickey'
