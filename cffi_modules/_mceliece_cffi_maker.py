@@ -34,9 +34,7 @@ def make_ffi(build_root, *, parent_module='pqc._lib'):
 	    ((build_root / fn) for fn in source_names)
 	)
 
-	include = [(common_dir), (build_root / 'api.h'), (build_root / 'params.h')]
-	include_h = [p.name for p in include if not p.is_dir()]
-	include_dirs = list({(p.parent if not p.is_dir() else p) for p in include})
+	include_dirs = [(build_root), (common_dir)]
 
 	cdefs.append(dedent(f"""\
 	static const char {namespace}CRYPTO_ALGNAME[...];
@@ -45,7 +43,27 @@ def make_ffi(build_root, *, parent_module='pqc._lib'):
 	int {namespace}crypto_kem_dec(unsigned char *key, const unsigned char *c, const unsigned char *sk);
 	"""))
 
-	c_header_sources.extend(f'#include "{h}"' for h in include_h)
+	c_header_sources.append('#include "api.h"')
+
+	cdefs.append(dedent(f"""\
+	// Exposed internal interface
+	typedef ... gf;
+	int {namespace}pk_gen(unsigned char *pk, unsigned char *sk, const uint32_t *perm, int16_t *pi, uint64_t *pivots);
+	void {namespace}encrypt(unsigned char *s, const unsigned char *pk, unsigned char *e);
+	int {namespace}decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c);
+	int {namespace}genpoly_gen(gf *out, gf *f);
+	#define SYS_N ...
+	#define SYS_T ...
+	#define GFBITS ...
+	"""))
+
+	c_header_sources.append(dedent("""\
+	// Exposed internal interface
+	#include "encrypt.h"
+	#include "decrypt.h"
+	#include "params.h"
+	#include "sk_gen.h"
+	"""))
 
 	cdefs.append(dedent(f"""\
 	// Site interface
@@ -54,9 +72,6 @@ def make_ffi(build_root, *, parent_module='pqc._lib'):
 	typedef uint8_t {namespace}crypto_publickey[...];
 	typedef uint8_t {namespace}crypto_kem_plaintext[...];
 	typedef uint8_t {namespace}crypto_kem_ciphertext[...];
-	#define GFBITS ...
-	#define SYS_N ...
-	#define SYS_T ...
 	"""))
 
 	c_header_sources.append(dedent(f"""\
