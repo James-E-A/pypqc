@@ -1,7 +1,19 @@
+Installation
+============
+
+(Installation instructions TODO. For now, install the “build-time”
+dependencies and it should work. Package does not have run-time dependency
+on any 3rd-party modules.)
+
+
 Usage
 =====
 
-::
+
+KEMs
+----
+
+(Currently, only the McEliece KEM is exposed. Kyber and HQC are TODO.)::
 
     from pqc.kem import mceliece6960119
     
@@ -18,11 +30,11 @@ Usage
     ss, kem_ct = mceliece6960119.kem_enc(pk)
     
     # 2(a). Hybrid KEM-Wrap
-    cek = urandom(32)
-    symm_ct = MY_SYMMETRIC_CRYPTOSYSTEM.enc(message_plaintext, key=cek)
-    kek = MY_KDF(ss, target=MY_KEYWRAP)
-    wk = MY_KEYWRAP.enc(cek, key=kek)
-    SEND_MESSAGE([kem_ct, wk, symm_ct])
+    #cek = urandom(32)
+    #symm_ct = MY_SYMMETRIC_CRYPTOSYSTEM.enc(message_plaintext, key=cek)
+    #kek = MY_KDF(ss, target=MY_KEYWRAP)
+    #wk = MY_KEYWRAP.enc(cek, key=kek)
+    #SEND_MESSAGE([kem_ct, wk, symm_ct])
     
     
     # 3. Key de-encapsulation
@@ -30,12 +42,9 @@ Usage
     assert ss_result == ss
     
     # 3(a) Hybrid KEM Unwrap
-    kek = MY_KDF(ss_result, target=MY_KEYWRAP)
-    cek = MY_KEYWRAP.dec(wk, key=kek)
-    message_result = MY_SYMMETRIC_CRYPTOSYSTEM.dec(symm_ct, key=cek)
-
-Currently, only the McEliece KEM is exposed. Kyber and HQC are planned
-next; after them will be the signature algorithms.
+    #kek = MY_KDF(ss_result, target=MY_KEYWRAP)
+    #cek = MY_KEYWRAP.dec(wk, key=kek)
+    #message_result = MY_SYMMETRIC_CRYPTOSYSTEM.dec(symm_ct, key=cek)
 
 Capabilities *not* included in PQClean, such as `McEliece signatures`_,
 `Hybrid Encryption`_ (depicted above), and `message encapsulation`_, are
@@ -43,6 +52,11 @@ Capabilities *not* included in PQClean, such as `McEliece signatures`_,
 Confirmation <https://www.github.com/thomwiggers/mceliece-clean/issues/3>`_
 is on the agenda for inclusion even if upstream ultimately decides to exclude
 it.)
+
+Signature Algorithms
+--------------------
+
+(TODO)
 
 
 Development
@@ -120,7 +134,7 @@ Getting started:
 
 
 Copyright
-========
+=========
 
 **Except as noted below**, all files original or contributed works,
 Copyright (c) 2023 James Edington Administrator.

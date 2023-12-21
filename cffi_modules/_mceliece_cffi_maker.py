@@ -37,13 +37,17 @@ def make_ffi(build_root, *, parent_module='pqc._lib'):
 	include_dirs = [(build_root), (common_dir)]
 
 	cdefs.append(dedent(f"""\
+	// Public KEM interface
 	static const char {namespace}CRYPTO_ALGNAME[...];
 	int {namespace}crypto_kem_keypair(unsigned char *pk, unsigned char *sk);
 	int {namespace}crypto_kem_enc(unsigned char *c, unsigned char *key, const unsigned char *pk);
 	int {namespace}crypto_kem_dec(unsigned char *key, const unsigned char *c, const unsigned char *sk);
 	"""))
 
-	c_header_sources.append('#include "api.h"')
+	c_header_sources.append(dedent("""
+	// Public KEM interface
+	#include "api.h"
+	"""))
 
 	cdefs.append(dedent(f"""\
 	// Exposed internal interface
@@ -55,6 +59,7 @@ def make_ffi(build_root, *, parent_module='pqc._lib'):
 	#define SYS_N ...
 	#define SYS_T ...
 	#define GFBITS ...
+	#define SYND_BYTES ...
 	"""))
 
 	c_header_sources.append(dedent("""\
