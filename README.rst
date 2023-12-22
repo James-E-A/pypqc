@@ -2,8 +2,7 @@ Installation
 ============
 
 (Installation instructions TODO. For now, install the “build-time”
-dependencies and it should work. Package does not have run-time dependency
-on any 3rd-party modules.)
+dependencies and it should work.)
 
 
 Usage
