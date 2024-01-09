@@ -168,6 +168,6 @@ Exceptions:
 
 * ``Lib/PQClean/crypto_sign/falcon*``: ⚠️ **May be patent-encumbered in the United States!** Provided under The MIT License; Copyright (c) 2017-2019 Falcon Project.
 
-* ``Lib/PQClean/crypto_sign/sphincs*``: Public domain (CC0); Andreas Hülsing, Jean-Philippe Aumasson, Daniel J. Bernstein, Ward Beullens, Christoph Dobraunig, Maria Eichlseder, Scott Fluhrer, Stefan-Lukas Gazdag, Panos Kampanakis, Stefan Kölbl, Tanja Lange, Martin M. Lauridsen, Florian Mendel, Ruben Niederhagen, Christian Rechberger, Joost Rijneveld, Peter Schwabe, and Bas Westerbaan.
+* ``Lib/PQClean/crypto_sign/sphincs*``: Public domain (CC0); from Andreas Hülsing, Jean-Philippe Aumasson, Daniel J. Bernstein, Ward Beullens, Christoph Dobraunig, Maria Eichlseder, Scott Fluhrer, Stefan-Lukas Gazdag, Panos Kampanakis, Stefan Kölbl, Tanja Lange, Martin M. Lauridsen, Florian Mendel, Ruben Niederhagen, Christian Rechberger, Joost Rijneveld, Peter Schwabe, and Bas Westerbaan.
 
 * All other files under ``Lib/PQClean``: Public domain (CC0); from Thom Wiggers, Douglas Stebila, and others.
