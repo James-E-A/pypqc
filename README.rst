@@ -158,16 +158,16 @@ Exceptions:
 
 * ``Lib/PQClean/common/sp800-185.*``: Public domain (CC0); from Ko Stoffelen.
 
-* ``Lib/PQClean/crypto_kem/hqc-rmrs*``: Public domain.
+* ``Lib/PQClean/crypto_kem/hqc-rmrs*``: ⚠️ **May be patent-encumbered in the United States!** Public domain; from Carlos Aguilar Melchor, Nicolas Aragon, Slim Bettaieb, Olivier Blazy, Jurjen Bos, Jean-Christophe Deneuville, Philippe Gaborit, Edoardo Persichetti, Jean-Marc Robert, Pascal Véron, Gilles Zémor, and Loïc Bidoux.
 
-* ``Lib/PQClean/crypto_kem/kyber*``: Public domain (CC0).
+* ``Lib/PQClean/crypto_kem/kyber*``: Public domain (CC0); from Peter Schwabe, Roberto Avanzi, Joppe Bos, Léo Ducas, Eike Kiltz, Tancrède Lepoint, Vadim Lyubashevsky, John M. Schanck, Gregor Seiler, and Damien Stehlé.
 
-* ``Lib/PQClean/crypto_kem/mceliece*``: Public domain.
+* ``Lib/PQClean/crypto_kem/mceliece*``: Public domain; from Daniel J. Bernstein, Tung Chou, Tanja Lange, Ingo von Maurich, Rafael Misoczki, Ruben Niederhagen, Edoardo Persichetti, Christiane Peters, Peter Schwabe, Nicolas Sendrier, Jakub Szefer, and Wen Wang.
 
-* ``Lib/PQClean/crypto_sign/dilithium*``: Public domain.
+* ``Lib/PQClean/crypto_sign/dilithium*``: Public domain; from Vadim Lyubashevsky, Léo Ducas, Eike Kiltz, Tancrède Lepoint, Peter Schwabe, Gregor Seiler, and Damien Stehlé.
 
 * ``Lib/PQClean/crypto_sign/falcon*``: ⚠️ **May be patent-encumbered in the United States!** Provided under The MIT License; Copyright (c) 2017-2019 Falcon Project.
 
-* ``Lib/PQClean/crypto_sign/sphincs*``: Public domain (CC0).
+* ``Lib/PQClean/crypto_sign/sphincs*``: Public domain (CC0); Andreas Hülsing, Jean-Philippe Aumasson, Daniel J. Bernstein, Ward Beullens, Christoph Dobraunig, Maria Eichlseder, Scott Fluhrer, Stefan-Lukas Gazdag, Panos Kampanakis, Stefan Kölbl, Tanja Lange, Martin M. Lauridsen, Florian Mendel, Ruben Niederhagen, Christian Rechberger, Joost Rijneveld, Peter Schwabe, and Bas Westerbaan.
 
-* All other files under ``Lib/PQClean``: Public domain (CC0).
+* All other files under ``Lib/PQClean``: Public domain (CC0); from Thom Wiggers, Douglas Stebila, and others.
