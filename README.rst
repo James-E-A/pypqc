@@ -67,9 +67,9 @@ Dependencies:
 - Python 3 (tested mainly on CPython 3.9, 3.10, 3.11, and 3.12; and on PyPy
   7.3.12)
 
-- cffi_ (from PyPI; build-time dependency only)
+- cffi_ (from PyPI; build- and run-time dependency)
 
-  - Transitive dependency: `Python Headers`_ (I think these come OOTB on
+  - Transitive non-PyPI build-time dependency: `Python Headers`_ (I think these come OOTB on
     Windows)
 
 - setuptools_ (from PyPI; build-time dependency only)
