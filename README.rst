@@ -150,7 +150,7 @@ Exceptions:
 
 * ``Lib/PQClean/common/keccak4x``: Public domain (CC0); from Gilles Van Assche and Ronny Van Keer.
 
-* ``Lib/PQClean/common/nistseedexpander.*``: ⚠️ **Ambiguously licensed!** Copyright (c) 2017 Lawrence E. Bassham, with contributions from Sebastian Verschoor.
+* ``Lib/PQClean/common/nistseedexpander.*``: Public domain (17 U.S.C. §105); from Lawrence E. Bassham and Sebastian Verschoor.
 
 * ``Lib/PQClean/common/randombytes.*``: Provided under The MIT License; Copyright (c) 2017 Daan Sprenkels.
 
