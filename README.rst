@@ -154,7 +154,7 @@ Exceptions:
 
 * ``Lib/PQClean/common/randombytes.*``: Provided under The MIT License; Copyright (c) 2017 Daan Sprenkels.
 
-* ``Lib/PQClean/common/sha2.*``: Public domain.
+* ``Lib/PQClean/common/sha2.*``: Public domain; from Daniel J. Bernstein.
 
 * ``Lib/PQClean/common/sp800-185.*``: Public domain (CC0); from Ko Stoffelen.
 
