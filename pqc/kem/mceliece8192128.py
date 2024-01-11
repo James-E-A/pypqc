@@ -1,4 +1,4 @@
-from .._lib.mceliece8192128f_clean import ffi, lib
+from .._lib.libmceliece8192128f_clean import ffi, lib
 
 __all__ = ['kem_keypair', 'kem_enc', 'kem_dec']
 

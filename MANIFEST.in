@@ -1,8 +1,8 @@
-recursive-include pqc *.py
-recursive-include Lib/PQClean/crypto_* *
-recursive-include Lib/PQClean/common *.h
-include Lib/PQClean/README*
 include cffi_modules/*
 
-#TODO
-recursive-exclude Lib/PQClean/crypto_sign *
+recursive-include pqc *.py
+
+include Lib/PQClean/README*
+recursive-include Lib/PQClean/common *.h
+recursive-include Lib/PQClean/crypto_kem/mceliece* *
+recursive-include Lib/PQClean/crypto_sign/sphincs* *

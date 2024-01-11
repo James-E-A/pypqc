@@ -2,7 +2,7 @@ Installation
 ============
 
 (Installation instructions TODO. For now, install the “build-time”
-dependencies and it should work.)
+dependencies named below, and then ``pip install pypqc`` should work.)
 
 
 Usage
@@ -30,7 +30,7 @@ KEMs
     
     # 2(a). Hybrid KEM-Wrap
     #cek = urandom(32)
-    #symm_ct = MY_SYMMETRIC_CRYPTOSYSTEM.enc(message_plaintext, key=cek)
+    #symm_ct = MY_SYMMETRIC_CRYPTOSYSTEM.enc(MY_MESSAGE, key=cek)
     #kek = MY_KDF(ss, target=MY_KEYWRAP)
     #wk = MY_KEYWRAP.enc(cek, key=kek)
     #SEND_MESSAGE([kem_ct, wk, symm_ct])
@@ -44,6 +44,7 @@ KEMs
     #kek = MY_KDF(ss_result, target=MY_KEYWRAP)
     #cek = MY_KEYWRAP.dec(wk, key=kek)
     #message_result = MY_SYMMETRIC_CRYPTOSYSTEM.dec(symm_ct, key=cek)
+    #assert message_result == MY_MESSAGE
 
 Capabilities *not* included in PQClean, such as `McEliece signatures`_,
 `Hybrid Encryption`_ (depicted above), and `message encapsulation`_, are
@@ -55,8 +56,29 @@ it.)
 Signature Algorithms
 --------------------
 
-(TODO)
+(Currently, only the SPHINCS+ signature algorithm is exposed; Simple is
+included; Robust is excluded; SHA256 and SHAKE256 are included; Haraka
+is excluded; these decisions are all inherited from PQClean and I don't know
+much about their rationale. Dilithium and Falcon are entirely TODO, though.)::
 
+    from pqc.sign import sphincs_shake_256s_simple
+    
+    
+    # 1. Keypair generation
+    pk, sk = sphincs_shake_256s_simple.sign_keypair()
+    
+    
+    # 2. Signing
+    # (detached signature)
+    sig = sphincs_shake_256s_simple.sign_signature(MY_MESSAGE, sk)
+    
+    # NOTE these^ are some large signatures (~29KiB)
+    # if you must display them, consider base64.encode(...)
+    
+    
+    # 3. Signature verification
+    # (Returns None on success; raises ValueError on failure.)
+    sphincs_shake_256s_simple.sign_verify(sig, MY_MESSAGE, pk)
 
 Development
 ===========
@@ -85,7 +107,10 @@ Dependencies:
       see `the documentation <https://learn.microsoft.com/en-us/cpp/build/building-on-the-command-line?view=msvc-170>`_.)
 
   - If you're on Mac,
-    `reportedly Homebrew + pkg-config + libffi is a good choice <https://cffi.readthedocs.io/en/latest/installation.html#macos-x>`_.
+    `reportedly Homebrew is a good choice <https://cffi.readthedocs.io/en/latest/installation.html#macos-x>`_.
+
+    - It looks like you will also need ``pkgconfig`` and ``libffi``, ideally
+      installed via Homebrew, to build this.
 
   - If you're on Linux, install build-essential_ or `'Development Tools'`_ or
     something like that.
