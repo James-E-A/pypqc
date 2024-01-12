@@ -185,7 +185,7 @@ Exceptions:
 
 * ``Lib/PQClean/crypto_kem/hqc-rmrs*``: ⚠️ **May be patent-encumbered in the United States!** Public domain; from Carlos Aguilar Melchor, Nicolas Aragon, Slim Bettaieb, Olivier Blazy, Jurjen Bos, Jean-Christophe Deneuville, Philippe Gaborit, Edoardo Persichetti, Jean-Marc Robert, Pascal Véron, Gilles Zémor, and Loïc Bidoux.
 
-* ``Lib/PQClean/crypto_kem/kyber*``: Public domain (CC0); from Peter Schwabe, Roberto Avanzi, Joppe Bos, Léo Ducas, Eike Kiltz, Tancrède Lepoint, Vadim Lyubashevsky, John M. Schanck, Gregor Seiler, and Damien Stehlé.
+* ``Lib/PQClean/crypto_kem/kyber*``: ⚠️ **May be patent-encumbered in the United States!** Public domain (CC0); from Peter Schwabe, Roberto Avanzi, Joppe Bos, Léo Ducas, Eike Kiltz, Tancrède Lepoint, Vadim Lyubashevsky, John M. Schanck, Gregor Seiler, and Damien Stehlé.
 
 * ``Lib/PQClean/crypto_kem/mceliece*``: Public domain; from Daniel J. Bernstein, Tung Chou, Tanja Lange, Ingo von Maurich, Rafael Misoczki, Ruben Niederhagen, Edoardo Persichetti, Christiane Peters, Peter Schwabe, Nicolas Sendrier, Jakub Szefer, and Wen Wang.
 
