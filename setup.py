@@ -5,6 +5,9 @@ from setuptools import setup
 
 setup(
     cffi_modules=[
+        'cffi_modules/dilithium2_clean.py:ffi',
+        'cffi_modules/dilithium3_clean.py:ffi',
+        'cffi_modules/dilithium5_clean.py:ffi',
         'cffi_modules/mceliece348864f_clean.py:ffi',
         'cffi_modules/mceliece460896f_clean.py:ffi',
         'cffi_modules/mceliece6688128f_clean.py:ffi',

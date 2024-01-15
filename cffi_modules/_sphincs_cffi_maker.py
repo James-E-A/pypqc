@@ -34,7 +34,7 @@ def make_ffi(build_root, *, parent_module='pqc._lib'):
 	include_dirs = [(build_root), (common_dir)]
 
 	cdefs.append(dedent(f"""\
-	// Public KEM interface
+	// Public signature interface
 	static const char {namespace}CRYPTO_ALGNAME[...];
 	int {namespace}crypto_sign_keypair(uint8_t *pk, uint8_t *sk);
 	int {namespace}crypto_sign_signature(uint8_t *sig, size_t *siglen, const uint8_t *m, size_t mlen, const uint8_t *sk);

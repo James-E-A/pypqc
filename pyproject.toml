@@ -12,9 +12,6 @@ dependencies = [
 include = ["pqc"]
 namespaces = false
 
-[tool.setuptools.exclude-package-data]
-"pqc" = ["*.c"]
-
 [build-system]
 requires = [
     'cffi >= 1.14.5',

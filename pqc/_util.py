@@ -1,7 +1,14 @@
 from collections import deque
 from functools import partial
 from itertools import starmap
+from pathlib import Path
 import platform
+import re
+
+def extant_with_other_suffix(p):
+	assert not re.match(r'[\?\*\[]', p.stem)
+	pseudo_p = p.with_suffix('.*')
+	return pseudo_p.parent.glob(pseudo_p.name)
 
 
 def using_avx2():
