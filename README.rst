@@ -10,7 +10,7 @@ Usage
 KEMs
 ----
 
-(Currently, only the McEliece KEM is exposed. Kyber and HQC are TODO.)::
+(Currently, only the McEliece and Kyber KEMs are exposed. HQC is TODO.)::
 
     from pqc.kem import mceliece6960119
     

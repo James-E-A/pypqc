@@ -6,13 +6,14 @@ import platform
 import re
 import warnings
 
-from pqc._util import partition_list, map_immed, fix_compile_args, fix_libraries, extant_with_other_suffix
+from pqc._util import partition_list, map_immed, extant_with_other_suffix, patent_warning
 
 _NAMESPACE_RE = re.compile(r'(?ms)^#define\s+(CRYPTO_NAMESPACE)\s*\(\s*(\w+)\s*\)\s+(\w+)\s*##\s*\2\s*$')
 
 def make_pqclean_ffi(build_root, c_header_sources, cdefs, *,
     common_sources=frozenset(),
-    parent_module='pqc._lib'):
+    parent_module='pqc._lib',
+    patent_info=None):
 
 	# 0. local variables #
 
@@ -25,6 +26,9 @@ def make_pqclean_ffi(build_root, c_header_sources, cdefs, *,
 	# 1. module_name #
 
 	module_name = f'{parent_module}.{lib_name}'
+	if patent_info is not None:
+		patent_message = patent_warning(lib_name, patent_info)
+		warnings.warn(patent_message)
 
 	# 2. cdefs, c_header_sources #
 
@@ -32,7 +36,7 @@ def make_pqclean_ffi(build_root, c_header_sources, cdefs, *,
 	if m:
 		namespace = m.group(3)
 	else:
-		warnings.warn(f'falling back to alternate codepath to figure out CRYPTO_NAMESPACE while building {lib_name} from {build_root}')
+		##warnings.warn(f'falling back to alternate codepath to figure out CRYPTO_NAMESPACE while building {lib_name} from {build_root}')
 		m = re.search(r'(?ms)^#define (\w+)CRYPTO_ALGNAME ', (build_root / 'api.h').read_text())
 		if m:
 			namespace = m.group(1)
@@ -98,8 +102,6 @@ def make_pqclean_ffi(build_root, c_header_sources, cdefs, *,
 	ffibuilder = FFI()
 	map_immed(ffibuilder.include, included_ffis)
 	map_immed(ffibuilder.cdef, cdefs)
-	fix_compile_args(extra_compile_args)
-	fix_libraries(libraries)
 	ffibuilder.set_source(
 		module_name,
 		'\n'.join(c_header_sources),
