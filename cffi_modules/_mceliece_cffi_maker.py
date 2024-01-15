@@ -9,9 +9,9 @@ def make_mceliece_ffi(build_root):
 	cdefs.append(dedent("""\
 	// Public KEM interface
 	static const char %(namespace)sCRYPTO_ALGNAME[...];
-	int %(namespace)scrypto_kem_keypair(unsigned char *pk, unsigned char *sk);
-	int %(namespace)scrypto_kem_enc(unsigned char *c, unsigned char *key, const unsigned char *pk);
-	int %(namespace)scrypto_kem_dec(unsigned char *key, const unsigned char *c, const unsigned char *sk);
+	int %(namespace)scrypto_kem_keypair(uint8_t *pk, uint8_t *sk);
+	int %(namespace)scrypto_kem_enc(uint8_t *c, uint8_t *key, const uint8_t *pk);
+	int %(namespace)scrypto_kem_dec(uint8_t *key, const uint8_t *c, const uint8_t *sk);
 	"""))
 
 	c_header_sources.append(dedent("""\
@@ -22,9 +22,9 @@ def make_mceliece_ffi(build_root):
 	cdefs.append(dedent("""\
 	// Exposed internal interface
 	typedef ... gf;
-	int %(namespace)spk_gen(unsigned char *pk, unsigned char *sk, const uint32_t *perm, int16_t *pi, uint64_t *pivots);
-	void %(namespace)sencrypt(unsigned char *s, const unsigned char *pk, unsigned char *e);
-	int %(namespace)sdecrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c);
+	int %(namespace)spk_gen(uint8_t *pk, uint8_t *sk, const uint32_t *perm, int16_t *pi, uint64_t *pivots);
+	void %(namespace)sencrypt(uint8_t *s, const uint8_t *pk, uint8_t *e);
+	int %(namespace)sdecrypt(uint8_t *e, const uint8_t *sk, const uint8_t *c);
 	int %(namespace)sgenpoly_gen(gf *out, gf *f);
 	#define SYS_N ...
 	#define SYS_T ...

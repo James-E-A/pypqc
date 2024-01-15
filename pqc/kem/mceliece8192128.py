@@ -12,8 +12,12 @@ _crypto_kem_keypair = getattr(lib, f'{_LIB_NAMESPACE}crypto_kem_keypair')
 _crypto_kem_enc = getattr(lib, f'{_LIB_NAMESPACE}crypto_kem_enc')
 _crypto_kem_dec = getattr(lib, f'{_LIB_NAMESPACE}crypto_kem_dec')
 
+_pk_gen = getattr(lib, f'{_LIB_NAMESPACE}crypto_pk_gen')
+_encrypt = getattr(lib, f'{_LIB_NAMESPACE}crypto_encrypt')
+_crypto_deccrypt = getattr(lib, f'{_LIB_NAMESPACE}decrypt')
 
-def kem_keypair():
+
+def keypair():
 	pk = ffi.new(_T_PUBLICKEY)
 	sk = ffi.new(_T_SECRETKEY)
 
@@ -24,7 +28,7 @@ def kem_keypair():
 	return bytes(pk), bytes(sk)
 
 
-def kem_enc(pk):
+def encap(pk):
 	ciphertext = ffi.new(_T_KEM_CIPHERTEXT)
 	key = ffi.new(_T_KEM_PLAINTEXT)
 	pk = ffi.cast(_T_PUBLICKEY, ffi.from_buffer(pk))
@@ -37,7 +41,7 @@ def kem_enc(pk):
 	return bytes(key), bytes(ciphertext)
 
 
-def kem_dec(ciphertext, sk):
+def decap(ciphertext, sk):
 	key = ffi.new(_T_KEM_PLAINTEXT)
 	ciphertext = ffi.cast(_T_KEM_CIPHERTEXT, ffi.from_buffer(ciphertext))
 	sk = ffi.cast(_T_SECRETKEY, ffi.from_buffer(sk))
