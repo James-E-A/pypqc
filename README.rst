@@ -32,7 +32,7 @@ KEMs
     assert ss_result == ss
 
 Capabilities *not* included in PQClean, such as `McEliece signatures`_,
-`Hybrid Encryption`_ or `KEM-TRANS`, and `message encapsulation`_, are
+`Hybrid Encryption`_ or `KEM-TRANS`_, and `message encapsulation`_, are
 *not* going to be implemented in this library. (Exception: `Plaintext
 Confirmation <https://www.github.com/thomwiggers/mceliece-clean/issues/3>`_
 is on the agenda for inclusion even if upstream ultimately decides to exclude
