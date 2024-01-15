@@ -4,10 +4,8 @@ Installation
 (Installation instructions TODO. For now, install the “build-time”
 dependencies named below, and then ``pip install pypqc`` should work.)
 
-
 Usage
 =====
-
 
 KEMs
 ----
@@ -18,7 +16,7 @@ KEMs
     
     
     # 1. Keypair generation
-    pk, sk = mceliece6960119.kem_keypair()
+    pk, sk = mceliece6960119.keypair()
     
     # WARNING these^ are some heavy keys
     # (1MiB public, 13.6KiB private)
@@ -26,28 +24,15 @@ KEMs
     
     
     # 2. Key encapsulation
-    ss, kem_ct = mceliece6960119.kem_enc(pk)
-    
-    # 2(a). Hybrid KEM-Wrap
-    #cek = urandom(32)
-    #symm_ct = MY_SYMMETRIC_CRYPTOSYSTEM.enc(MY_MESSAGE, key=cek)
-    #kek = MY_KDF(ss, target=MY_KEYWRAP)
-    #wk = MY_KEYWRAP.enc(cek, key=kek)
-    #SEND_MESSAGE([kem_ct, wk, symm_ct])
+    ss, kem_ct = mceliece6960119.encap(pk)
     
     
     # 3. Key de-encapsulation
-    ss_result = mceliece6960119.kem_dec(kem_ct, sk)
+    ss_result = mceliece6960119.decap(kem_ct, sk)
     assert ss_result == ss
-    
-    # 3(a) Hybrid KEM Unwrap
-    #kek = MY_KDF(ss_result, target=MY_KEYWRAP)
-    #cek = MY_KEYWRAP.dec(wk, key=kek)
-    #message_result = MY_SYMMETRIC_CRYPTOSYSTEM.dec(symm_ct, key=cek)
-    #assert message_result == MY_MESSAGE
 
 Capabilities *not* included in PQClean, such as `McEliece signatures`_,
-`Hybrid Encryption`_ (depicted above), and `message encapsulation`_, are
+`Hybrid Encryption`_ or `KEM-TRANS`, and `message encapsulation`_, are
 *not* going to be implemented in this library. (Exception: `Plaintext
 Confirmation <https://www.github.com/thomwiggers/mceliece-clean/issues/3>`_
 is on the agenda for inclusion even if upstream ultimately decides to exclude
@@ -56,21 +41,18 @@ it.)
 Signature Algorithms
 --------------------
 
-(Currently, only the SPHINCS+ signature algorithm is exposed; Simple is
-included; Robust is excluded; SHA256 and SHAKE256 are included; Haraka
-is excluded; these decisions are all inherited from PQClean and I don't know
-much about their rationale. Dilithium and Falcon are entirely TODO, though.)::
+(Currently, Only SPHINCS+ and Dilithium are is exposed. Falcon is TODO.)::
 
     from pqc.sign import sphincs_shake_256s_simple
     
     
     # 1. Keypair generation
-    pk, sk = sphincs_shake_256s_simple.sign_keypair()
+    pk, sk = sphincs_shake_256s_simple.keypair()
     
     
     # 2. Signing
     # (detached signature)
-    sig = sphincs_shake_256s_simple.sign_signature(MY_MESSAGE, sk)
+    sig = sphincs_shake_256s_simple.sign(MY_MESSAGE, sk)
     
     # NOTE these^ are some large signatures (~29KiB)
     # if you must display them, consider base64.encode(...)
@@ -78,7 +60,11 @@ much about their rationale. Dilithium and Falcon are entirely TODO, though.)::
     
     # 3. Signature verification
     # (Returns None on success; raises ValueError on failure.)
-    sphincs_shake_256s_simple.sign_verify(sig, MY_MESSAGE, pk)
+    sphincs_shake_256s_simple.verify(sig, MY_MESSAGE, pk)
+
+Regarding SPHINCS+: the Simple version is included; the Robust version is is excluded;
+SHA256 and SHAKE256 are included; Haraka is excluded. These decisions are all inherited
+from PQClean; I don't know much about their rationale.
 
 Development
 ===========
@@ -145,6 +131,12 @@ Getting started:
    DIFFERENT directory, such as your home folder, so you can be sure it's
    being imported properly and not being masked by the local copy.)
 
+   - N.B. / FIXME: this function is currently NOT a full test suite;
+     it only does a single encap-decap cycle with
+     the default implementation of mceliece6960119.
+     It does NOT test any other version of McEliece,
+     or any signature algorithm.
+
 
 .. _cffi: https://cffi.readthedocs.io/en/release-1.16/
 .. _setuptools: https://setuptools.pypa.io/en/stable/
@@ -154,6 +146,7 @@ Getting started:
 
 .. _`McEliece Signatures`: https://inria.hal.science/inria-00072511
 .. _`Hybrid Encryption`: https://en.wikipedia.org/wiki/Hybrid_encryption
+.. _`KEM-TRANS`: https://www.ietf.org/staging/draft-prat-perret-lamps-cms-pq-kem-00.html
 .. _`message encapsulation`: https://en.wikipedia.org/wiki/Cryptographic_Message_Syntax
 
 

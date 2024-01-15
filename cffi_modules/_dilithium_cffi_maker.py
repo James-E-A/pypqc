@@ -1,17 +1,68 @@
-from cffi import FFI
-
-from distutils.sysconfig import parse_makefile
-from pathlib import Path
-import platform
-import re
+from ._common_cffi_maker import make_pqclean_ffi
 from textwrap import dedent
-import warnings
 
-from pqc._util import partition_list, map_immed, fix_compile_args, fix_libraries, extant_with_other_suffix
+def make_dilithium_ffi(build_root):
+	cdefs = []
+	c_header_sources = []
+	common_sources = ['fips202.c', 'randombytes.c']
 
-_NAMESPACE_RE = re.compile(r'(?ms)^#define\s+(CRYPTO_NAMESPACE)\s*\(\s*(\w+)\s*\)\s+(\w+)\s*##\s*\2\s*$')
+	cdefs.append(dedent("""\
+	// Public signature interface
+	int %(namespace)scrypto_sign_keypair(uint8_t *pk, uint8_t *sk);
+	int %(namespace)scrypto_sign_signature(uint8_t *sig, size_t *siglen, const uint8_t *m, size_t mlen, const uint8_t *sk);
+	int %(namespace)scrypto_sign_verify(const uint8_t *sig, size_t siglen, const uint8_t *m, size_t mlen, const uint8_t *pk);
+	"""))
 
-def make_ffi(build_root, *, parent_module='pqc._lib'):
+	c_header_sources.append(dedent("""\
+	// Public signature interface
+	#include "api.h"
+	"""))
+
+	cdefs.append(dedent(f"""\
+	// Exposed internal interface
+	int %(namespace)scrypto_sign(uint8_t *sm, size_t *smlen, const uint8_t *m, size_t mlen, const uint8_t *sk);
+	int %(namespace)scrypto_sign_open(uint8_t *m, size_t *mlen, const uint8_t *sm, size_t smlen, const uint8_t *pk);
+	#define CRHBYTES ...
+	#define RNDBYTES ...
+	#define N ...
+	#define Q ...
+	#define D ...
+	#define ROOT_OF_UNITY ...
+	#define K ...
+	#define L ...
+	#define ETA ...
+	#define TAU ...
+	#define BETA ...
+	#define GAMMA1 ...
+	#define GAMMA2 ...
+	#define OMEGA ...
+	#define CTILDEBYTES ...
+	"""))
+
+	c_header_sources.append(dedent("""\
+	// Exposed internal interface
+	#include "params.h"
+	"""))
+
+	cdefs.append(dedent(f"""\
+	// Site interface
+	static const char _NAMESPACE[...];
+	typedef uint8_t %(namespace)scrypto_secretkey[...];
+	typedef uint8_t %(namespace)scrypto_publickey[...];
+	typedef uint8_t %(namespace)scrypto_signature[...];
+	"""))
+
+	c_header_sources.append(dedent(f"""\
+	// Site interface
+	static const char _NAMESPACE[] = "%(namespace)s";
+	typedef uint8_t %(namespace)scrypto_secretkey[%(namespace)sCRYPTO_SECRETKEYBYTES];
+	typedef uint8_t %(namespace)scrypto_publickey[%(namespace)sCRYPTO_PUBLICKEYBYTES];
+	typedef uint8_t %(namespace)scrypto_signature[%(namespace)sCRYPTO_BYTES];
+	"""))
+
+	return make_pqclean_ffi(build_root=build_root, c_header_sources=c_header_sources, cdefs=cdefs, common_sources=common_sources)
+
+def OLD_make_ffi(build_root, *, parent_module='pqc._lib'):
 	build_root = Path(build_root)
 	makefile_parsed = parse_makefile(build_root / 'Makefile')
 	common_dir = build_root / '..' / '..' / '..' / 'common'
@@ -59,11 +110,11 @@ def make_ffi(build_root, *, parent_module='pqc._lib'):
 
 	include_dirs = [(build_root), (common_dir)]
 
-	cdefs.append(dedent(f"""\
+	cdefs.append(dedent("""\
 	// Public signature interface
-	int {namespace}crypto_sign_keypair(uint8_t *pk, uint8_t *sk);
-	int {namespace}crypto_sign_signature(uint8_t *sig, size_t *siglen, const uint8_t *m, size_t mlen, const uint8_t *sk);
-	int {namespace}crypto_sign_verify(const uint8_t *sig, size_t siglen, const uint8_t *m, size_t mlen, const uint8_t *pk);
+	int %(namespace)scrypto_sign_keypair(uint8_t *pk, uint8_t *sk);
+	int %(namespace)scrypto_sign_signature(uint8_t *sig, size_t *siglen, const uint8_t *m, size_t mlen, const uint8_t *sk);
+	int %(namespace)scrypto_sign_verify(const uint8_t *sig, size_t siglen, const uint8_t *m, size_t mlen, const uint8_t *pk);
 	"""))
 
 	c_header_sources.append(dedent("""\
@@ -71,10 +122,10 @@ def make_ffi(build_root, *, parent_module='pqc._lib'):
 	#include "api.h"
 	"""))
 
-	cdefs.append(dedent(f"""\
+	cdefs.append(dedent("""\
 	// Exposed internal interface
-	int {namespace}crypto_sign(uint8_t *sm, size_t *smlen, const uint8_t *m, size_t mlen, const uint8_t *sk);
-	int {namespace}crypto_sign_open(uint8_t *m, size_t *mlen, const uint8_t *sm, size_t smlen, const uint8_t *pk);
+	int %(namespace)scrypto_sign(uint8_t *sm, size_t *smlen, const uint8_t *m, size_t mlen, const uint8_t *sk);
+	int %(namespace)scrypto_sign_open(uint8_t *m, size_t *mlen, const uint8_t *sm, size_t smlen, const uint8_t *pk);
 	#define CRHBYTES ...
 	#define RNDBYTES ...
 	#define N ...
@@ -97,20 +148,20 @@ def make_ffi(build_root, *, parent_module='pqc._lib'):
 	#include "params.h"
 	"""))
 
-	cdefs.append(dedent(f"""\
+	cdefs.append(dedent("""\
 	// Site interface
 	static const char _NAMESPACE[...];
-	typedef uint8_t {namespace}crypto_secretkey[...];
-	typedef uint8_t {namespace}crypto_publickey[...];
-	typedef uint8_t {namespace}crypto_signature[...];
+	typedef uint8_t %(namespace)scrypto_secretkey[...];
+	typedef uint8_t %(namespace)scrypto_publickey[...];
+	typedef uint8_t %(namespace)scrypto_signature[...];
 	"""))
 
-	c_header_sources.append(dedent(f"""\
+	c_header_sources.append(dedent("""\
 	// Site interface
-	static const char _NAMESPACE[] = "{namespace}";
-	typedef uint8_t {namespace}crypto_secretkey[{namespace}CRYPTO_SECRETKEYBYTES];
-	typedef uint8_t {namespace}crypto_publickey[{namespace}CRYPTO_PUBLICKEYBYTES];
-	typedef uint8_t {namespace}crypto_signature[{namespace}CRYPTO_BYTES];
+	static const char _NAMESPACE[] = "%(namespace)s";
+	typedef uint8_t %(namespace)scrypto_secretkey[%(namespace)sCRYPTO_SECRETKEYBYTES];
+	typedef uint8_t %(namespace)scrypto_publickey[%(namespace)sCRYPTO_PUBLICKEYBYTES];
+	typedef uint8_t %(namespace)scrypto_signature[%(namespace)sCRYPTO_BYTES];
 	"""))
 
 	for p in common_sources:
