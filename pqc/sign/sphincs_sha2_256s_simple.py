@@ -1,6 +1,6 @@
 from .._lib.libsphincs_sha2_256s_simple_clean import ffi, lib
 
-__all__ = ['sign_keypair', 'sign_signature', 'sign_verify']
+__all__ = ['keypair', 'signature', 'verify']
 
 _LIB_NAMESPACE = ffi.string(lib._NAMESPACE).decode('ascii')
 _T_PUBLICKEY = f'{_LIB_NAMESPACE}crypto_publickey'
@@ -12,7 +12,7 @@ _crypto_sign_signature = getattr(lib, f'{_LIB_NAMESPACE}crypto_sign_signature')
 _crypto_sign_verify = getattr(lib, f'{_LIB_NAMESPACE}crypto_sign_verify')
 
 
-def sign_keypair():
+def keypair():
 	_pk = ffi.new(_T_PUBLICKEY)
 	_sk = ffi.new(_T_SECRETKEY)
 
@@ -23,7 +23,7 @@ def sign_keypair():
 	return bytes(_pk), bytes(_sk)
 
 
-def sign_signature(m, sk):
+def signature(m, sk):
 	_m = ffi.from_buffer(m)
 
 	_sk = ffi.cast(_T_SECRETKEY, ffi.from_buffer(sk))
@@ -41,7 +41,7 @@ def sign_signature(m, sk):
 	return bytes(_sig)
 
 
-def sign_verify(sig, m, pk):
+def verify(sig, m, pk):
 	_sig = ffi.cast(_T_SIGNATURE, ffi.from_buffer(sig))
 
 	_m = ffi.from_buffer(m)

@@ -6,7 +6,7 @@ import platform
 import re
 import warnings
 
-from pqc._util import partition_list, map_immed, fix_compile_args, fix_libraries, extant_with_other_suffix
+from pqc._util import partition_list, map_immed, extant_with_other_suffix
 
 _NAMESPACE_RE = re.compile(r'(?ms)^#define\s+(CRYPTO_NAMESPACE)\s*\(\s*(\w+)\s*\)\s+(\w+)\s*##\s*\2\s*$')
 
@@ -98,8 +98,6 @@ def make_pqclean_ffi(build_root, c_header_sources, cdefs, *,
 	ffibuilder = FFI()
 	map_immed(ffibuilder.include, included_ffis)
 	map_immed(ffibuilder.cdef, cdefs)
-	fix_compile_args(extra_compile_args)
-	fix_libraries(libraries)
 	ffibuilder.set_source(
 		module_name,
 		'\n'.join(c_header_sources),
