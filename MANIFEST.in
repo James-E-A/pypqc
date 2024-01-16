@@ -1,7 +1,6 @@
 recursive-include pqc *.py
 recursive-include cffi_modules *
-recursive-include Modules/PQClean README*
-recursive-include Modules/PQClean/common *.h
+recursive-include Modules/PQClean/common *
 
 # Don't waste sdist space until the optimized variants are compiled
 recursive-exclude Modules/PQClean/crypto_kem *
