@@ -61,4 +61,16 @@ def patent_warning(subject, patent_info):
 			
 			If the continued use of {subject} is important to you, consider hiring a lawyer and/or purchasing a license for it.""")
 
+	if severity == 3:
+		return dedent(f"""\
+			{subject} may be protected under patent(s) {'; '.join(patents)}.
+			IT MIGHT NOT BE LICENSED FOR PUBLIC USE AT THIS TIME.
+			If you rely on this library via PyPI, it could break at any time if I'm forced by the patentholders to remove this module.
+			Additionally, the patentholders might impose on you *additional* terms, beyond those stated in the software's license.
+			
+			This is not legal advice. For more information, see:
+			""") + '\n'.join(links) + dedent(f"""
+			
+			If the continued use of {subject} is important to you, consider hiring a lawyer and/or purchasing a license for it.""")
+
 	raise ValueError(f'severity = {severity}')

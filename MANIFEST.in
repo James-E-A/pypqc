@@ -7,6 +7,9 @@ recursive-include Modules/PQClean/common *.h
 recursive-exclude Modules/PQClean/crypto_kem *
 recursive-exclude Modules/PQClean/crypto_sign *
 
+recursive-include Modules/PQClean/crypto_kem/hqc-128/clean *
+recursive-include Modules/PQClean/crypto_kem/hqc-192/clean *
+recursive-include Modules/PQClean/crypto_kem/hqc-256/clean *
 recursive-include Modules/PQClean/crypto_kem/kyber512/clean *
 recursive-include Modules/PQClean/crypto_kem/kyber768/clean *
 recursive-include Modules/PQClean/crypto_kem/kyber1024/clean *

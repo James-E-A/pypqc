@@ -10,21 +10,21 @@ Usage
 KEMs
 ----
 
-(Currently, only the McEliece and Kyber KEMs are exposed. HQC is TODO.)::
+McEliece, Kyber, and HQC are currently provided, all with the same interface.::
 
-    from pqc.kem import mceliece6960119
+    from pqc.kem import mceliece6960119 as kemalg
     
     
     # 1. Keypair generation
-    pk, sk = mceliece6960119.keypair()
+    pk, sk = kemalg.keypair()
     
     
     # 2. Key encapsulation
-    ss, kem_ct = mceliece6960119.encap(pk)
+    ss, kem_ct = kemalg.encap(pk)
     
     
     # 3. Key de-encapsulation
-    ss_result = mceliece6960119.decap(kem_ct, sk)
+    ss_result = kemalg.decap(kem_ct, sk)
     assert ss_result == ss
 
 Capabilities *not* included in PQClean, such as `McEliece signatures`_,
