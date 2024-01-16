@@ -18,10 +18,6 @@ KEMs
     # 1. Keypair generation
     pk, sk = mceliece6960119.keypair()
     
-    # WARNING these^ are some heavy keys
-    # (1MiB public, 13.6KiB private)
-    # if you must display them, consider base64.encode(...)
-    
     
     # 2. Key encapsulation
     ss, kem_ct = mceliece6960119.encap(pk)
@@ -53,9 +49,6 @@ SPHINCS+, Dilithium, and Falcon are provided, all with the same interface.::
     # 2. Signing
     # (detached signature)
     sig = sigalg.sign(MY_MESSAGE, sk)
-    
-    # NOTE these^ are some large signatures (~29KiB)
-    # if you must display them, consider base64.encode(...)
     
     
     # 3. Signature verification
