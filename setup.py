@@ -8,6 +8,8 @@ setup(
         'cffi_modules/dilithium2_clean.py:ffi',
         'cffi_modules/dilithium3_clean.py:ffi',
         'cffi_modules/dilithium5_clean.py:ffi',
+        'cffi_modules/falcon_512_clean.py:ffi',
+        'cffi_modules/falcon_1024_clean.py:ffi',
         'cffi_modules/kyber512_clean.py:ffi',
         'cffi_modules/kyber768_clean.py:ffi',
         'cffi_modules/kyber1024_clean.py:ffi',

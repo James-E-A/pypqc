@@ -18,6 +18,8 @@ recursive-include Modules/PQClean/crypto_kem/mceliece8192128f/clean *
 recursive-include Modules/PQClean/crypto_sign/dilithium2/clean *
 recursive-include Modules/PQClean/crypto_sign/dilithium3/clean *
 recursive-include Modules/PQClean/crypto_sign/dilithium5/clean *
+recursive-include Modules/PQClean/crypto_sign/falcon-512/clean *
+recursive-include Modules/PQClean/crypto_sign/falcon-1024/clean *
 recursive-include Modules/PQClean/crypto_sign/sphincs-sha2-128f-simple/clean *
 recursive-include Modules/PQClean/crypto_sign/sphincs-sha2-128s-simple/clean *
 recursive-include Modules/PQClean/crypto_sign/sphincs-sha2-192f-simple/clean *

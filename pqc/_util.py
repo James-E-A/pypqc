@@ -40,7 +40,7 @@ def patent_warning(subject, patent_info):
 
 	if severity == 1:
 		return dedent(f"""\
-			{subject} may be protected under patents {'; '.join(patents)}.
+			{subject} may be protected under patent(s) {'; '.join(patents)}.
 			If you rely on this library via PyPI, it could break at any time if I'm forced by the patentholders to remove this module.
 			Additionally, the patentholders might impose on you *additional* terms, beyond those stated in the software's license.
 			
@@ -51,7 +51,7 @@ def patent_warning(subject, patent_info):
 
 	if severity == 2:
 		return dedent(f"""\
-			{subject} may be protected under patents {'; '.join(patents)}.
+			{subject} may be protected under patent(s) {'; '.join(patents)}.
 			ITS LICENSING STATUS FOR PUBLIC USE IS DISPUTED OR UNKNOWN AT THIS TIME.
 			If you rely on this library via PyPI, it could break at any time if I'm forced by the patentholders to remove this module.
 			Additionally, the patentholders might impose on you *additional* terms, beyond those stated in the software's license.

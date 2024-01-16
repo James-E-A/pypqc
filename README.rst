@@ -62,9 +62,13 @@ SPHINCS+, Dilithium, and Falcon are provided, all with the same interface.::
     # (Returns None on success; raises ValueError on failure.)
     sigalg.verify(sig, MY_MESSAGE, pk)
 
-Regarding SPHINCS+: the Simple version is included; the Robust version is is excluded;
-SHA256 and SHAKE256 are included; Haraka is excluded. These decisions are all inherited
+Regarding SPHINCS+: the Simple version is included; the Robust version is is not;
+SHA256 and SHAKE256 are included; Haraka is not. These decisions are all inherited
 from PQClean; I don't know much about their rationale.
+
+Regarding Falcon: the Compressed version is included.
+The Padded version is not included, but TODO as soon as upstream adds it;
+the CT version is probably not going to be included.
 
 Development
 ===========
