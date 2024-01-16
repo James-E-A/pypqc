@@ -41,18 +41,18 @@ it.)
 Signature Algorithms
 --------------------
 
-(Currently, Only SPHINCS+ and Dilithium are is exposed. Falcon is TODO.)::
+SPHINCS+, Dilithium, and Falcon are provided, all with the same interface.::
 
-    from pqc.sign import sphincs_shake_256s_simple
+    from pqc.sign import sphincs_shake_256s_simple as sigalg
     
     
     # 1. Keypair generation
-    pk, sk = sphincs_shake_256s_simple.keypair()
+    pk, sk = sigalg.keypair()
     
     
     # 2. Signing
     # (detached signature)
-    sig = sphincs_shake_256s_simple.sign(MY_MESSAGE, sk)
+    sig = sigalg.sign(MY_MESSAGE, sk)
     
     # NOTE these^ are some large signatures (~29KiB)
     # if you must display them, consider base64.encode(...)
@@ -60,7 +60,7 @@ Signature Algorithms
     
     # 3. Signature verification
     # (Returns None on success; raises ValueError on failure.)
-    sphincs_shake_256s_simple.verify(sig, MY_MESSAGE, pk)
+    sigalg.verify(sig, MY_MESSAGE, pk)
 
 Regarding SPHINCS+: the Simple version is included; the Robust version is is excluded;
 SHA256 and SHAKE256 are included; Haraka is excluded. These decisions are all inherited

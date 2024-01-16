@@ -32,7 +32,7 @@ def make_pqclean_ffi(build_root, c_header_sources, cdefs, *,
 
 	# 2. cdefs, c_header_sources #
 
-	m = _NAMESPACE_RE.search((build_root / 'params.h').read_text())
+	m = _NAMESPACE_RE.search((build_root / 'params.h').read_text() if (build_root / 'params.h').exists() else '')
 	if m:
 		namespace = m.group(3)
 	else:

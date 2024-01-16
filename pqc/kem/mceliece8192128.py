@@ -12,9 +12,9 @@ _crypto_kem_keypair = getattr(lib, f'{_LIB_NAMESPACE}crypto_kem_keypair')
 _crypto_kem_enc = getattr(lib, f'{_LIB_NAMESPACE}crypto_kem_enc')
 _crypto_kem_dec = getattr(lib, f'{_LIB_NAMESPACE}crypto_kem_dec')
 
-_pk_gen = getattr(lib, f'{_LIB_NAMESPACE}crypto_pk_gen')
-_encrypt = getattr(lib, f'{_LIB_NAMESPACE}crypto_encrypt')
-_crypto_deccrypt = getattr(lib, f'{_LIB_NAMESPACE}decrypt')
+_pk_gen = getattr(lib, f'{_LIB_NAMESPACE}pk_gen')
+_encrypt = getattr(lib, f'{_LIB_NAMESPACE}encrypt')
+_deccrypt = getattr(lib, f'{_LIB_NAMESPACE}decrypt')
 
 
 def keypair():
