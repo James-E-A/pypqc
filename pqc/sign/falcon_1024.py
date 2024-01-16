@@ -43,8 +43,8 @@ def sign(m, sk):
 
 
 def verify(sig, m, pk):
-	assert len(_sig) <= _SIGNATURE_MAXLEN
 	_sig = ffi.from_buffer(sig)
+	assert len(_sig) <= _SIGNATURE_MAXLEN
 
 	_m = ffi.from_buffer(m)
 
