@@ -1,4 +1,3 @@
-recursive-include pqc *.py
 recursive-include cffi_modules *
 recursive-include Modules/PQClean/common *
 

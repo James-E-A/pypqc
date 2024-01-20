@@ -1,16 +1,12 @@
 [project]
 name = "pypqc"
-version = "0.0.6"
+version = "0.0.6.post1.dev0+feature.unittest"
 description = "Python bindings for the \"PQClean\" post-quantum cryptography library."
 readme = "README.rst"
 urls = {"Homepage" = "https://github.com/JamesTheAwesomeDude/pypqc"}
 dependencies = [
     'cffi >= 1.0.0',
 ]
-
-[tool.setuptools.packages.find]
-include = ["pqc"]
-namespaces = false
 
 [build-system]
 requires = [
