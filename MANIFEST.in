@@ -1,36 +1,8 @@
 recursive-include pqc *.py
-recursive-include cffi_modules *
-recursive-include Modules/PQClean/common *
+recursive-include cffi_modules *.py
+# (Thank you setuptools, very cool)
+recursive-exclude pqc *.py[cio]
+recursive-exclude cffi_modules *.py[co]
 
-# Don't waste sdist space until the optimized variants are compiled
-recursive-exclude Modules/PQClean/crypto_kem *
-recursive-exclude Modules/PQClean/crypto_sign *
-
-recursive-include Modules/PQClean/crypto_kem/hqc-128/clean *
-recursive-include Modules/PQClean/crypto_kem/hqc-192/clean *
-recursive-include Modules/PQClean/crypto_kem/hqc-256/clean *
-recursive-include Modules/PQClean/crypto_kem/kyber512/clean *
-recursive-include Modules/PQClean/crypto_kem/kyber768/clean *
-recursive-include Modules/PQClean/crypto_kem/kyber1024/clean *
-recursive-include Modules/PQClean/crypto_kem/mceliece348864f/clean *
-recursive-include Modules/PQClean/crypto_kem/mceliece460896f/clean *
-recursive-include Modules/PQClean/crypto_kem/mceliece6688128f/clean *
-recursive-include Modules/PQClean/crypto_kem/mceliece6960119f/clean *
-recursive-include Modules/PQClean/crypto_kem/mceliece8192128f/clean *
-recursive-include Modules/PQClean/crypto_sign/dilithium2/clean *
-recursive-include Modules/PQClean/crypto_sign/dilithium3/clean *
-recursive-include Modules/PQClean/crypto_sign/dilithium5/clean *
-recursive-include Modules/PQClean/crypto_sign/falcon-512/clean *
-recursive-include Modules/PQClean/crypto_sign/falcon-1024/clean *
-recursive-include Modules/PQClean/crypto_sign/sphincs-sha2-128f-simple/clean *
-recursive-include Modules/PQClean/crypto_sign/sphincs-sha2-128s-simple/clean *
-recursive-include Modules/PQClean/crypto_sign/sphincs-sha2-192f-simple/clean *
-recursive-include Modules/PQClean/crypto_sign/sphincs-sha2-192s-simple/clean *
-recursive-include Modules/PQClean/crypto_sign/sphincs-sha2-256f-simple/clean *
-recursive-include Modules/PQClean/crypto_sign/sphincs-sha2-256s-simple/clean *
-recursive-include Modules/PQClean/crypto_sign/sphincs-shake-128f-simple/clean *
-recursive-include Modules/PQClean/crypto_sign/sphincs-shake-128s-simple/clean *
-recursive-include Modules/PQClean/crypto_sign/sphincs-shake-192f-simple/clean *
-recursive-include Modules/PQClean/crypto_sign/sphincs-shake-192s-simple/clean *
-recursive-include Modules/PQClean/crypto_sign/sphincs-shake-256f-simple/clean *
-recursive-include Modules/PQClean/crypto_sign/sphincs-shake-256s-simple/clean *
+# (Don't waste sdist space until the optimized variants are compiled)
+recursive-include Modules/PQClean/common/*/*/clean *
