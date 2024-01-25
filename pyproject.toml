@@ -1,6 +1,6 @@
 [project]
 name = "pypqc"
-version = "0.0.6.1-dev0"
+version = "0.0.6.1-dev2"
 description = "Python bindings for the \"PQClean\" post-quantum cryptography library."
 readme = "README.rst"
 urls = {"Homepage" = "https://github.com/JamesTheAwesomeDude/pypqc"}
@@ -15,5 +15,5 @@ namespaces = false
 [build-system]
 requires = [
     'cffi >= 1.14.5',
-    'setuptools >= 49.5.0',
+    'setuptools @ git+https://github.com/JamesTheAwesomeDude/pypa-setuptools.git@site-patches/pypqc',
 ]
