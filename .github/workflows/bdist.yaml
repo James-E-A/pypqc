@@ -14,6 +14,8 @@ jobs:
            cibw-build: cp37-manylinux_x86_64
          - os: windows-2019
            cibw-build: cp37-win_amd64
+         - os: windows-2019
+           cibw-build: pp37-win_amd64
 
     steps:
       - uses: actions/checkout@v4
