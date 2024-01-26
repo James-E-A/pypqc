@@ -4,11 +4,26 @@ on: [push]
 
 jobs:
   build_wheels:
-    name: Build wheels on ${{ matrix.os }}
+    name: Build ${{ cibw-build }} wheel on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-20.04, windows-2019]
+        include:
+          - os: ubuntu-20.04
+            cibw-build: cp37-manylinux_x86_64
+            # cibw-build: cp37-manylinux_i686
+            # cibw-build: cp37-manylinux_aarch64
+            # cibw-build: cp37-musllinux_x86_64
+            # cibw-build: cp37-musllinux_i686
+            # cibw-build: cp37-musllinux_aarch64
+            cibw-build: pp37-manylinux_x86_64
+            # cibw-build: pp37-manylinux_i686
+            # cibw-build: pp37-manylinux_aarch64
+          - os: windows-2019
+            cibw-build: cp37-win_amd64
+            # cibw-build: cp37-win32
+            cibw-build: pp37-win_amd64
 
     steps:
       - uses: actions/checkout@v4
@@ -21,6 +36,8 @@ jobs:
 
       - name: Build wheels
         run: python -m cibuildwheel --output-dir wheelhouse
+        env:
+          CIBW_BUILD: ${{ cibw-build }}
 
       - uses: actions/upload-artifact@v4
         with:
