@@ -1,20 +1,8 @@
-Installation
-============
-
-Until we get binary wheels published (`#9 <https://github.com/JamesTheAwesomeDude/pypqc/issues/9>`_), you must:
-
-1. Install a C compiler
-
-2. Apply OS-specific fixes:
-
-   - If you're on Windows, create a folder ``C:\temp`` and then run ``set "TMPDIR=C:\temp"``. (Workaround for `#14 <https://github.com/JamesTheAwesomeDude/pypqc/issues/14>`_)
-
-   - If you're on Linux, install the Python development headers.
-
-3. Run ``pip install pypqc``
-
 Usage
 =====
+
+Simply install from PyPI with ``pip install pypqc``, or see "Development" below
+if you want to tinker on the codebase!
 
 KEMs
 ----
@@ -81,14 +69,16 @@ Dependencies:
 - Python 3 (tested mainly on CPython 3.9, 3.10, 3.11, and 3.12; and on PyPy
   7.3.12)
 
-- cffi_ (from PyPI; build- and run-time dependency)
+- cffi_
 
-  - Transitive non-PyPI build-time dependency: `Python Headers`_ (I think these come OOTB on
-    Windows)
+  - Transitive non-PyPI build-time dependency: `Python Headers`_ (only Linux users
+    need to manually install these; they come OOtB on Windows. Not sure about Mac.)
 
-- setuptools_ (from PyPI; build-time dependency only)
+- setuptools_ (build-time dependency)
 
-- a C compiler (build-time dependency only)
+- wheel_ (build-time dependency)
+
+- a C compiler (build-time dependency)
 
   - If you're on Windows, https://visualstudio.microsoft.com/visual-cpp-build-tools/
 
@@ -131,6 +121,8 @@ Getting started:
    - Editable / "develop" mode not supported currently (CFFI will have to
      `support this <https://setuptools.pypa.io/en/latest/userguide/extension.html#setuptools.command.build.SubCommand.editable_mode>`_
      before it's even on the table.)
+
+     - If you get error 1104 when trying to compile, make a folder ``C:\temp``, then try ``set "TMPDIR=C:\temp"`` and try again. (https://discuss.python.org/t/-/44077/5)
 
 2. Run ``python -m pqc.demo`` to test it. If it prints "OK" and exits, the
    functions are almost certainly not broken. (Ideally, run this from a
