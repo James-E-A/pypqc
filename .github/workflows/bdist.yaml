@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   build_wheels:
-    name: Build ${{ cibw-build }} wheel on ${{ matrix.os }}
+    name: Build ${{ matrix.cibw-build }} wheel on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -37,7 +37,7 @@ jobs:
       - name: Build wheels
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
-          CIBW_BUILD: ${{ cibw-build }}
+          CIBW_BUILD: ${{ matrix.cibw-build }}
 
       - uses: actions/upload-artifact@v4
         with:
