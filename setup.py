@@ -4,6 +4,7 @@
 from setuptools import setup
 
 setup(
+    "bdist_wheel": bdist_wheel_abi_none,
     cffi_modules=[
         'cffi_modules/dilithium2_clean.py:ffi',
         'cffi_modules/dilithium3_clean.py:ffi',
