@@ -2,6 +2,7 @@
 # https://github.com/pypa/setuptools/issues/1040
 
 from setuptools import setup
+from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 
 class bdist_wheel_abi_none(_bdist_wheel):
     """https://github.com/joerick/python-ctypes-package-sample/blob/7db688cd6ee32ae95bce0f75fb7d806926e20252/setup.py#L29"""
