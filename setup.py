@@ -15,7 +15,7 @@ class bdist_wheel_abi_none(_bdist_wheel):
         return "py3", "none", plat
 
 setup(
-    "bdist_wheel": bdist_wheel_abi_none,
+    cmdclass={"build_ext": build_ext, "bdist_wheel": bdist_wheel_abi_none},
     cffi_modules=[
         'cffi_modules/dilithium2_clean.py:ffi',
         'cffi_modules/dilithium3_clean.py:ffi',
