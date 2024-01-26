@@ -22,6 +22,7 @@ jobs:
       - name: Build wheels
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
+          CIBW_BUILD_VERBOSITY: 1
           # https://peps.python.org/pep-0494/
           CIBW_SKIP: "cp36*"
           # https://cibuildwheel.readthedocs.io/en/stable/options/#:~:text=cibuildwheel%20doesn%27t%20yet%20ship%20a%20default%20repair%20command%20for%20Windows%2E
