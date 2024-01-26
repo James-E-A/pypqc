@@ -1,8 +1,17 @@
 Installation
 ============
 
-(Installation instructions TODO. For now, install the “build-time”
-dependencies named below, and then ``pip install pypqc`` should work.)
+Until we get binary wheels published (`#9 <https://github.com/JamesTheAwesomeDude/pypqc/issues/9>`_), you must:
+
+1. Install a C compiler
+
+2. Apply OS-specific fixes:
+
+   - If you're on Windows, create a folder ``C:\temp`` and then run ``set "TMPDIR=C:\temp"``. (Workaround for `#14 <https://github.com/JamesTheAwesomeDude/pypqc/issues/14>`_)
+
+   - If you're on Linux, install the Python development headers.
+
+3. Run ``pip install pypqc``
 
 Usage
 =====
