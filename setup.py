@@ -2,6 +2,7 @@
 # https://github.com/pypa/setuptools/issues/1040
 
 from setuptools import setup
+from distutils.command.build_ext import build_ext as _build_ext
 from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 
 class bdist_wheel_abi_none(_bdist_wheel):
