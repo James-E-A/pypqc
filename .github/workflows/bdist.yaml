@@ -28,6 +28,9 @@ jobs:
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
           CIBW_BUILD: ${{ matrix.cibw-build }}
+          # https://cibuildwheel.readthedocs.io/en/stable/options/#:~:text=cibuildwheel%20doesn%27t%20yet%20ship%20a%20default%20repair%20command%20for%20Windows%2E
+          CIBW_BEFORE_BUILD_WINDOWS: "pip install delvewheel"
+          CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: "delvewheel repair -w {dest_dir} {wheel}"
 
       - uses: actions/upload-artifact@v4
         with:
