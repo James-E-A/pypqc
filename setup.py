@@ -2,8 +2,23 @@
 # https://github.com/pypa/setuptools/issues/1040
 
 from setuptools import setup
+from distutils.command.build_ext import build_ext as _build_ext
+from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
+
+
+class bdist_wheel_abi_none(_bdist_wheel):
+    """https://github.com/joerick/python-ctypes-package-sample/blob/7db688cd6ee32ae95bce0f75fb7d806926e20252/setup.py#L29"""
+    def finalize_options(self):
+        _bdist_wheel.finalize_options(self)
+        self.root_is_pure = False
+
+    def get_tag(self):
+        python, abi, plat = _bdist_wheel.get_tag(self)
+        return "py3", "none", plat
+
 
 setup(
+    cmdclass={"bdist_wheel": bdist_wheel_abi_none},
     cffi_modules=[
         'cffi_modules/dilithium2_clean.py:ffi',
         'cffi_modules/dilithium3_clean.py:ffi',

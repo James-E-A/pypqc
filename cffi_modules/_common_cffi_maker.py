@@ -110,5 +110,6 @@ def make_pqclean_ffi(build_root, c_header_sources, cdefs, *,
 		extra_objects=extra_objects,
 		extra_compile_args=extra_compile_args,
 		libraries=libraries,
+		py_limited_api=True
 	)
 	return ffibuilder
