@@ -1,6 +1,6 @@
 from .._lib.libsphincs_shake_192s_simple_clean import ffi, lib
 
-__all__ = ['keypair', 'signature', 'verify']
+__all__ = ['keypair', 'sign', 'verify']
 
 _LIB_NAMESPACE = ffi.string(lib._NAMESPACE).decode('ascii')
 _T_PUBLICKEY = f'{_LIB_NAMESPACE}crypto_publickey'
@@ -19,11 +19,11 @@ def keypair():
 	errno = _crypto_sign_keypair(_pk, _sk)
 
 	if errno:
-		raise RuntimeError(f"{_LIB_NAMESPACE}crypto_sign_keypair returned error code {errno}")
+		raise RuntimeError(f"{_crypto_sign_keypair.__name__} returned error code {errno}")
 	return bytes(_pk), bytes(_sk)
 
 
-def signature(m, sk):
+def sign(m, sk):
 	_m = ffi.from_buffer(m)
 
 	_sk = ffi.cast(_T_SECRETKEY, ffi.from_buffer(sk))
@@ -33,10 +33,10 @@ def signature(m, sk):
 	_siglen = ffi.new('size_t*')
 
 	errno = _crypto_sign_signature(_sig, _siglen, _m, len(m), _sk)
-	assert len(_sig) == _siglen[0]  # This is a fixed parameter; WHY is it output??
+	assert len(_sig) == _siglen[0]  # Fixed-length signature
 
 	if errno:
-		raise RuntimeError(f"{_LIB_NAMESPACE}crypto_sign_signature returned error code {errno}")
+		raise RuntimeError(f"{_crypto_sign_signature.__name__} returned error code {errno}")
 
 	return bytes(_sig)
 
@@ -53,7 +53,7 @@ def verify(sig, m, pk):
 	if errno:
 		if errno == -1:
 			raise ValueError('verification failed')
-		raise RuntimeError(f"{_LIB_NAMESPACE}crypto_sign_verify returned error code {errno}")
+		raise RuntimeError(f"{_crypto_sign_verify.__name__} returned error code {errno}")
 
 	return
 

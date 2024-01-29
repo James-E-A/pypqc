@@ -1,6 +1,6 @@
 from .._lib.libfalcon_1024_clean import ffi, lib
 
-__all__ = ['keypair', 'signature', 'verify']
+__all__ = ['keypair', 'sign', 'verify']
 
 _LIB_NAMESPACE = ffi.string(lib._NAMESPACE).decode('ascii')
 _T_PUBLICKEY = f'{_LIB_NAMESPACE}crypto_publickey'
@@ -10,7 +10,6 @@ _T_SIGNATURE = f'{_LIB_NAMESPACE}crypto_signature'
 _crypto_sign_keypair = getattr(lib, f'{_LIB_NAMESPACE}crypto_sign_keypair')
 _crypto_sign_signature = getattr(lib, f'{_LIB_NAMESPACE}crypto_sign_signature')
 _crypto_sign_verify = getattr(lib, f'{_LIB_NAMESPACE}crypto_sign_verify')
-_SIGNATURE_MAXLEN = getattr(lib, f'{_LIB_NAMESPACE}CRYPTO_BYTES')
 
 
 def keypair():
@@ -20,7 +19,7 @@ def keypair():
 	errno = _crypto_sign_keypair(_pk, _sk)
 
 	if errno:
-		raise RuntimeError(f"{_LIB_NAMESPACE}crypto_sign_keypair returned error code {errno}")
+		raise RuntimeError(f"{_crypto_sign_keypair.__name__} returned error code {errno}")
 	return bytes(_pk), bytes(_sk)
 
 
@@ -34,17 +33,16 @@ def sign(m, sk):
 	_siglen = ffi.new('size_t*')
 
 	errno = _crypto_sign_signature(_sigbuf, _siglen, _m, len(m), _sk)
+	_sig = _sigbuf[0:_siglen[0]]  # Variable-length signature
 
 	if errno:
-		raise RuntimeError(f"{_LIB_NAMESPACE}crypto_sign_signature returned error code {errno}")
+		raise RuntimeError(f"{_crypto_sign_signature.__name__} returned error code {errno}")
 
-	_sig = _sigbuf[0:_siglen[0]]  # Non-copying slice operation
 	return bytes(_sig)
 
 
 def verify(sig, m, pk):
 	_sig = ffi.from_buffer(sig)
-	assert len(_sig) <= _SIGNATURE_MAXLEN
 
 	_m = ffi.from_buffer(m)
 
@@ -55,7 +53,7 @@ def verify(sig, m, pk):
 	if errno:
 		if errno == -1:
 			raise ValueError('verification failed')
-		raise RuntimeError(f"{_LIB_NAMESPACE}crypto_sign_verify returned error code {errno}")
+		raise RuntimeError(f"{_crypto_sign_verify.__name__} returned error code {errno}")
 
 	return
 

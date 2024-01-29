@@ -12,8 +12,9 @@ _crypto_kem_keypair = getattr(lib, f'{_LIB_NAMESPACE}crypto_kem_keypair')
 _crypto_kem_enc = getattr(lib, f'{_LIB_NAMESPACE}crypto_kem_enc')
 _crypto_kem_dec = getattr(lib, f'{_LIB_NAMESPACE}crypto_kem_dec')
 
-_indcpa_enc = getattr(lib, f'{_LIB_NAMESPACE}indcpa_enc')
-_indcpa_dec = getattr(lib, f'{_LIB_NAMESPACE}indcpa_dec')
+_pk_gen = getattr(lib, f'{_LIB_NAMESPACE}pk_gen')
+_encrypt = getattr(lib, f'{_LIB_NAMESPACE}encrypt')
+_deccrypt = getattr(lib, f'{_LIB_NAMESPACE}decrypt')
 
 
 def keypair():
@@ -23,7 +24,7 @@ def keypair():
 	errno = _crypto_kem_keypair(ffi.cast('char*', pk), ffi.cast('char*', sk))
 
 	if errno:
-		raise RuntimeError(f"{_LIB_NAMESPACE}crypto_kem_keypair returned error code {errno}")
+		raise RuntimeError(f"{_crypto_kem_keypair.__name__} returned error code {errno}")
 	return bytes(pk), bytes(sk)
 
 
@@ -35,7 +36,7 @@ def encap(pk):
 	errno = _crypto_kem_enc(ffi.cast('char*', ciphertext), ffi.cast('char*', key), ffi.cast('char*', pk))
 
 	if errno:
-		raise RuntimeError(f"{_LIB_NAMESPACE}crypto_kem_enc returned error code {errno}")
+		raise RuntimeError(f"{_crypto_kem_enc.__name__} returned error code {errno}")
 
 	return bytes(key), bytes(ciphertext)
 
@@ -48,7 +49,7 @@ def decap(ciphertext, sk):
 	errno = _crypto_kem_dec(ffi.cast('char*', key), ffi.cast('char*', ciphertext), ffi.cast('char*', sk))
 
 	if errno:
-		raise RuntimeError(f"{_LIB_NAMESPACE}crypto_kem_dec returned error code {errno}")
+		raise RuntimeError(f"{_crypto_kem_dec.__name__} returned error code {errno}")
 
 	return bytes(key)
 
