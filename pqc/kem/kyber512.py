@@ -12,7 +12,7 @@ if os.environ.get('LICENSED_KYBER', '0') == '0':
 		      'https://mailarchive.ietf.org/arch/msg/pqc/MS92cuZkSRCDEjpPP90s2uAcRPo/']
 	)
 
-__all__ = ['kem_keypair', 'kem_enc', 'kem_dec']
+__all__ = ['keypair', 'encap', 'decap']
 
 _LIB_NAMESPACE = ffi.string(lib._NAMESPACE).decode('ascii')
 _T_PUBLICKEY = f'{_LIB_NAMESPACE}crypto_publickey'
@@ -23,10 +23,6 @@ _T_KEM_CIPHERTEXT = f'{_LIB_NAMESPACE}crypto_kem_ciphertext'
 _crypto_kem_keypair = getattr(lib, f'{_LIB_NAMESPACE}crypto_kem_keypair')
 _crypto_kem_enc = getattr(lib, f'{_LIB_NAMESPACE}crypto_kem_enc')
 _crypto_kem_dec = getattr(lib, f'{_LIB_NAMESPACE}crypto_kem_dec')
-
-_pk_gen = getattr(lib, f'{_LIB_NAMESPACE}pk_gen')
-_encrypt = getattr(lib, f'{_LIB_NAMESPACE}encrypt')
-_deccrypt = getattr(lib, f'{_LIB_NAMESPACE}decrypt')
 
 
 def keypair():

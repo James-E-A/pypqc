@@ -2,13 +2,13 @@ from .._lib.libhqc_128_clean import ffi, lib
 
 import os
 if os.environ.get('LICENSED_HQC', '0') == '0':
-	from ..util import patent_notice
+	from .._util import patent_notice
 	patent_notice(['FR2956541B1/US9094189B2/EP2537284B1'],
-		      'the HQC cryptosystem', 3,
-		      ['https://csrc.nist.gov/csrc/media/Projects/post-quantum-cryptography/documents/round-4/final-ip-statements/HQC-Statements-Round4.pdf']
+	              'the HQC cryptosystem', 3,
+	              ['https://csrc.nist.gov/csrc/media/Projects/post-quantum-cryptography/documents/round-4/final-ip-statements/HQC-Statements-Round4.pdf']
 	)
 
-__all__ = ['kem_keypair', 'kem_enc', 'kem_dec']
+__all__ = ['keypair', 'encap', 'decap']
 
 _LIB_NAMESPACE = ffi.string(lib._NAMESPACE).decode('ascii')
 _T_PUBLICKEY = f'{_LIB_NAMESPACE}crypto_publickey'
@@ -19,10 +19,6 @@ _T_KEM_CIPHERTEXT = f'{_LIB_NAMESPACE}crypto_kem_ciphertext'
 _crypto_kem_keypair = getattr(lib, f'{_LIB_NAMESPACE}crypto_kem_keypair')
 _crypto_kem_enc = getattr(lib, f'{_LIB_NAMESPACE}crypto_kem_enc')
 _crypto_kem_dec = getattr(lib, f'{_LIB_NAMESPACE}crypto_kem_dec')
-
-_pk_gen = getattr(lib, f'{_LIB_NAMESPACE}pk_gen')
-_encrypt = getattr(lib, f'{_LIB_NAMESPACE}encrypt')
-_deccrypt = getattr(lib, f'{_LIB_NAMESPACE}decrypt')
 
 
 def keypair():

@@ -1,10 +1,12 @@
 from .._lib.libfalcon_1024_clean import ffi, lib
 
-from .._util import warn_patent
-warn_patent(['US7308097B2'],
-            'the Falcon cryptosystem', 2,
-            ['https://csrc.nist.gov/csrc/media/Projects/post-quantum-cryptography/documents/selected-algos-2022/final-ip-statements/Falcon-Statements-final.pdf#page=20']
-)
+import os
+if os.environ.get('LICENSED_FALCON', '0') == '0':
+	from .._util import patent_notice
+	patent_notice(['US7308097B2'],
+	            'the Falcon cryptosystem', 2,
+	            ['https://csrc.nist.gov/csrc/media/Projects/post-quantum-cryptography/documents/selected-algos-2022/final-ip-statements/Falcon-Statements-final.pdf#page=20']
+	)
 
 __all__ = ['keypair', 'sign', 'verify']
 
