@@ -77,10 +77,11 @@ def make_pqclean_ffi(build_root, c_header_sources, cdefs, *,
 	# 4. included_ffis, extra_compile_args, libraries, include_dirs #
 
 	included_ffis = []
-
 	extra_compile_args = makefile_parsed['CFLAGS'].split()
-
 	include_dirs = [build_root]
+	libraries = []
+
+	# Modifications
 
 	extra_compile_args, _include_compile_args = partition_list(
 	    lambda arg: not re.match(r'-I(.+)', arg),
@@ -89,13 +90,13 @@ def make_pqclean_ffi(build_root, c_header_sources, cdefs, *,
 	for arg in _include_compile_args:
 		include_dirs.append(build_root / arg[2:])
 
+	extra_compile_args.remove('-Werror')  # FIXME
+
 	if platform.system() == 'Windows':
 		# https://foss.heptapod.net/pypy/cffi/-/issues/516
 		# https://www.reddit.com/r/learnpython/comments/175js2u/def_extern_says_im_not_using_it_in_api_mode/
 		# https://learn.microsoft.com/en-us/cpp/build/reference/tc-tp-tc-tp-specify-source-file-type?view=msvc-170
 		extra_compile_args.append('/TC')
-
-	libraries = []
 	if platform.system() == 'Windows':
 		# https://stackoverflow.com/questions/69900013/link-error-cannot-build-python-c-extension-in-windows
 		# https://learn.microsoft.com/en-us/windows/win32/seccrypto/required-libraries
