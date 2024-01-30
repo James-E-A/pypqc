@@ -78,7 +78,17 @@ def make_pqclean_ffi(build_root, c_header_sources, cdefs, *,
 
 	included_ffis = []
 
-	extra_compile_args = []
+	extra_compile_args = makefile_parsed['CFLAGS']
+
+	include_dirs = [build_root]
+
+	_include_compile_args, extra_compile_args = partition_list(
+	    lambda arg: not re.match(r'-I(.+)', arg),
+	    extra_compile_args
+	)
+	for arg in _include_compile_args:
+		include_dirs.append(build_root / arg[2:])
+
 	if platform.system() == 'Windows':
 		# https://foss.heptapod.net/pypy/cffi/-/issues/516
 		# https://www.reddit.com/r/learnpython/comments/175js2u/def_extern_says_im_not_using_it_in_api_mode/
@@ -91,7 +101,6 @@ def make_pqclean_ffi(build_root, c_header_sources, cdefs, *,
 		# https://learn.microsoft.com/en-us/windows/win32/seccrypto/required-libraries
 		libraries.append('Advapi32')
 
-	include_dirs = [(build_root), (common_dir)]
 
 	# 5. create, return #
 
