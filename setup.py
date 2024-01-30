@@ -29,7 +29,8 @@ class site_bdist_wheel(_bdist_wheel):
     def get_tag(self):
         python, abi, plat = _bdist_wheel.get_tag(self)
         if self.py_limited_api and platform.python_implementation() not in ABI3_EXCLUDE_IMPLEMENTATIONS:
-            python = f'cp{sys.version_info.major}' if platform.python_implementation() == 'CPython' else f'py{sys.version_info.major}'
+            # https://github.com/pypa/cibuildwheel/blob/v2.16.3/cibuildwheel/util.py#L653
+            python = f'cp{sys.version_info.major}{sys.version_info.minor}' if platform.python_implementation() == 'CPython' else f'py{sys.version_info.major}{sys.version_info.minor}'
             abi = f'abi{sys.version_info.major}'
         return python, abi, plat
 
