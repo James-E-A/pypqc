@@ -82,7 +82,7 @@ def make_pqclean_ffi(build_root, c_header_sources, cdefs, *,
 
 	include_dirs = [build_root]
 
-	_include_compile_args, extra_compile_args = partition_list(
+	extra_compile_args, _include_compile_args = partition_list(
 	    lambda arg: not re.match(r'-I(.+)', arg),
 	    extra_compile_args
 	)
