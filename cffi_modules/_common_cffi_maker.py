@@ -78,7 +78,7 @@ def make_pqclean_ffi(build_root, c_header_sources, cdefs, *,
 
 	included_ffis = []
 
-	extra_compile_args = makefile_parsed['CFLAGS']
+	extra_compile_args = makefile_parsed['CFLAGS'].split()
 
 	include_dirs = [build_root]
 
@@ -100,7 +100,6 @@ def make_pqclean_ffi(build_root, c_header_sources, cdefs, *,
 		# https://stackoverflow.com/questions/69900013/link-error-cannot-build-python-c-extension-in-windows
 		# https://learn.microsoft.com/en-us/windows/win32/seccrypto/required-libraries
 		libraries.append('Advapi32')
-
 
 	# 5. create, return #
 
