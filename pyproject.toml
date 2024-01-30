@@ -1,6 +1,6 @@
 [project]
 name = "pypqc"
-version = "0.0.6.2a0-dev0"
+version = "0.0.6.2a0-dev1"
 description = "Python bindings for the \"PQClean\" post-quantum cryptography library."
 readme = "README.rst"
 urls = {"Homepage" = "https://github.com/JamesTheAwesomeDude/pypqc"}

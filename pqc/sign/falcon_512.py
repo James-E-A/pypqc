@@ -1,5 +1,13 @@
 from .._lib.libfalcon_512_clean import ffi, lib
 
+import os
+os.environ.get('LICENSED_FALCON', '0') == '0':
+	from .._util import warn_patent
+	warn_patent(['US7308097B2'],
+		    'the Falcon cryptosystem', 2,
+		    ['https://csrc.nist.gov/csrc/media/Projects/post-quantum-cryptography/documents/selected-algos-2022/final-ip-statements/Falcon-Statements-final.pdf#page=20']
+	)
+
 __all__ = ['keypair', 'sign', 'verify']
 
 _LIB_NAMESPACE = ffi.string(lib._NAMESPACE).decode('ascii')

@@ -32,14 +32,12 @@ def map_immed(f, it, *, splat=False):
 	deque((map if not splat else starmap)(f, it), 0)
 
 
-def patent_warning(subject, patent_info):
-	severity, patents, links = patent_info
-
+def patent_notice(patents, subject, severity, links, stacklevel=0):
 	if severity == 0:
-		return None
+		return
 
 	if severity == 1:
-		return dedent(f"""\
+		warn(dedent(f"""\
 			{subject} may be protected under patent(s) {'; '.join(patents)}.
 			If you rely on this library via PyPI, it could break at any time if I'm forced by the patentholders to remove this module.
 			Additionally, the patentholders might impose on you *additional* terms, beyond those stated in the software's license.
@@ -47,10 +45,12 @@ def patent_warning(subject, patent_info):
 			This is not legal advice. For more information, see:
 			""") + '\n'.join(links) + dedent(f"""
 			
-			If the continued use of {subject} is important to you, consider hiring a lawyer and/or purchasing a license for it.""")
+			If the continued use of {subject} is important to you, consider hiring a lawyer and/or purchasing a license for it."""),
+			stacklevel=2+stacklevel)
+		return
 
 	if severity == 2:
-		return dedent(f"""\
+		warn(dedent(f"""\
 			{subject} may be protected under patent(s) {'; '.join(patents)}.
 			ITS LICENSING STATUS FOR PUBLIC USE IS DISPUTED OR UNKNOWN AT THIS TIME.
 			If you rely on this library via PyPI, it could break at any time if I'm forced by the patentholders to remove this module.
@@ -59,10 +59,12 @@ def patent_warning(subject, patent_info):
 			This is not legal advice. For more information, see:
 			""") + '\n'.join(links) + dedent(f"""
 			
-			If the continued use of {subject} is important to you, consider hiring a lawyer and/or purchasing a license for it.""")
+			If the continued use of {subject} is important to you, consider hiring a lawyer and/or purchasing a license for it."""),
+			stacklevel=2+stacklevel)
+		return
 
 	if severity == 3:
-		return dedent(f"""\
+		warn(dedent(f"""\
 			{subject} may be protected under patent(s) {'; '.join(patents)}.
 			IT MIGHT NOT BE LICENSED FOR PUBLIC USE AT THIS TIME.
 			If you rely on this library via PyPI, it could break at any time if I'm forced by the patentholders to remove this module.
@@ -71,6 +73,8 @@ def patent_warning(subject, patent_info):
 			This is not legal advice. For more information, see:
 			""") + '\n'.join(links) + dedent(f"""
 			
-			If the continued use of {subject} is important to you, consider hiring a lawyer and/or purchasing a license for it.""")
+			If the continued use of {subject} is important to you, consider hiring a lawyer and/or purchasing a license for it."""),
+			stacklevel=2+stacklevel)
+		return
 
 	raise ValueError(f'severity = {severity}')

@@ -6,14 +6,13 @@ import platform
 import re
 import warnings
 
-from pqc._util import partition_list, map_immed, extant_with_other_suffix, patent_warning
+from pqc._util import partition_list, map_immed, extant_with_other_suffix
 
 _NAMESPACE_RE = re.compile(r'(?ms)^#define\s+(CRYPTO_NAMESPACE)\s*\(\s*(\w+)\s*\)\s+(\w+)\s*##\s*\2\s*$')
 
 def make_pqclean_ffi(build_root, c_header_sources, cdefs, *,
     common_sources=frozenset(),
-    parent_module='pqc._lib',
-    patent_info=None):
+    parent_module='pqc._lib'):
 
 	# 0. local variables #
 
@@ -26,9 +25,6 @@ def make_pqclean_ffi(build_root, c_header_sources, cdefs, *,
 	# 1. module_name #
 
 	module_name = f'{parent_module}.{lib_name}'
-	if patent_info is not None:
-		patent_message = patent_warning(lib_name, patent_info)
-		warnings.warn(patent_message)
 
 	# 2. cdefs, c_header_sources #
 
