@@ -4,12 +4,18 @@ on: [push]
 
 jobs:
   build_wheels:
-    name: bdist_wheel on ${{ matrix.os }}
+    name: bdist_wheel for ${{ matrix.cibw-impl-name }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         # FIXME? PQClean GNU extensions break clang thus MacOS
         os: [ubuntu-20.04, windows-2019]
+        cibw-impl: ["cp3*", "pp3*"]
+        include:
+          - cibw-impl: "cp3*"
+            cibw-impl-name: "CPython 3.X"
+          - cibw-impl: "pp3*"
+            cibw-impl-name: "PyPy 3.X"
 
     steps:
       - uses: actions/checkout@v4
@@ -23,6 +29,7 @@ jobs:
       - name: Build wheels
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
+          CIBW_BUILD "${{ matrix.cibw-impl }}*"
           CIBW_BUILD_VERBOSITY: 1
           # FIXME? cibuildwheel doesn't property implement delvewheel yet (delvewheel needs Python 3.7+ runtime, but CPython doesn't support using non-current runtimes for REPAIR_WHEEL_COMMAND)
           # FIXME? PQClean GNU extensions break musl
