@@ -9,11 +9,13 @@ jobs:
     strategy:
       matrix:
         # FIXME? PQClean GNU extensions break clang thus the default toolchain used by CIBW on Github Actions MacOS
-        os: [Windows, Linux]
+        os: [Windows, Mac, Linux]
         py-impl: ["CPython 3.X", "PyPy 3.X"]
         include:
           - os: Windows
             github_os: windows-2019
+          - os: Mac
+            github_os: macos-11
           - os: Linux
             github_os: ubuntu-20.04
           - py-impl: "CPython 3.X"
