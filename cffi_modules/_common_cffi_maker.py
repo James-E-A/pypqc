@@ -18,6 +18,7 @@ def make_pqclean_ffi(build_root, c_header_sources, cdefs, *,
 
 	build_root = Path(build_root)
 	makefile_parsed = parse_makefile(build_root / 'Makefile')
+	cflag_makefile_parsed = makefile_parsed if platform.system() != 'Windows' else parse_makefile(build_root / 'Makefile.microsoft_nmake')
 	common_dir = build_root / '..' / '..' / '..' / 'common'
 	_lib_name = Path(makefile_parsed['LIB']).stem
 	lib_name = _lib_name.replace('-', '_')
@@ -77,27 +78,39 @@ def make_pqclean_ffi(build_root, c_header_sources, cdefs, *,
 	# 4. included_ffis, extra_compile_args, libraries, include_dirs #
 
 	included_ffis = []
-	extra_compile_args = makefile_parsed['CFLAGS'].split()
+	extra_compile_args = cflag_makefile_parsed['CFLAGS'].split()
 	include_dirs = [build_root]
 	libraries = []
 
 	# Modifications
 
-	extra_compile_args, _include_compile_args = partition_list(
-	    lambda arg: not re.match(r'-I(.+)', arg),
-	    extra_compile_args
-	)
-	for arg in _include_compile_args:
-		include_dirs.append(build_root / arg[2:])
+	# * Move "include" flags to setuptools
+	_to_pop = []
+	for i, arg in enumerate(extra_compile_args):
+		if arg.startswith('-I'):
+			include_dirs.append(build_root / arg[2:])
+			_to_pop.extend([i])
+		if arg.startswith('/I'):
+			include_dirs.append(build_root / extra_compile_args[i+1])
+			_to_pop.extend([i, i+1])
+	map_immed(extra_compile_args.pop, reversed(_to_pop))
 
-	extra_compile_args.remove('-Werror')  # FIXME
+	# * FIXME don't make errors fatal
+	_to_pop = []
+	for i, arg in enumerate(extra_compile_args):
+		if arg.startswith('-Werror'):
+			_to_pop.extend([i])
+		if arg == '/WX':
+			_to_pop.extend([i])
+	map_immed(extra_compile_args.pop, reversed(_to_pop))
 
+	# * Other Windows compiler fixes
 	if platform.system() == 'Windows':
 		# https://foss.heptapod.net/pypy/cffi/-/issues/516
 		# https://www.reddit.com/r/learnpython/comments/175js2u/def_extern_says_im_not_using_it_in_api_mode/
 		# https://learn.microsoft.com/en-us/cpp/build/reference/tc-tp-tc-tp-specify-source-file-type?view=msvc-170
 		extra_compile_args.append('/TC')
-	if platform.system() == 'Windows':
+
 		# https://stackoverflow.com/questions/69900013/link-error-cannot-build-python-c-extension-in-windows
 		# https://learn.microsoft.com/en-us/windows/win32/seccrypto/required-libraries
 		libraries.append('Advapi32')
