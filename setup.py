@@ -21,7 +21,7 @@ class site_bdist_wheel(_bdist_wheel):
             abi = f'abi{sys.version_info.major}'
         else:
             import pprint; raise AssertionError(pprint.pformat((locals(),
-                {'self.py_limited_api': self.py_limited_api, 'platform.python_implementation()': platform.python_implementation())))
+                {'self.py_limited_api': self.py_limited_api, 'platform.python_implementation()': platform.python_implementation()})))
         return python, abi, plat
 
 
