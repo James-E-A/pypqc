@@ -4,10 +4,7 @@
 import platform
 from setuptools import setup
 import sys
-import wheel.bdist_wheel as _mod_bdist_wheel
-#_mod_bdist_wheel.PY_LIMITED_API_PATTERN = r'(cp|py)\d'
-_bdist_wheel = _mod_bdist_wheel.bdist_wheel
-
+from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 
 # Pending https://hpyproject.org/
 ABI3_EXCLUDE_IMPLEMENTATIONS = {
@@ -20,24 +17,20 @@ class site_bdist_wheel(_bdist_wheel):
 
     def finalize_options(self):
         # https://github.com/pypa/wheel/blob/0.42.0/src/wheel/bdist_wheel.py#L244
-        if (all(ext.py_limited_api for ext in self.distribution.ext_modules)
-            and platform.python_implementation() not in ABI3_EXCLUDE_IMPLEMENTATIONS
+        if (platform.python_implementation() not in ABI3_EXCLUDE_IMPLEMENTATIONS
+            # https://github.com/pypa/wheel/blob/0.42.0/src/wheel/bdist_wheel.py#L267
+            and (self.distribution.has_ext_modules() or self.distribution.has_c_libraries())
+            # https://github.com/pypa/setuptools/blob/v69.0.3/setuptools/command/build_ext.py#L160
+            and all(ext.py_limited_api for ext in self.distribution.ext_modules)
         ):
             self.py_limited_api = f'cp{sys.version_info.major}{sys.version_info.minor}' if platform.python_implementation() == 'CPython' else f'py{sys.version_info.major}{sys.version_info.minor}'
         super().finalize_options()
 
     def get_tag(self):
         python, abi, plat = _bdist_wheel.get_tag(self)
-        if self.py_limited_api and platform.python_implementation() not in ABI3_EXCLUDE_IMPLEMENTATIONS:
-            python = f'cp{sys.version_info.major}' if platform.python_implementation() == 'CPython' else f'py{sys.version_info.major}'
-            abi = f'abi{sys.version_info.major}'
-        if not self.py_limited_api and platform.python_implementation() in {'CPython'}:
-            # https://github.com/python-cffi/cffi/blob/v1.16.0/src/cffi/setuptools_ext.py#L114
-            import pprint; raise AssertionError(pprint.pformat({**locals(),
-                'self.py_limited_api': self.py_limited_api,
-                'platform.python_implementation()': platform.python_implementation(),
-                'self.distribution.ext_modules': [(lambda obj: {k: getattr(obj, k) for k in dir(obj) if not k.startswith('_')})(obj) for obj in self.distribution.ext_modules],
-            }))
+        #if self.py_limited_api and platform.python_implementation() not in ABI3_EXCLUDE_IMPLEMENTATIONS:
+        #    python = f'cp{sys.version_info.major}' if platform.python_implementation() == 'CPython' else f'py{sys.version_info.major}'
+        #    abi = f'abi{sys.version_info.major}'
         return python, abi, plat
 
 
