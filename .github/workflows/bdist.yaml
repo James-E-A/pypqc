@@ -10,7 +10,7 @@ jobs:
       matrix:
         # FIXME? PQClean GNU extensions break clang thus MacOS
         os: [ubuntu-20.04, windows-2019]
-        cibw-impl: ["cp3", "pp3"]
+        cibw_impl: ["cp3", "pp3"]
         include:
           - cibw_impl: "cp3"
             cibw_impl_name: "CPython 3.X"
