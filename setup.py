@@ -1,6 +1,7 @@
 # https://foss.heptapod.net/pypy/cffi/-/issues/441
 # https://github.com/pypa/setuptools/issues/1040
 
+import platform
 from setuptools import setup
 from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 
