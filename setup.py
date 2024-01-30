@@ -3,7 +3,9 @@
 
 import platform
 from setuptools import setup
-from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
+import wheel.bdist_wheel as _mod_bdist_wheel
+_mod_bdist_wheel.PY_LIMITED_API_PATTERN = r'(cp|py)\d'
+_bdist_wheel = _mod_bdist_wheel.bdist_wheel
 
 
 class site_bdist_wheel(_bdist_wheel):
@@ -19,7 +21,8 @@ class site_bdist_wheel(_bdist_wheel):
         }:
             python = f'py{sys.version_info.major}'
             abi = f'abi{sys.version_info.major}'
-        else:
+        if not self.py_limited_api and platform.python_implementation() in {'CPython'}:
+            # https://github.com/python-cffi/cffi/blob/v1.16.0/src/cffi/setuptools_ext.py#L114
             import pprint; raise AssertionError(pprint.pformat((locals(),
                 {'self.py_limited_api': self.py_limited_api, 'platform.python_implementation()': platform.python_implementation()})))
         return python, abi, plat
