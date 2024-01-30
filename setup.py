@@ -3,28 +3,41 @@
 
 import platform
 from setuptools import setup
+import sys
 import wheel.bdist_wheel as _mod_bdist_wheel
-_mod_bdist_wheel.PY_LIMITED_API_PATTERN = r'(cp|py)\d'
+#_mod_bdist_wheel.PY_LIMITED_API_PATTERN = r'(cp|py)\d'
 _bdist_wheel = _mod_bdist_wheel.bdist_wheel
+
+
+# Pending https://hpyproject.org/
+ABI3_EXCLUDE_IMPLEMENTATIONS = {
+  'PyPy',  # https://github.com/orgs/pypy/discussions/4884#discussioncomment-8309845
+}
 
 
 class site_bdist_wheel(_bdist_wheel):
     """https://github.com/joerick/python-ctypes-package-sample/blob/7db688cd6ee32ae95bce0f75fb7d806926e20252/setup.py#L29"""
+
     def finalize_options(self):
-        _bdist_wheel.finalize_options(self)
-        self.root_is_pure = False
+        # https://github.com/pypa/wheel/blob/0.42.0/src/wheel/bdist_wheel.py#L244
+        if (all(ext.py_limited_api for ext in self.distribution.ext_modules)
+            and platform.python_implementation() not in ABI3_EXCLUDE_IMPLEMENTATIONS
+        ):
+            self.py_limited_api = f'cp{sys.version_info.major}{sys.version_info.minor}' if platform.python_implementation() == 'CPython' else f'py{sys.version_info.major}{sys.version_info.minor}'
+        super().finalize_options()
 
     def get_tag(self):
         python, abi, plat = _bdist_wheel.get_tag(self)
-        if self.py_limited_api and platform.python_implementation() not in {
-            'PyPy',  # https://github.com/orgs/pypy/discussions/4884#discussioncomment-8309845
-        }:
-            python = f'py{sys.version_info.major}'
+        if self.py_limited_api and platform.python_implementation() not in ABI3_EXCLUDE_IMPLEMENTATIONS:
+            python = f'cp{sys.version_info.major}' if platform.python_implementation() == 'CPython' else f'py{sys.version_info.major}'
             abi = f'abi{sys.version_info.major}'
         if not self.py_limited_api and platform.python_implementation() in {'CPython'}:
             # https://github.com/python-cffi/cffi/blob/v1.16.0/src/cffi/setuptools_ext.py#L114
-            import pprint; raise AssertionError(pprint.pformat((locals(),
-                {'self.py_limited_api': self.py_limited_api, 'platform.python_implementation()': platform.python_implementation()})))
+            import pprint; raise AssertionError(pprint.pformat({**locals(),
+                'self.py_limited_api': self.py_limited_api,
+                'platform.python_implementation()': platform.python_implementation(),
+                'self.distribution.ext_modules': [(lambda obj: {k: getattr(obj, k) for k in dir(obj) if not k.startswith('_')})(obj) for obj in self.distribution.ext_modules],
+            }))
         return python, abi, plat
 
 
