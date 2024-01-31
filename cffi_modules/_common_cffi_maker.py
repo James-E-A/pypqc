@@ -115,6 +115,13 @@ def make_pqclean_ffi(build_root, c_header_sources, cdefs, *,
 		# https://learn.microsoft.com/en-us/windows/win32/seccrypto/required-libraries
 		libraries.append('Advapi32')
 
+	# * Other Mac OS compiler fixes
+	if platform.system() == 'Darwin':
+		# https://github.com/JamesTheAwesomeDude/pypqc/issues/9
+		# https://github.com/actions/runner-images/issues/1938
+		# https://github.com/harfbuzz/harfbuzz/issues/1763#issuecomment-500574443
+		extra_compile_args.append('-DHB_NO_PRAGMA_GCC_DIAGNOSTIC_ERROR')
+
 	# 5. create, return #
 
 	ffibuilder = FFI()
