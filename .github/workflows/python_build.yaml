@@ -1,0 +1,72 @@
+name: Build
+
+on: [push]
+
+jobs:
+  sdist:
+    name: Source build for pip
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+      - name: install requirements
+        run: python -m pip install -r requirements.txt
+      - name: build sdist
+        run: python -m build --sdist && twine check ./dist/*
+      - name: upload sdist
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdist
+          path: ./dist/*
+
+  bdist:
+    name: Binary build for ${{ matrix.py-impl }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.github_os }}
+    strategy:
+      matrix:
+        py-impl: ["CPython 3.X", "PyPy 3.X"]
+        os: [Windows, Mac, Linux]
+
+        include:
+          - py-impl: "CPython 3.X"
+            cibw_build: "cp3*"
+          - py-impl: "PyPy 3.X"
+            cibw_build: "pp3*"
+          # Use the oldest OSes available for compatibility
+          - os: Windows
+            github_os: windows-2019
+          - os: Mac
+            github_os: macos-11
+          - os: Linux
+            github_os: ubuntu-20.04
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: sdist
+          path: ./dist/
+
+      # Used to host cibuildwheel
+      - uses: actions/setup-python@v4
+
+      - name: Install cibuildwheel
+        run: python -m pip install cibuildwheel==2.16.3
+
+      - name: Build wheels
+        # https://github.com/pypa/cibuildwheel/issues/173#issuecomment-1501236916
+        run: python -m cibuildwheel ./dist/*.tar.gz --output-dir ./dist
+        env:
+          CIBW_BUILD: ${{ matrix.cibw_build }}
+          CIBW_BUILD_VERBOSITY: 1
+          # FIXME? cibuildwheel disagrees with CPython 3.6 in some way
+          # FIXME? PQClean GNU extensions break musl
+          CIBW_SKIP: "cp36-* *-musllinux_*"
+          # https://cibuildwheel.readthedocs.io/en/stable/options/#:~:text=cibuildwheel%20doesn%27t%20yet%20ship%20a%20default%20repair%20command%20for%20Windows%2E
+          CIBW_BEFORE_BUILD_WINDOWS: "pip install delvewheel"
+          CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: "delvewheel repair -w {dest_dir} {wheel}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
+          path: ./dist/*.whl
+
