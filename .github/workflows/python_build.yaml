@@ -27,7 +27,7 @@ jobs:
       fail-fast: false
       matrix:
         py-impl: ["CPython 3.X", "PyPy 3.X"]
-        os: [Windows, Mac, Linux]
+        os: [Windows, Mac, Linux, "Linux (Extra Architectures)"]
 
         include:
           - py-impl: "CPython 3.X"
@@ -37,10 +37,16 @@ jobs:
           # Use the oldest OSes available for compatibility
           - os: Windows
             github_os: windows-2019
+            cibw_archs: AMD64 x86 ARM64
           - os: Mac
             github_os: macos-11
+            cibw_archs: x86_64 arm64 universal2
           - os: Linux
             github_os: ubuntu-20.04
+            cibw_archs: x86_64 i686 aarch64
+          - os: Linux (Extra Architectures)
+            github_os: ubuntu-20.04
+            cibw_archs: ppc64le s390x
 
     steps:
       - uses: actions/download-artifact@v4
@@ -64,7 +70,7 @@ jobs:
         run: python -m cibuildwheel ${{ steps.sdist_glob.outputs.paths }} --output-dir ./dist
         env:
           CIBW_BUILD: ${{ matrix.cibw_build }}
-          CIBW_ARCHS: all
+          CIBW_ARCHS: ${{ matrix.cibw_archs }}
           CIBW_BUILD_VERBOSITY: 1
           # FIXME? cibuildwheel disagrees with CPython 3.6 in some way
           # FIXME? PQClean GNU extensions break musl
