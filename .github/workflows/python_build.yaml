@@ -46,6 +46,11 @@ jobs:
         with:
           name: sdist
           path: ./dist/
+      - uses: tj-actions/glob@v20
+        # FIXME? use a more programmatic or integrated solution here
+        id: sdist_glob
+        with:
+          files: ./dist/*
 
       # Used to host cibuildwheel
       - uses: actions/setup-python@v3
@@ -55,7 +60,7 @@ jobs:
 
       - name: Build wheels
         # https://github.com/pypa/cibuildwheel/issues/173#issuecomment-1501236916
-        run: python -c "import glob,pathlib,runpy,sys; sys.argv[:] = ['cibuildwheel', *glob.glob('./dist/*'), '--output-dir', './dist']; runpy.run_module('cibuildwheel');"
+        run: python -m cibuildwheel ${{ steps.glob.outputs.paths }} --output-dir ./dist
         env:
           CIBW_BUILD: ${{ matrix.cibw_build }}
           CIBW_BUILD_VERBOSITY: 1
@@ -70,4 +75,5 @@ jobs:
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
           path: ./dist/*.whl
+          if-no-files-found: error
 
