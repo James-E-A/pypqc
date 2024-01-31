@@ -21,6 +21,7 @@ jobs:
 
   bdist:
     name: Binary build for ${{ matrix.py-impl }} on ${{ matrix.os }}
+    needs: sdist
     runs-on: ${{ matrix.github_os }}
     strategy:
       matrix:
