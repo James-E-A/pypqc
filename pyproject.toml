@@ -18,3 +18,7 @@ requires = [
     'setuptools >= 49.5.0',
     'wheel >= 0.30.0',
 ]
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "tab"

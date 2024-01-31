@@ -1,12 +1,15 @@
 from .._lib.libfalcon_1024_clean import ffi, lib
 
 import os
+
 if os.environ.get('LICENSED_FALCON', '0') == '0':
+	# fmt: off
 	from .._util import patent_notice
 	patent_notice(['US7308097B2'],
 	            'the Falcon cryptosystem', 2,
 	            ['https://csrc.nist.gov/csrc/media/Projects/post-quantum-cryptography/documents/selected-algos-2022/final-ip-statements/Falcon-Statements-final.pdf#page=20']
 	)
+	# fmt: on
 
 __all__ = ['keypair', 'sign', 'verify']
 
@@ -28,7 +31,7 @@ def keypair():
 
 	if errno == 0:
 		return bytes(_pk), bytes(_sk)
-	raise RuntimeError(f"{_crypto_sign_keypair.__name__} returned error code {errno}")
+	raise RuntimeError(f'{_crypto_sign_keypair.__name__} returned error code {errno}')
 
 
 def sign(m, sk):
@@ -40,9 +43,9 @@ def sign(m, sk):
 	errno = _crypto_sign_signature(_sigbuf, _siglen, _m, len(m), _sk)
 
 	if errno == 0:
-		_sig = _sigbuf[0:_siglen[0]]  # Variable-length signature
+		_sig = _sigbuf[0 : _siglen[0]]  # Variable-length signature
 		return bytes(_sig)
-	raise RuntimeError(f"{_crypto_sign_signature.__name__} returned error code {errno}")
+	raise RuntimeError(f'{_crypto_sign_signature.__name__} returned error code {errno}')
 
 
 def verify(sig, m, pk):
@@ -56,4 +59,4 @@ def verify(sig, m, pk):
 		return
 	if errno == -1:
 		raise ValueError('verification failed')
-	raise RuntimeError(f"{_crypto_sign_verify.__name__} returned error code {errno}")
+	raise RuntimeError(f'{_crypto_sign_verify.__name__} returned error code {errno}')

@@ -1,7 +1,9 @@
 from .._lib.libkyber1024_clean import ffi, lib
 
 import os
+
 if os.environ.get('LICENSED_KYBER', '0') == '0':
+	# fmt: off
 	from .._util import patent_notice
 	patent_notice(['FR2956541A1/US9094189B2/EP2537284B1', 'US9246675/EP2837128B1', 'potential unknown others'],
 		      'the Kyber cryptosystem', 1, [
@@ -11,6 +13,7 @@ if os.environ.get('LICENSED_KYBER', '0') == '0':
 		      'https://datatracker.ietf.org/meeting/116/proceedings#pquip:~:text=Patents%20and%20PQC',
 		      'https://mailarchive.ietf.org/arch/msg/pqc/MS92cuZkSRCDEjpPP90s2uAcRPo/']
 	)
+	# fmt: on
 
 __all__ = ['keypair', 'encap', 'decap']
 
@@ -33,7 +36,7 @@ def keypair():
 
 	if errno == 0:
 		return bytes(_pk), bytes(_sk)
-	raise RuntimeError(f"{_crypto_kem_keypair.__name__} returned error code {errno}")
+	raise RuntimeError(f'{_crypto_kem_keypair.__name__} returned error code {errno}')
 
 
 def encap(pk):
@@ -45,7 +48,7 @@ def encap(pk):
 
 	if errno == 0:
 		return bytes(_ss), bytes(_ct)
-	raise RuntimeError(f"{_crypto_kem_enc.__name__} returned error code {errno}")
+	raise RuntimeError(f'{_crypto_kem_enc.__name__} returned error code {errno}')
 
 
 def decap(ciphertext, sk):
@@ -57,5 +60,4 @@ def decap(ciphertext, sk):
 
 	if errno == 0:
 		return bytes(_ss)
-	raise RuntimeError(f"{_crypto_kem_dec.__name__} returned error code {errno}")
-
+	raise RuntimeError(f'{_crypto_kem_dec.__name__} returned error code {errno}')

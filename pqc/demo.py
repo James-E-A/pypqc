@@ -6,5 +6,5 @@ if __name__ == '__main__':
 	test_decrypted = mceliece6960119.kem_dec(test_ciphertext, secret_key)
 
 	if test_key != test_decrypted:
-		raise AssertionError("fail :(")
-	print("OK")
+		raise AssertionError('fail :(')
+	print('OK')

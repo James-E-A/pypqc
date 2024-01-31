@@ -25,7 +25,7 @@ def keypair():
 
 	if errno == 0:
 		return bytes(_pk), bytes(_sk)
-	raise RuntimeError(f"{_crypto_kem_keypair.__name__} returned error code {errno}")
+	raise RuntimeError(f'{_crypto_kem_keypair.__name__} returned error code {errno}')
 
 
 def encap(pk):
@@ -37,7 +37,7 @@ def encap(pk):
 
 	if errno == 0:
 		return bytes(_ss), bytes(_ct)
-	raise RuntimeError(f"{_crypto_kem_enc.__name__} returned error code {errno}")
+	raise RuntimeError(f'{_crypto_kem_enc.__name__} returned error code {errno}')
 
 
 def decap(ciphertext, sk):
@@ -49,5 +49,4 @@ def decap(ciphertext, sk):
 
 	if errno == 0:
 		return bytes(_ss)
-	raise RuntimeError(f"{_crypto_kem_dec.__name__} returned error code {errno}")
-
+	raise RuntimeError(f'{_crypto_kem_dec.__name__} returned error code {errno}')

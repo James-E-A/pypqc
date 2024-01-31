@@ -20,7 +20,7 @@ def keypair():
 
 	if errno == 0:
 		return bytes(_pk), bytes(_sk)
-	raise RuntimeError(f"{_crypto_sign_keypair.__name__} returned error code {errno}")
+	raise RuntimeError(f'{_crypto_sign_keypair.__name__} returned error code {errno}')
 
 
 def sign(m, sk):
@@ -34,7 +34,7 @@ def sign(m, sk):
 	if errno == 0:
 		assert len(_sig) == _siglen[0]  # Fixed-length signature
 		return bytes(_sig)
-	raise RuntimeError(f"{_crypto_sign_signature.__name__} returned error code {errno}")
+	raise RuntimeError(f'{_crypto_sign_signature.__name__} returned error code {errno}')
 
 
 def verify(sig, m, pk):
@@ -48,4 +48,4 @@ def verify(sig, m, pk):
 		return
 	if errno == -1:
 		raise ValueError('verification failed')
-	raise RuntimeError(f"{_crypto_sign_verify.__name__} returned error code {errno}")
+	raise RuntimeError(f'{_crypto_sign_verify.__name__} returned error code {errno}')
