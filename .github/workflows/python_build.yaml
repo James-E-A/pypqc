@@ -63,6 +63,7 @@ jobs:
         run: python -m cibuildwheel ${{ steps.sdist_glob.outputs.paths }} --output-dir ./dist
         env:
           CIBW_BUILD: ${{ matrix.cibw_build }}
+          CIBW_ARCHS: all
           CIBW_BUILD_VERBOSITY: 1
           # FIXME? cibuildwheel disagrees with CPython 3.6 in some way
           # FIXME? PQClean GNU extensions break musl
