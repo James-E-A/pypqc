@@ -55,7 +55,7 @@ jobs:
 
       - name: Build wheels
         # https://github.com/pypa/cibuildwheel/issues/173#issuecomment-1501236916
-        run: python -m cibuildwheel ./dist/*.tar.gz --output-dir ./dist
+        run: python -c "import glob,pathlib,runpy,sys; sys.argv[:] = ['cibuildwheel', *glob.glob('./dist/*'), '--output-dir', './dist']; runpy.run_module('cibuildwheel');"
         env:
           CIBW_BUILD: ${{ matrix.cibw_build }}
           CIBW_BUILD_VERBOSITY: 1
