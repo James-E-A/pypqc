@@ -24,10 +24,10 @@ jobs:
     needs: sdist
     runs-on: ${{ matrix.github_os }}
     strategy:
+      fail-fast: false
       matrix:
         py-impl: ["CPython 3.X", "PyPy 3.X"]
         os: [Windows, Mac, Linux]
-      fail-fast: false
 
         include:
           - py-impl: "CPython 3.X"
