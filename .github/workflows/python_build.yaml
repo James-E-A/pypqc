@@ -43,10 +43,10 @@ jobs:
             cibw_archs: x86_64 arm64 universal2
           - os: Linux
             github_os: ubuntu-20.04
-            cibw_archs: x86_64 i686 aarch64
+            cibw_archs: x86_64 i686
           - os: Linux (Extra Architectures)
             github_os: ubuntu-20.04
-            cibw_archs: ppc64le s390x
+            cibw_archs: aarch64 ppc64le s390x
 
         exclude:
           - os: Linux (Extra Architectures)
@@ -66,6 +66,9 @@ jobs:
 
       # Used to host cibuildwheel
       - uses: actions/setup-python@v3
+
+      - if: matrix.os == 'Linux (Extra Architectures)'
+        uses: docker/setup-qemu-action@v3
 
       - name: Install cibuildwheel
         run: python -m pip install cibuildwheel==2.16.3
