@@ -120,7 +120,12 @@ def make_pqclean_ffi(build_root, c_header_sources, cdefs, *,
 		# https://github.com/JamesTheAwesomeDude/pypqc/issues/9
 		# https://github.com/actions/runner-images/issues/1938
 		# https://github.com/harfbuzz/harfbuzz/issues/1763#issuecomment-500574443
-		extra_compile_args.append('-DHB_NO_PRAGMA_GCC_DIAGNOSTIC_ERROR')
+		extra_compile_args.extend([
+		    '-DHB_NO_PRAGMA_GCC_DIAGNOSTIC_ERROR',
+		    '-Wno-error=implicit-function-declaration',
+		    '-Wno-error=pedantic',
+		    '-Wno-error=macro-redefined',
+		])
 
 	# 5. create, return #
 
