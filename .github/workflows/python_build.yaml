@@ -60,7 +60,7 @@ jobs:
 
       - name: Build wheels
         # https://github.com/pypa/cibuildwheel/issues/173#issuecomment-1501236916
-        run: python -m cibuildwheel ${{ steps.glob.outputs.paths }} --output-dir ./dist
+        run: python -m cibuildwheel ${{ steps.sdist_glob.outputs.paths }} --output-dir ./dist
         env:
           CIBW_BUILD: ${{ matrix.cibw_build }}
           CIBW_BUILD_VERBOSITY: 1
