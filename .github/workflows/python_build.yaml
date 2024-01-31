@@ -48,6 +48,11 @@ jobs:
             github_os: ubuntu-20.04
             cibw_archs: ppc64le s390x
 
+        exclude:
+          - os: Linux (Extra Architectures)
+            # FIXME? cibuildwheel disagrees with this
+            py-impl: "PyPy 3.X"
+
     steps:
       - uses: actions/download-artifact@v4
         with:
