@@ -1,6 +1,6 @@
 from .._lib.libmceliece8192128f_clean import ffi, lib
 
-__all__ = ['kem_keypair', 'kem_enc', 'kem_dec']
+__all__ = ['keypair', 'encap', 'decap']
 
 _LIB_NAMESPACE = ffi.string(lib._NAMESPACE).decode('ascii')
 _T_PUBLICKEY = f'{_LIB_NAMESPACE}crypto_publickey'

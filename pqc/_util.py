@@ -1,8 +1,5 @@
 from collections import deque
-from functools import partial
 from itertools import starmap
-from pathlib import Path
-import platform
 import re
 from textwrap import dedent
 from warnings import warn
