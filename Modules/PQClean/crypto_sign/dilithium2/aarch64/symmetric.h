@@ -1,13 +1,14 @@
-#ifndef SYMMETRIC_H
-#define SYMMETRIC_H
+#ifndef PQCLEAN_DILITHIUM2_AARCH64_SYMMETRIC_H
+#define PQCLEAN_DILITHIUM2_AARCH64_SYMMETRIC_H
 
 /*
  * This file was originally licensed
  * under Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0.html) or
  * public domain at https://github.com/pq-crystals/dilithium/tree/master/ref
  *
- * We choose
- * CC0 1.0 Universal or the following MIT License
+ * We offer
+ * CC0 1.0 Universal or the following MIT License for this file.
+ * You may freely choose one of them that applies.
  *
  * MIT License
  *
@@ -33,7 +34,7 @@
  */
 
 #include "fips202.h"
-#include "fips202x2.h"
+#include "keccak2x/fips202x2.h"
 #include "params.h"
 #include <stdint.h>
 

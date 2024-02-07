@@ -95,7 +95,8 @@ int32_t use_hint(int32_t a, unsigned int hint) {
 
     if (a0 > 0) {
         return (a1 + 1) & 15;
+    } else {
+        return (a1 - 1) & 15;
     }
-    return (a1 - 1) & 15;
 
 }
