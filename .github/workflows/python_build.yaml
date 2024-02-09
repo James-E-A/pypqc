@@ -1,0 +1,99 @@
+name: Build
+
+on: [push]
+
+jobs:
+  sdist:
+    name: Source build for pip
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+      - name: install dev requirements
+        run: python -m pip install -r requirements-dev.txt
+      - name: build sdist
+        run: python -m build --sdist && twine check ./dist/*
+      - name: upload sdist
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdist
+          path: ./dist/*
+
+  bdist:
+    name: Binary build for ${{ matrix.py-impl }} on ${{ matrix.os }}
+    needs: sdist
+    runs-on: ${{ matrix.github_os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        py-impl: ["CPython 3.X", "PyPy 3.X"]
+        os: [Windows, Mac, Linux, "Linux (Extra Architectures)"]
+
+        include:
+          - py-impl: "CPython 3.X"
+            cibw_build: "cp3*"
+          - py-impl: "PyPy 3.X"
+            cibw_build: "pp3*"
+          # Use the oldest OSes available for compatibility
+          - os: Windows
+            github_os: windows-2019
+            cibw_archs: AMD64 x86 ARM64
+          - os: Mac
+            github_os: macos-11
+            cibw_archs: x86_64 arm64 universal2
+          - os: Linux
+            github_os: ubuntu-20.04
+            cibw_archs: x86_64 i686
+          - os: Linux (Extra Architectures)
+            github_os: ubuntu-20.04
+            cibw_archs: aarch64 ppc64le s390x
+
+        exclude:
+          - os: Linux (Extra Architectures)
+            # FIXME? cibuildwheel disagrees with this
+            py-impl: "PyPy 3.X"
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: sdist
+          path: ./dist/
+      - uses: tj-actions/glob@v20
+        # FIXME? use a more programmatic or integrated solution here
+        id: sdist_glob
+        with:
+          files: ./dist/*
+
+      # Used to host cibuildwheel
+      - uses: actions/setup-python@v3
+
+      - if: matrix.os == 'Linux (Extra Architectures)'
+        uses: docker/setup-qemu-action@v3
+
+      - name: Install cibuildwheel
+        run: python -m pip install cibuildwheel==2.16.3
+
+      - name: Build wheels
+        # https://github.com/pypa/cibuildwheel/issues/173#issuecomment-1501236916
+        run: python -m cibuildwheel ${{ steps.sdist_glob.outputs.paths }} --output-dir ./dist
+        env:
+          CIBW_BUILD: ${{ matrix.cibw_build }}
+          CIBW_ARCHS: ${{ matrix.cibw_archs }}
+          CIBW_BUILD_VERBOSITY: 1
+          # FIXME? cibuildwheel disagrees with CPython 3.6 in some way
+          # FIXME? PQClean GNU extensions break musl
+          # FIXME? delvewheel chokes specifically on CPython on Windows on ARM
+          CIBW_SKIP: >
+            cp36-*
+            *-musllinux_*
+            cp*-win*arm*
+          # https://cibuildwheel.readthedocs.io/en/stable/options/#:~:text=cibuildwheel%20doesn%27t%20yet%20ship%20a%20default%20repair%20command%20for%20Windows%2E
+          CIBW_BEFORE_BUILD_WINDOWS: "pip install delvewheel"
+          CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: "delvewheel repair -w {dest_dir} {wheel}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
+          path: ./dist/*.whl
+          if-no-files-found: error
+

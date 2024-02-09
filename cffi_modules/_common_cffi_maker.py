@@ -6,19 +6,19 @@ import platform
 import re
 import warnings
 
-from pqc._util import partition_list, map_immed, extant_with_other_suffix, patent_warning
+from pqc._util import partition_list, map_immed, extant_with_other_suffix
 
 _NAMESPACE_RE = re.compile(r'(?ms)^#define\s+(CRYPTO_NAMESPACE)\s*\(\s*(\w+)\s*\)\s+(\w+)\s*##\s*\2\s*$')
 
 def make_pqclean_ffi(build_root, c_header_sources, cdefs, *,
     common_sources=frozenset(),
-    parent_module='pqc._lib',
-    patent_info=None):
+    parent_module='pqc._lib'):
 
 	# 0. local variables #
 
 	build_root = Path(build_root)
 	makefile_parsed = parse_makefile(build_root / 'Makefile')
+	cflag_makefile_parsed = makefile_parsed if platform.system() != 'Windows' else parse_makefile(build_root / 'Makefile.microsoft_nmake')
 	common_dir = build_root / '..' / '..' / '..' / 'common'
 	_lib_name = Path(makefile_parsed['LIB']).stem
 	lib_name = _lib_name.replace('-', '_')
@@ -26,9 +26,6 @@ def make_pqclean_ffi(build_root, c_header_sources, cdefs, *,
 	# 1. module_name #
 
 	module_name = f'{parent_module}.{lib_name}'
-	if patent_info is not None:
-		patent_message = patent_warning(lib_name, patent_info)
-		warnings.warn(patent_message)
 
 	# 2. cdefs, c_header_sources #
 
@@ -81,21 +78,51 @@ def make_pqclean_ffi(build_root, c_header_sources, cdefs, *,
 	# 4. included_ffis, extra_compile_args, libraries, include_dirs #
 
 	included_ffis = []
+	extra_compile_args = cflag_makefile_parsed['CFLAGS'].split()
+	include_dirs = [build_root]
+	libraries = []
 
-	extra_compile_args = []
+	# Modifications
+
+	# * Move "include" flags to setuptools
+	_to_pop = []
+	for i, arg in enumerate(extra_compile_args):
+		if arg.startswith('-I'):
+			include_dirs.append(build_root / arg[2:])
+			_to_pop.extend([i])
+		if arg.startswith('/I'):
+			include_dirs.append(build_root / extra_compile_args[i+1])
+			_to_pop.extend([i, i+1])
+	map_immed(extra_compile_args.pop, reversed(_to_pop))
+
+	# * FIXME don't make errors fatal
+	_to_pop = []
+	for i, arg in enumerate(extra_compile_args):
+		if arg.startswith('-Werror'):
+			_to_pop.extend([i])
+		if arg == '/WX':
+			_to_pop.extend([i])
+	map_immed(extra_compile_args.pop, reversed(_to_pop))
+
+	# * Other Windows compiler fixes
 	if platform.system() == 'Windows':
 		# https://foss.heptapod.net/pypy/cffi/-/issues/516
 		# https://www.reddit.com/r/learnpython/comments/175js2u/def_extern_says_im_not_using_it_in_api_mode/
 		# https://learn.microsoft.com/en-us/cpp/build/reference/tc-tp-tc-tp-specify-source-file-type?view=msvc-170
 		extra_compile_args.append('/TC')
 
-	libraries = []
-	if platform.system() == 'Windows':
 		# https://stackoverflow.com/questions/69900013/link-error-cannot-build-python-c-extension-in-windows
 		# https://learn.microsoft.com/en-us/windows/win32/seccrypto/required-libraries
 		libraries.append('Advapi32')
 
-	include_dirs = [(build_root), (common_dir)]
+	# * Other Mac OS compiler fixes
+	if platform.system() == 'Darwin':
+		# https://github.com/JamesTheAwesomeDude/pypqc/issues/9
+		# https://github.com/actions/runner-images/issues/1938
+		extra_compile_args.extend([
+		    '-Wno-error=implicit-function-declaration',
+		    '-Wno-error=macro-redefined',
+		])
 
 	# 5. create, return #
 
