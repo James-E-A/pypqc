@@ -1,0 +1,99 @@
+I, Philippe Gaborit, University of Limoges, 123 av. A. Thomas, 87000 Limoges France
+am the owner of the following patents and/or patent applications: “Cryptographic method for
+communicating confidential information” US9094189 B2, and “Procédé cryptographique de
+communication d'une information confidentielle” FR 10/51190, and do hereby commit and agree
+to grant to any interested party on a worldwide basis, if the cryptosystem known as, HQC
+is selected for standardization, in consideration of its evaluation and selection by NIST, a non-
+exclusive license for the purpose of implementing the standard:
+
+without compensation, and under reasonable terms and conditions that are
+demonstrably free of any unfair discrimination.
+
+I further do hereby commit and agree to license such party on the same basis with respect to any
+other patent application or patent hereafter granted to me, or owned or controlled by me, that is
+or may be necessary for the purpose of implementing the standard.
+
+I further do hereby commit and agree that I will include, in any documents transferring
+ownership of each patent and patent application, provisions to ensure that the commitments and
+assurances made by me are binding on the transferee and any future transferee.
+
+I further do hereby commit and agree that these commitments and assurances are intended by
+me to be binding on successors-in-interest of each patent and patent application, regardless of
+whether such provisions are included in the relevant transfer documents.
+
+I further do hereby grant to the U.S. Government, during the public review and the evaluation
+process, and during the lifetime of the standard, a nonexclusive, nontransferrable, irrevocable,
+paid-up worldwide license solely for the purpose of modifying my submitted cryptosystem’s
+specifications (e.g., to protect against a newly discovered vulnerability) for incorporation into
+the standard.
+-----
+I, Carlos Aguilar Melchor, of ENSEEIHT, 2 rue Charles Camichel, 31000 Tolouse, FRANCE
+am the owner of the following patents and/or patent applications: “Cryptographic method for
+communicating confidential information” US9094189 B2, and “Procédé cryptographique de
+communication d'une information confidentielle” FR 10/51190, and do hereby commit and agree
+to grant to any interested party on a worldwide basis, if the cryptosystem known as, HQC,
+is selected for standardization, in consideration of its evaluation and selection by NIST, a non-
+exclusive license for the purpose of implementing the standard:
+
+without compensation, and under reasonable terms and conditions that are
+demonstrably free of any unfair discrimination.
+
+I further do hereby commit and agree to license such party on the same basis with respect to any
+other patent application or patent hereafter granted to me, or owned or controlled by me, that is
+or may be necessary for the purpose of implementing the standard.
+
+I further do hereby commit and agree that I will include, in any documents transferring
+ownership of each patent and patent application, provisions to ensure that the commitments and
+assurances made by me are binding on the transferee and any future transferee.
+
+I further do hereby commit and agree that these commitments and assurances are intended by
+me to be binding on successors-in-interest of each patent and patent application, regardless of
+whether such provisions are included in the relevant transfer documents.
+
+I further do hereby grant to the U.S. Government, during the public review and the evaluation
+process, and during the lifetime of the standard, a nonexclusive, nontransferrable, irrevocable,
+paid-up worldwide license solely for the purpose of modifying my submitted cryptosystem’s
+specifications (e.g., to protect against a newly discovered vulnerability) for incorporation into
+the standard.
+-----
+I, Marion BLIN, interim Regional Delegate of CENTRE NATIONAL DE
+LA RECHERCHE SCIENTIFIQUE, 3 rue Michel Ange, 75794 PARIS
+cedex 19 FRANCE, am the authorized representative of the owner of
+the following patent(s) and/or patent application(s):
+
+ - French Priority Patent: Procédé cryptographique de
+   communication d’une information confidentielle, FR 10/51190,
+   February 18th, 2010, and its validated extensions in France, in
+   Germany, in Swiss, in United Kingdom, United States, and in
+   Japan,
+
+and do hereby commit and agree to grant to any interested party on a
+worldwide basis, if the cryptosystem known as HQC is selected for
+standardization, in consideration of its evaluation and selection by
+NIST, a non-exclusive license for the purpose of implementing the
+standard:
+
+without compensation and under reasonable terms and conditions
+that are demon- strably free of any unfair discrimination.
+
+I further do hereby commit and agree to license such party on the
+same basis with respect to any other patent application or patent
+hereafter granted to me, or owned or controlled by me, that is or may
+be necessary for the purpose of implementing the standard.
+
+I further do hereby commit and agree that I will include, in any
+documents transferring ownership of each patent and patent
+application, provisions to ensure that the commitments and assurances
+made by me are binding on the transferee and any future transferee.
+
+I further do hereby commit and agree that these commitments and
+assurances are in- tended by me to be binding on successors-in-
+interest of each patent and patent application, regardless of whether
+such provisions are included in the relevant transfer documents.
+
+I further do hereby grant to the U.S. Government, during the public
+review and the evaluation process, and during the lifetime of the
+standard, a nonexclusive, nontransferrable, irrevocable, paid-up
+worldwide license solely for the purpose of modifying my submitted
+cryptosystem’s specifications (e.g., to protect against a newly
+discovered vulnerability) for incorporation into the standard.
