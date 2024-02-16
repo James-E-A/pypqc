@@ -66,11 +66,13 @@ jobs:
         uses: docker/setup-qemu-action@v3
 
       - name: Install cibuildwheel
-        run: python scripts/_run-cibw.py install
+        run: python -c "import os,subprocess,sys;CIBW_VER = os.environ.get('_CIBW_VER','2.16.3');subprocess.check_call([sys.executable,'-m','pip','install',f'cibuildwheel == {CIBW_VER}'])"
 
       - name: Build wheels
         # https://github.com/pypa/cibuildwheel/issues/173#issuecomment-1501236916
-        run: python scripts/_run-cibw.py build dist/
+        run: >
+          python -c "import pathlib,subprocess,sys;target=Path(sys.argv[1]);subprocess.check_call([sys.executable,'-m','cibuildwheel',*target.glob('*'),'--output-dir',target])"
+          dist/
         env:
           CIBW_BUILD: ${{ matrix.cibw_build }}
           CIBW_ARCHS: ${{ matrix.cibw_archs }}
