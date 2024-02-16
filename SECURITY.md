@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-* `0.6.X`
+* 0.6.X
 
 ## Reporting a Vulnerability
 
@@ -27,12 +27,12 @@ If they claim no patch is available, you may have to escalate:
 * Falcon: https://falcon-sign.info/falcon.pdf#:~:text=Zhang-,falcon,ens%2Efr
 
 If upstream has already issued an update, but we have not included it,
-please open a ticket on the issue tracker about that.
+please open a ticket on our issue tracker about that.
 
 ### Vulnerabilities in the bindings
 
 If the vulnerability is *not* with the actual algorithms, but with our
-Python bindings, please open a ticket on the issue tracker about that.
+Python bindings, please open a ticket on our issue tracker about that.
 
 ## Reporting a Supply-Chain Compromise
 
