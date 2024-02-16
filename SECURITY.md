@@ -38,4 +38,4 @@ Python bindings, please open a ticket on our issue tracker about that.
 
 If you believe some element of the supply chain has been compromised
 (e.g. pypqc has merged fake commits, or the PyPI project page has been
-compromised, etc.), please e-mail james<dot>edington<?>uah.edu ASAP.
+compromised, etc.), please e-mail james{{dot}}edington{{?}}uah.edu ASAP.
