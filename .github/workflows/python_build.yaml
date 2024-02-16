@@ -10,9 +10,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
       - name: install dev requirements
-        run: python -m pip install -r requirements-dev.txt
+        run: python scripts/install-dev-reqs.py
       - name: build sdist
-        run: python -m build --sdist && twine check ./dist/*
+        run: python scripts/build-sdist.py
       - name: upload sdist
         uses: actions/upload-artifact@v4
         with:
@@ -58,11 +58,6 @@ jobs:
         with:
           name: sdist
           path: ./dist/
-      - uses: tj-actions/glob@v20
-        # FIXME? use a more programmatic or integrated solution here
-        id: sdist_glob
-        with:
-          files: ./dist/*
 
       # Used to host cibuildwheel
       - uses: actions/setup-python@v3
@@ -71,11 +66,11 @@ jobs:
         uses: docker/setup-qemu-action@v3
 
       - name: Install cibuildwheel
-        run: python -m pip install cibuildwheel==2.16.3
+        run: python scripts/_run-cibw.py install
 
       - name: Build wheels
         # https://github.com/pypa/cibuildwheel/issues/173#issuecomment-1501236916
-        run: python -m cibuildwheel ${{ steps.sdist_glob.outputs.paths }} --output-dir ./dist
+        run: python scripts/_run-cibw.py build dist/
         env:
           CIBW_BUILD: ${{ matrix.cibw_build }}
           CIBW_ARCHS: ${{ matrix.cibw_archs }}
