@@ -36,6 +36,7 @@ def patent_notice(patents, subject, severity, links, stacklevel=0):
 	if severity == 1:
 		warn(dedent(f"""\
 			{subject} may be protected under patent(s) {'; '.join(patents)}.
+			
 			If you rely on this library via PyPI, it could break at any time if I'm forced by the patentholders to remove this module.
 			Additionally, the patentholders might impose on you *additional* terms, beyond those stated in the software's license.
 			
@@ -49,6 +50,7 @@ def patent_notice(patents, subject, severity, links, stacklevel=0):
 	if severity == 2:
 		warn(dedent(f"""\
 			{subject} may be protected under patent(s) {'; '.join(patents)}.
+			
 			ITS LICENSING STATUS FOR PUBLIC USE IS DISPUTED OR UNKNOWN AT THIS TIME.
 			If you rely on this library via PyPI, it could break at any time if I'm forced by the patentholders to remove this module.
 			Additionally, the patentholders might impose on you *additional* terms, beyond those stated in the software's license.
@@ -63,6 +65,7 @@ def patent_notice(patents, subject, severity, links, stacklevel=0):
 	if severity == 3:
 		warn(dedent(f"""\
 			{subject} may be protected under patent(s) {'; '.join(patents)}.
+			
 			IT MIGHT NOT BE LICENSED FOR PUBLIC USE AT THIS TIME.
 			If you rely on this library via PyPI, it could break at any time if I'm forced by the patentholders to remove this module.
 			Additionally, the patentholders might impose on you *additional* terms, beyond those stated in the software's license.
