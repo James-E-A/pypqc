@@ -6,7 +6,7 @@ import sys
 subprocess.check_call([
 	sys.executable, '-m', 'build',
 	'--sdist'
-)]
+])
 
 subprocess.check_call([
 	sys.executable, '-m', 'twine',
