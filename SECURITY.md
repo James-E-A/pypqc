@@ -1,16 +1,12 @@
-Security Policy
-===============
+# Security Policy
 
-Supported Versions
-------------------
+## Supported Versions
 
-* ``0.6.X``
+* `0.6.X`
 
-Reporting a Vulnerability
--------------------------
+## Reporting a Vulnerability
 
-Vulnerabilities in the actual algorithms
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Vulnerabilities in the actual algorithms
 
 First, check to see if upstream has issued any updates, and open a
 ticket with them if necessary according to their policy:
@@ -33,14 +29,12 @@ If they claim no patch is available, you may have to escalate:
 If upstream has already issued an update, but we have not included it,
 please open a ticket on the issue tracker about that.
 
-Vulnerabilities in the bindings
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Vulnerabilities in the bindings
 
 If the vulnerability is *not* with the actual algorithms, but with our
 Python bindings, please open a ticket on the issue tracker about that.
 
-Reporting a Supply-Chain Compromise
------------------------------------
+## Reporting a Supply-Chain Compromise
 
 If you believe some element of the supply chain has been compromised
 (e.g. pypqc has merged fake commits, or the PyPI project page has been
