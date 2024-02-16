@@ -1,6 +1,6 @@
 recursive-include pqc *.py
 recursive-include cffi_modules *.py
-recursive-include scripts
+recursive-include scripts *
 # (Thank you setuptools, very cool)
 recursive-exclude pqc *.py[cio]
 recursive-exclude cffi_modules *.py[co]
