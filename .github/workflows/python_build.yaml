@@ -71,7 +71,7 @@ jobs:
       - name: Build wheels
         # https://github.com/pypa/cibuildwheel/issues/173#issuecomment-1501236916
         run: >
-          python -c "import pathlib,subprocess,sys;target=Path(sys.argv[1]);subprocess.check_call([sys.executable,'-m','cibuildwheel',*target.glob('*'),'--output-dir',target])"
+          python -c "import pathlib,subprocess,sys;target=pathlib.Path(sys.argv[1]);subprocess.check_call([sys.executable,'-m','cibuildwheel',*target.glob('*'),'--output-dir',target])"
           dist/
         env:
           CIBW_BUILD: ${{ matrix.cibw_build }}
