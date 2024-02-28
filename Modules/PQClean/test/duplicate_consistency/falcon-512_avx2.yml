@@ -9,6 +9,11 @@ consistency_checks:
       - pqclean.c
       - vrfy.c
   - source:
+      scheme: falcon-512
+      implementation: aarch64
+    files:
+      - api.h
+  - source:
       scheme: falcon-1024
       implementation: clean
     files:
@@ -25,6 +30,49 @@ consistency_checks:
       - common.c
       - fft.c
       - fpr.c
+      - keygen.c
+      - rng.c
+      - sign.c
+      - vrfy.c
+  - source:
+      scheme: falcon-512-padded
+      implementation: clean
+    files:
+      - codec.c
+      - common.c
+      - vrfy.c
+  - source:
+      scheme: falcon-512-padded
+      implementation: avx2
+    files:
+      - fpr.h
+      - inner.h
+      - codec.c
+      - common.c
+      - fft.c
+      - fpr.c
+      - keygen.c
+      - rng.c
+      - sign.c
+      - vrfy.c
+  - source:
+      scheme: falcon-1024-padded
+      implementation: clean
+    files:
+      - codec.c
+      - common.c
+      - vrfy.c
+  - source:
+      scheme: falcon-1024-padded
+      implementation: avx2
+    files:
+      - fpr.h
+      - inner.h
+      - codec.c
+      - common.c
+      - fft.c
+      - fpr.c
+      - keygen.c
       - rng.c
       - sign.c
       - vrfy.c
