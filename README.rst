@@ -9,6 +9,10 @@ KEMs
 
 McEliece, Kyber, and HQC are currently provided, all with the same interface.::
 
+    # Available: hqc_128, hqc_192, hqc_256,
+    # kyber512, kyber768, kyber1024,
+    # mceliece348864, mceliece460896,
+    # mceliece6688128, mceliece6960119, mceliece8192128
     from pqc.kem import mceliece6960119 as kemalg
     
     
@@ -36,6 +40,14 @@ Signature Algorithms
 
 SPHINCS+, Dilithium, and Falcon are provided, all with the same interface.::
 
+    # Supported: dilithium2, dilithium3, dilithium5,
+    # falcon_512, falcon_512_padded, falcon_1024, falcon_1024_padded,
+    # sphincs_sha2_128f_simple, sphincs_sha2_128s_simple,
+    # sphincs_shake_128f_simple, sphincs_shake_128s_simple,
+    # sphincs_sha2_192f_simple, sphincs_sha2_192s_simple,
+    # sphincs_shake_192f_simple, sphincs_shake_192s_simple,
+    # sphincs_sha2_256f_simple, sphincs_sha2_256s_simple,
+    # sphincs_shake_256f_simple, sphincs_shake_256s_simple
     from pqc.sign import sphincs_shake_256s_simple as sigalg
     
     
@@ -53,12 +65,11 @@ SPHINCS+, Dilithium, and Falcon are provided, all with the same interface.::
     sigalg.verify(sig, MY_MESSAGE, pk)
 
 Regarding SPHINCS+: the Simple version is included; the Robust version is is not;
-SHA256 and SHAKE256 are included; Haraka is not. These decisions are all inherited
-from PQClean; I don't know much about their rationale.
+SHA256 and SHAKE256 are included; Haraka is not. See https://github.com/PQClean/PQClean/discussions/548#discussioncomment-8565116
+for more information.
 
-Regarding Falcon: the Compressed version is included.
-The Padded version is not included, but TODO as soon as upstream adds it;
-the CT version is probably not going to be included.
+Regarding Falcon: the Compressed and Padded versions are included, and are able to
+``verify()`` each others' signatures. The CT version is not currently planned.
 
 Development
 ===========
