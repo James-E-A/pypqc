@@ -14,16 +14,11 @@ def make_sign_ffi(build_root, extra_c_header_sources=frozenset(), extra_cdefs=fr
 	c_header_sources = [dedent("""\
 	// Public signature interface
 	#include "api.h"
-	int crypto_sign_keypair(uint8_t *pk, uint8_t *sk) {
-		return %(namespace)scrypto_sign_keypair(pk, sk);}
-	int crypto_sign_signature(uint8_t *sig, size_t *siglen, const uint8_t *m, size_t mlen, const uint8_t *sk) {
-		return %(namespace)scrypto_sign_signature(sig, siglen, m, mlen, sk);}
-	int crypto_sign_verify(const uint8_t *sig, size_t siglen, const uint8_t *m, size_t mlen, const uint8_t *pk) {
-		return %(namespace)scrypto_sign_verify(sig, siglen, m, mlen, pk);}
-	int crypto_sign(uint8_t *sm, size_t *smlen, const uint8_t *m, size_t mlen, const uint8_t *sk) {
-		return %(namespace)scrypto_sign(sm, smlen, m, mlen, sk);}
-	int crypto_sign_open(uint8_t *m, size_t *mlen, const uint8_t *sm, size_t smlen, const uint8_t *pk) {
-		return %(namespace)scrypto_sign_open(m, mlen, sm, smlen, pk);}
+	#define crypto_sign_keypair %(namespace)scrypto_sign_keypair
+	#define crypto_sign_signature %(namespace)scrypto_sign_signature
+	#define crypto_sign_verify %(namespace)scrypto_sign_verify
+	#define crypto_sign %(namespace)scrypto_sign
+	#define crypto_sign_open %(namespace)scrypto_sign_open
 	""")]
 
 	cdefs.append(dedent("""\

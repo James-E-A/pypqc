@@ -12,12 +12,9 @@ def make_kem_ffi(build_root, extra_cdefs=frozenset(), extra_c_header_sources=fro
 	c_header_sources = [dedent("""\
 	// Public KEM interface
 	#include "api.h"
-	int crypto_kem_keypair(uint8_t *pk, uint8_t *sk) {
-		return %(namespace)scrypto_kem_keypair(pk, sk);}
-	int crypto_kem_enc(uint8_t *c, uint8_t *key, const uint8_t *pk) {
-		return %(namespace)scrypto_kem_enc(c, key, pk);}
-	int crypto_kem_dec(uint8_t *key, const uint8_t *c, const uint8_t *sk) {
-		return %(namespace)scrypto_kem_dec(key, c, sk);}
+	#define crypto_kem_keypair %(namespace)scrypto_kem_keypair
+	#define crypto_kem_enc %(namespace)scrypto_kem_enc
+	#define crypto_kem_dec %(namespace)scrypto_kem_dec
 	""")]
 
 	cdefs.append(dedent("""\
