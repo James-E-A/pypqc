@@ -4,35 +4,40 @@ from textwrap import dedent
 def make_sign_ffi(build_root, extra_c_header_sources=frozenset(), extra_cdefs=frozenset(), **k):
 	cdefs = [dedent("""\
 	// Public signature interface
-	int %(namespace)scrypto_sign_keypair(uint8_t *pk, uint8_t *sk);
-	int %(namespace)scrypto_sign_signature(uint8_t *sig, size_t *siglen, const uint8_t *m, size_t mlen, const uint8_t *sk);
-	int %(namespace)scrypto_sign_verify(const uint8_t *sig, size_t siglen, const uint8_t *m, size_t mlen, const uint8_t *pk);
-	int %(namespace)scrypto_sign(uint8_t *sm, size_t *smlen, const uint8_t *m, size_t mlen, const uint8_t *sk);
-	int %(namespace)scrypto_sign_open(uint8_t *m, size_t *mlen, const uint8_t *sm, size_t smlen, const uint8_t *pk);
-	#define %(namespace)sCRYPTO_SECRETKEYBYTES ...
-	#define %(namespace)sCRYPTO_PUBLICKEYBYTES ...
-	#define %(namespace)sCRYPTO_BYTES ...
+	int crypto_sign_keypair(uint8_t *pk, uint8_t *sk);
+	int crypto_sign_signature(uint8_t *sig, size_t *siglen, const uint8_t *m, size_t mlen, const uint8_t *sk);
+	int crypto_sign_verify(const uint8_t *sig, size_t siglen, const uint8_t *m, size_t mlen, const uint8_t *pk);
+	int crypto_sign(uint8_t *sm, size_t *smlen, const uint8_t *m, size_t mlen, const uint8_t *sk);
+	int crypto_sign_open(uint8_t *m, size_t *mlen, const uint8_t *sm, size_t smlen, const uint8_t *pk);
 	""")]
 
 	c_header_sources = [dedent("""\
 	// Public signature interface
 	#include "api.h"
+	int crypto_sign_keypair(uint8_t *pk, uint8_t *sk) {
+		return %(namespace)scrypto_sign_keypair(pk, sk);}
+	int crypto_sign_signature(uint8_t *sig, size_t *siglen, const uint8_t *m, size_t mlen, const uint8_t *sk) {
+		return %(namespace)scrypto_sign_signature(sig, siglen, m, mlen, sk);}
+	int crypto_sign_verify(const uint8_t *sig, size_t siglen, const uint8_t *m, size_t mlen, const uint8_t *pk) {
+		return %(namespace)scrypto_sign_verify(sig, siglen, m, mlen, pk);}
+	int crypto_sign(uint8_t *sm, size_t *smlen, const uint8_t *m, size_t mlen, const uint8_t *sk) {
+		return %(namespace)scrypto_sign(sm, smlen, m, mlen, sk);}
+	int crypto_sign_open(uint8_t *m, size_t *mlen, const uint8_t *sm, size_t smlen, const uint8_t *pk) {
+		return %(namespace)scrypto_sign_open(m, mlen, sm, smlen, pk);}
 	""")]
 
 	cdefs.append(dedent("""\
 	// Site interface
-	static const char _NAMESPACE[...];
-	typedef uint8_t %(namespace)scrypto_secretkey[...];
-	typedef uint8_t %(namespace)scrypto_publickey[...];
-	typedef uint8_t %(namespace)scrypto_signature[...];
+	typedef uint8_t _CRYPTO_SECRETKEY_t[...];
+	typedef uint8_t _CRYPTO_PUBLICKEY_t[...];
+	typedef uint8_t _CRYPTO_SIGNATURE_t[...];
 	"""))
 
 	c_header_sources.append(dedent("""\
 	// Site interface
-	static const char _NAMESPACE[] = "%(namespace)s";
-	typedef uint8_t %(namespace)scrypto_secretkey[%(namespace)sCRYPTO_SECRETKEYBYTES];
-	typedef uint8_t %(namespace)scrypto_publickey[%(namespace)sCRYPTO_PUBLICKEYBYTES];
-	typedef uint8_t %(namespace)scrypto_signature[%(namespace)sCRYPTO_BYTES];
+	typedef uint8_t _CRYPTO_SECRETKEY_t[%(namespace)sCRYPTO_SECRETKEYBYTES];
+	typedef uint8_t _CRYPTO_PUBLICKEY_t[%(namespace)sCRYPTO_PUBLICKEYBYTES];
+	typedef uint8_t _CRYPTO_SIGNATURE_t[%(namespace)sCRYPTO_BYTES];
 	"""))
 
 	cdefs.extend(extra_cdefs)
