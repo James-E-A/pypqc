@@ -1,6 +1,6 @@
 [project]
 name = 'pypqc'
-version = '0.0.7.0-a2'
+version = '0.0.7.0-a3'
 description = 'Python bindings for the "PQClean" post-quantum cryptography library.'
 readme = 'README.rst'
 license.file = 'COPYING.rst'

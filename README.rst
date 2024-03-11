@@ -41,7 +41,7 @@ Signature Algorithms
 SPHINCS+, Dilithium, and Falcon are provided, all with the same interface.::
 
     # Supported: dilithium2, dilithium3, dilithium5,
-    # falcon_512, falcon_512_padded, falcon_1024, falcon_1024_padded,
+    # falcon_512, falcon_padded_512, falcon_1024, falcon_padded_1024,
     # sphincs_sha2_128f_simple, sphincs_sha2_128s_simple,
     # sphincs_shake_128f_simple, sphincs_shake_128s_simple,
     # sphincs_sha2_192f_simple, sphincs_sha2_192s_simple,
