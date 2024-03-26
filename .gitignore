@@ -5,6 +5,9 @@ __pycache__/
 /dist/
 /build/
 
+# Project-specific excludes
+/pqc/_lib/
+
 # CFFI seemingly generates this folder ONLY on Windows;
 # I can't find any documentation about it...
 /Release/

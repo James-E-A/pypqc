@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.7 (WIP)
+
+- Added Falcon-Padded-512 and Falcon-Padded-1024.
+- Added compatibility with Padded signatures to Falcon-512 and Falcon-1024.
+
 ## 0.0.6.2 (2024-02-09)
 
 - Added Mac OS support.
@@ -7,6 +12,8 @@
 ## 0.0.6.1 (2024-01-26)
 
 - Upstream security fix for KyberSlash (both versions).
+  https://github.com/pq-crystals/kyber/commit/dda29cc63af721981ee2c831cf00822e69be3220
+  https://github.com/pq-crystals/kyber/commit/11d00ff1f20cfca1f72d819e5a45165c1e0a2816
   https://github.com/PQClean/PQClean/commit/3b43bc6fe46fe47be38f87af5019a7f1462ae6dd
 
 ## 0.0.6.2 (2024-01-22)
@@ -15,8 +22,9 @@
 
 ## 0.0.5 (2024-01-15)
 
-- Added Falcon, with parameter sets Falcon-512 and Falcon-1024 (compressed
-  version only, pending upstream https://www.github.com/PQClean/PQClean/pull/530.)
+- Added Falcon signatures (detached only) with parameter sets Falcon-512
+  and Falcon-1024 (compressed version only, pending upstream
+  https://www.github.com/PQClean/PQClean/pull/530.)
 
 ## 0.0.4 (2024-01-15)
 
