@@ -4,37 +4,33 @@ from textwrap import dedent
 def make_kem_ffi(build_root, extra_cdefs=frozenset(), extra_c_header_sources=frozenset(), **k):
 	cdefs = [dedent("""\
 	// Public KEM interface
-	static const char %(namespace)sCRYPTO_ALGNAME[...];
-	int %(namespace)scrypto_kem_keypair(uint8_t *pk, uint8_t *sk);
-	int %(namespace)scrypto_kem_enc(uint8_t *c, uint8_t *key, const uint8_t *pk);
-	int %(namespace)scrypto_kem_dec(uint8_t *key, const uint8_t *c, const uint8_t *sk);
-	#define %(namespace)sCRYPTO_SECRETKEYBYTES ...
-	#define %(namespace)sCRYPTO_PUBLICKEYBYTES ...
-	#define %(namespace)sCRYPTO_BYTES ...
-	#define %(namespace)sCRYPTO_CIPHERTEXTBYTES ...
+	int crypto_kem_keypair(uint8_t *pk, uint8_t *sk);
+	int crypto_kem_enc(uint8_t *c, uint8_t *key, const uint8_t *pk);
+	int crypto_kem_dec(uint8_t *key, const uint8_t *c, const uint8_t *sk);
 	""")]
 
 	c_header_sources = [dedent("""\
 	// Public KEM interface
 	#include "api.h"
+	#define crypto_kem_keypair %(namespace)scrypto_kem_keypair
+	#define crypto_kem_enc %(namespace)scrypto_kem_enc
+	#define crypto_kem_dec %(namespace)scrypto_kem_dec
 	""")]
 
 	cdefs.append(dedent("""\
 	// Site interface
-	static const char _NAMESPACE[...];
-	typedef uint8_t %(namespace)scrypto_secretkey[...];
-	typedef uint8_t %(namespace)scrypto_publickey[...];
-	typedef uint8_t %(namespace)scrypto_kem_plaintext[...];
-	typedef uint8_t %(namespace)scrypto_kem_ciphertext[...];
+	typedef uint8_t _CRYPTO_SECRETKEY_t[...];
+	typedef uint8_t _CRYPTO_PUBLICKEY_t[...];
+	typedef uint8_t _CRYPTO_KEM_PLAINTEXT_t[...];
+	typedef uint8_t _CRYPTO_KEM_CIPHERTEXT_t[...];
 	"""))
 
 	c_header_sources.append(dedent("""\
 	// Site interface
-	static const char _NAMESPACE[] = "%(namespace)s";
-	typedef uint8_t %(namespace)scrypto_secretkey[%(namespace)sCRYPTO_SECRETKEYBYTES];
-	typedef uint8_t %(namespace)scrypto_publickey[%(namespace)sCRYPTO_PUBLICKEYBYTES];
-	typedef uint8_t %(namespace)scrypto_kem_plaintext[%(namespace)sCRYPTO_BYTES];
-	typedef uint8_t %(namespace)scrypto_kem_ciphertext[%(namespace)sCRYPTO_CIPHERTEXTBYTES];
+	typedef uint8_t _CRYPTO_SECRETKEY_t[%(namespace)sCRYPTO_SECRETKEYBYTES];
+	typedef uint8_t _CRYPTO_PUBLICKEY_t[%(namespace)sCRYPTO_PUBLICKEYBYTES];
+	typedef uint8_t _CRYPTO_KEM_PLAINTEXT_t[%(namespace)sCRYPTO_BYTES];
+	typedef uint8_t _CRYPTO_KEM_CIPHERTEXT_t[%(namespace)sCRYPTO_CIPHERTEXTBYTES];
 	"""))
 
 	cdefs.extend(extra_cdefs)

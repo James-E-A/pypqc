@@ -20,6 +20,14 @@ class Scheme:
     def namespace_prefix(self):
         return 'PQCLEAN_{}_'.format(self.name.upper()).replace('-', '')
 
+    # only useful for Falcon
+    def padded_namespace_prefix(self):
+        if self.name.startswith('falcon-'):
+            return 'PQCLEAN_{}PADDED{}_'.format(*self.name.upper().split('-'))
+        else: # return a dummy value
+            return self.namespace_prefix()
+            
+
     @staticmethod
     @lru_cache(maxsize=None)
     def by_name(scheme_name):
@@ -136,6 +144,11 @@ class Implementation:
 
     def namespace_prefix(self):
         return '{}{}_'.format(self.scheme.namespace_prefix(),
+                              self.name.upper()).replace('-', '')
+
+    # only useful for Falcon
+    def padded_namespace_prefix(self):
+        return '{}{}_'.format(self.scheme.padded_namespace_prefix(),
                               self.name.upper()).replace('-', '')
 
     def supported_on_os(self, os: Optional[str] = None) -> bool:

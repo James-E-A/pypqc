@@ -4,6 +4,11 @@ import re
 from textwrap import dedent
 from warnings import warn
 
+
+class PatentWarning(UserWarning):
+	pass
+
+
 def extant_with_other_suffix(p):
 	assert not re.match(r'[\?\*\[]', p.stem)
 	pseudo_p = p.with_suffix('.*')
@@ -44,6 +49,7 @@ def patent_notice(patents, subject, severity, links, stacklevel=0):
 			""") + '\n'.join(links) + dedent(f"""
 			
 			If the continued use of {subject} is important to you, consider hiring a lawyer and/or purchasing a license for it."""),
+			PatentWarning,
 			stacklevel=2+stacklevel)
 		return
 
@@ -59,6 +65,7 @@ def patent_notice(patents, subject, severity, links, stacklevel=0):
 			""") + '\n'.join(links) + dedent(f"""
 			
 			If the continued use of {subject} is important to you, consider hiring a lawyer and/or purchasing a license for it."""),
+			PatentWarning,
 			stacklevel=2+stacklevel)
 		return
 
@@ -74,6 +81,7 @@ def patent_notice(patents, subject, severity, links, stacklevel=0):
 			""") + '\n'.join(links) + dedent(f"""
 			
 			If the continued use of {subject} is important to you, consider hiring a lawyer and/or purchasing a license for it."""),
+			PatentWarning,
 			stacklevel=2+stacklevel)
 		return
 
