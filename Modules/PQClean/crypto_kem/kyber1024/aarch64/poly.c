@@ -39,6 +39,7 @@
 #include "reduce.h"
 #include "cbd.h"
 #include "symmetric.h"
+#include "verify.h"
 
 /*************************************************
 * Name:        poly_compress
@@ -184,12 +185,11 @@ void poly_frombytes(int16_t r[KYBER_N], const uint8_t a[KYBER_POLYBYTES]) {
 **************************************************/
 void poly_frommsg(int16_t r[KYBER_N], const uint8_t msg[KYBER_INDCPA_MSGBYTES]) {
     unsigned int i, j;
-    int16_t mask;
 
     for (i = 0; i < KYBER_N / 8; i++) {
         for (j = 0; j < 8; j++) {
-            mask = -(int16_t)((msg[i] >> j) & 1);
-            r[8 * i + j] = mask & ((KYBER_Q + 1) / 2);
+            r->coeffs[8*i+j] = 0;
+            cmov_int16(r->coeffs+8*i+j, ((KYBER_Q+1)/2), (msg[i] >> j)&1);
         }
     }
 }
