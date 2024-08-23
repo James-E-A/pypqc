@@ -3,6 +3,7 @@
 
 from distutils.sysconfig import parse_makefile
 from pathlib import Path
+import platform
 
 _NEWLINE = '\n'
 _NEWLINE_REPR = '\\n'
@@ -21,10 +22,6 @@ def main():
 				# Polyfill the broken/missing checkout.
 				proj_libdir.unlink(missing_ok=True)
 				subprocess.check_call(["MKLINK", "/J", proj_libdir, Path('..', '..', 'lib')], shell=True)
-			else:
-				# temporary fix until I can get this checked into Git from a Unix machine
-				proj_libdir.unlink(missing_ok=True)
-				proj_libdir.symlink_to(Path('..', '..', 'lib'))
 
 		for alg_packagedir in (projdir / 'src' / 'pqc' / '_cffi_modules').iterdir():
 			package = f'pqc._cffi_modules.{alg_packagedir.name}'
