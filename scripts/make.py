@@ -4,6 +4,7 @@
 from distutils.sysconfig import parse_makefile
 from pathlib import Path
 import platform
+import re
 import subprocess
 
 _NEWLINE = '\n'
@@ -49,23 +50,37 @@ def make_spec(basedir, *, parent_package, relative_to):
 	module_name = f'{parent_package}.{libname}'
 	cdefs = []
 	c_header_sources = []
+	depends = []
 	extra_objects = []
 	extra_compile_args = []
 	include_dirs = []
 	sources = []
 
+	c_header_sources.append((basedir / 'api.h').read_text())
+	cdefs.extend(re.findall(r'(?m)^(?:\w+.*?;)$', (basedir / 'api.h').read_text()))
+
+	if 'HEADERS' in makefile_parsed:
+		depends.extend(
+			(basedir / fn).relative_to(relative_to) for fn in (s.strip() for s in makefile_parsed['HEADERS'].split())
+		)
+
 	if 'SOURCES' in makefile_parsed:
 		sources.extend(
 			(basedir / fn).relative_to(relative_to) for fn in (s.strip() for s in makefile_parsed['SOURCES'].split())
 		)
+
 	elif 'OBJECTS' in makefile_parsed:
-		sources.extend(
-			next(basedir.glob(Path(fn).with_suffix('.*').name)).relative_to(relative_to) for fn in (s.strip() for s in makefile_parsed['OBJECTS'].split())
-		)
+		for p in (
+			p.relative_to(relative_to) for fn in (s.strip() for s in makefile_parsed['OBJECTS'].split()) for p in basedir.glob(Path(fn).with_suffix('.*').name)
+		):
+			if p in depends:
+				continue
+			sources.append(p)
 
 	return {
 		'module_name': module_name,
 		'cdefs': cdefs,
+		'depends': depends,
 		'c_header_sources': c_header_sources,
 		'extra_objects': extra_objects,
 		'extra_compile_args': extra_compile_args,
@@ -97,11 +112,12 @@ ffibuilder = cffi.FFI()
 ffibuilder.set_source(
 	{spec.pop('module_name', None)!r},
 	{c_header_sources_repr},
-	sources={[p.as_posix() for p in spec.pop('sources', [])]!r},  # needs to be POSIX format on every platform
-	include_dirs={[p.as_posix() for p in spec.pop('include_dirs', [])]!r},  # needs to be POSIX format on every platform
-	extra_objects={spec.get('extra_objects', [])!r},
-	extra_compile_args={spec.get('extra_compile_args', [])!r},
-	libraries={spec.get('libraries', [])!r},
+	sources={[p.as_posix() for p in spec.pop('sources', [])]!r},
+	include_dirs={[p.as_posix() for p in spec.pop('include_dirs', [])]!r},
+	extra_objects={[p.as_posix() for p in spec.pop('extra_objects', [])]!r},
+	extra_compile_args={spec.pop('extra_compile_args', [])!r},
+	depends={[p.as_posix() for p in spec.pop('depends', [])]!r},
+	libraries={spec.pop('libraries', [])!r},
 	py_limited_api=True{''.join(f'')}\
 {''.join(f',{_NEWLINE}{_TAB}{k}={v!r}' for k, v in spec.items())}
 )
