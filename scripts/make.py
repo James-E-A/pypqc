@@ -4,6 +4,7 @@
 from distutils.sysconfig import parse_makefile
 from pathlib import Path
 import platform
+import subprocess
 
 _NEWLINE = '\n'
 _NEWLINE_REPR = '\\n'
@@ -21,7 +22,7 @@ def main():
 				# Known bug on Windows systems without Administrator access.
 				# Polyfill the broken/missing checkout.
 				proj_libdir.unlink(missing_ok=True)
-				subprocess.check_call(["MKLINK", "/J", proj_libdir, Path('..', '..', 'lib')], shell=True)
+				subprocess.check_call(["MKLINK", "/J", proj_libdir, Path('..', '..', 'lib')], shell=True, cwd=proj_libdir.parent)
 
 		for alg_packagedir in (projdir / 'src' / 'pqc' / '_cffi_modules').iterdir():
 			package = f'pqc._cffi_modules.{alg_packagedir.name}'
@@ -42,7 +43,6 @@ def main():
 
 
 def make_spec(basedir, *, parent_package, relative_to):
-	print("Building in", basedir)
 	makefile_parsed = parse_makefile(basedir / 'Makefile')
 	libname = Path(makefile_parsed['LIB']).stem
 
