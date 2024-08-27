@@ -1,0 +1,6 @@
+recursive-include cffi_modules *.py
+recursive-include lib/PQClean/crypto_sign/falcon* *
+
+#FIXME
+recursive-exclude lib/PQClean/crypto_*/*/aarch64 *
+recursive-exclude lib/PQClean/crypto_*/*/avx2 *

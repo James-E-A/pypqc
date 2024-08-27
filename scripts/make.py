@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # This should probably be converted into a Makefile
 
+from collections import deque
 from distutils.sysconfig import parse_makefile
 from pathlib import Path
 import platform
@@ -13,8 +14,8 @@ _TAB = '\t'
 
 def main():
 	root = Path(__file__).parent.parent
-	assert (root / 'src' / 'lib' / 'PQClean').exists()
-	for projdir in (root / 'src' / 'projects').iterdir():
+	assert (root / 'lib' / 'PQClean').exists()
+	for projdir in (root / 'projects').iterdir():
 
 		proj_libdir = projdir / 'lib'
 		if (proj_libdir.is_file() or not proj_libdir.exists()):
@@ -25,7 +26,7 @@ def main():
 				proj_libdir.unlink(missing_ok=True)
 				subprocess.check_call(["MKLINK", "/J", proj_libdir, Path('..', '..', 'lib')], shell=True, cwd=proj_libdir.parent)
 
-		for alg_packagedir in (projdir / 'src' / 'pqc' / '_cffi_modules').iterdir():
+		for alg_packagedir in (projdir / 'src' / 'pqc' / '_lib').iterdir():
 			package = f'pqc._cffi_modules.{alg_packagedir.name}'
 			alg_type, alg_prefix = alg_packagedir.name.split('_')
 			for alg_dir in ((projdir / 'lib' / 'PQClean'
@@ -37,15 +38,14 @@ def main():
 						continue # FIXME
 
 					spec = make_spec(alg_impl_dir, parent_package=package, relative_to=projdir)
-					print(spec)
 					(projdir / 'cffi_modules').mkdir(exist_ok=True)
 					print(f"=====BEGIN SPEC=====\n{render_spec(spec)}\n=====END SPEC=====")
 					(projdir / 'cffi_modules' / f'{alg_dir.name}_{alg_impl_dir.name}.py').write_text(render_spec(spec))
 
 
 def make_spec(basedir, *, parent_package, relative_to):
-	makefile_parsed = parse_makefile(basedir / 'Makefile')
-	libname = Path(makefile_parsed['LIB']).stem
+	makefile_parsed = parse_makefile(basedir / ('Makefile.microsoft_nmake' if platform.system() == 'Windows' else 'Makefile'))
+	libname = Path(makefile_parsed['LIBRARY' if platform.system() == 'Windows' else 'LIB']).stem
 
 	module_name = f'{parent_package}.{libname}'
 	cdefs = []
@@ -54,9 +54,12 @@ def make_spec(basedir, *, parent_package, relative_to):
 	extra_objects = []
 	extra_compile_args = []
 	include_dirs = []
+	libraries = []
 	sources = []
 
-	c_header_sources.append((basedir / 'api.h').read_text())
+	c_header_sources.append('//Public interface\n#include "api.h"')
+	include_dirs.append((basedir / '..' / '..' / '..' / 'common').relative_to(relative_to))
+
 	cdefs.extend(re.findall(r'(?m)^(?:\w+.*?;)$', (basedir / 'api.h').read_text()))
 
 	if 'HEADERS' in makefile_parsed:
@@ -75,7 +78,47 @@ def make_spec(basedir, *, parent_package, relative_to):
 		):
 			if p in depends:
 				continue
-			sources.append(p)
+			if p.suffix in {'.c', '.cpp'}:
+				sources.append(p)
+			elif p.suffix in {'.s', '.S', '.asm'}:
+				extra_objects.append(p)
+			else:
+				depends.append(p)
+
+	if 'CFLAGS' in makefile_parsed:
+		extra_compile_args.extend(s.strip() for s in makefile_parsed['CFLAGS'].split())
+
+
+	# * Move "include" flags to setuptools
+	tmp = []
+	for i, arg in enumerate(extra_compile_args):
+		if arg.startswith('-I'):
+			include_dirs.append((basedir / arg[2:]).relative_to(relative_to))
+			tmp.extend([i])
+		if arg.startswith('/I'):
+			include_dirs.append((basedir / arg[2:]).relative_to(relative_to))
+			tmp.extend([i, i+1])
+	map_immed(extra_compile_args.pop, reversed(tmp))
+
+	# * FIXME is this a problem with PQClean, or with CFFI?
+	tmp = []
+	for i, arg in enumerate(extra_compile_args):
+		if arg.startswith('-Werror'):
+			tmp.extend([i])
+		if arg == '/WX':
+			tmp.extend([i])
+	map_immed(extra_compile_args.pop, reversed(tmp))
+
+	# * Other Windows compiler fixes
+	if platform.system() == 'Windows':
+		# https://foss.heptapod.net/pypy/cffi/-/issues/516
+		# https://www.reddit.com/r/learnpython/comments/175js2u/def_extern_says_im_not_using_it_in_api_mode/
+		# https://learn.microsoft.com/en-us/cpp/build/reference/tc-tp-tc-tp-specify-source-file-type?view=msvc-170
+		extra_compile_args.append('/TC')
+
+		# https://stackoverflow.com/questions/69900013/link-error-cannot-build-python-c-extension-in-windows
+		# https://learn.microsoft.com/en-us/windows/win32/seccrypto/required-libraries
+		libraries.append('Advapi32')
 
 	return {
 		'module_name': module_name,
@@ -85,6 +128,7 @@ def make_spec(basedir, *, parent_package, relative_to):
 		'extra_objects': extra_objects,
 		'extra_compile_args': extra_compile_args,
 		'include_dirs': include_dirs,
+		'libraries': libraries,
 		'sources': sources,
 	}
 
@@ -127,6 +171,10 @@ ffi = ffibuilder
 if __name__ == '__main__':
 	raise NotImplementedError
 """
+
+
+def map_immed(f, it, *, splat=False):
+	deque((starmap if splat else map)(f, it), 0)
 
 
 def repr_bigstring(s):

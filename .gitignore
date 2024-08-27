@@ -1,8 +1,11 @@
 __pycache__
 /.*venv*
-/dist
-/build
 /.hypothesis
+dist
+build
+
+# https://github.com/pypa/build/issues/610
+*.egg-info
 
 /.vscode
 

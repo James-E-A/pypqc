@@ -1,0 +1,8 @@
+recursive-include cffi_modules *.py
+recursive-include lib/PQClean/crypto_kem/kyber* *
+include lib/PQClean/common/randombytes*
+include lib/PQClean/common/fips202*
+
+#FIXME
+recursive-exclude lib/PQClean/crypto_*/*/aarch64 *
+recursive-exclude lib/PQClean/crypto_*/*/avx2 *
