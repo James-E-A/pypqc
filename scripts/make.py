@@ -42,7 +42,7 @@ from pqc._lib.kem_{alg_prefix}.lib{alg_dir.name.replace("-", "_")}_clean import 
 
 
 def keypair():
-	with ffi.new('uint8_t[]', lib.CRYPTO_PUBLICKEYBYTES) as pk,\
+	with ffi.new('uint8_t[]', lib.CRYPTO_PUBLICKEYBYTES) as pk,\\
 	     ffi.new('uint8_t[]', lib.CRYPTO_SECRETKEYBYTES) as sk:
 		errno = lib.crypto_kem_keypair(pk, sk)
 		if errno == 0:
@@ -52,8 +52,8 @@ def keypair():
 
 
 def encap(pk_bytes):
-	with ffi.new('uint8_t[]', lib.CRYPTO_CIPHERTEXTBYTES) as c,\
-	     ffi.new('uint8_t[]', lib.CRYPTO_BYTES) as key,\
+	with ffi.new('uint8_t[]', lib.CRYPTO_CIPHERTEXTBYTES) as c,\\
+	     ffi.new('uint8_t[]', lib.CRYPTO_BYTES) as key,\\
 	     ffi.from_buffer(pk_bytes) as pk: # FIXME validate length
 		errno = lib.crypto_kem_enc(c, key, pk)
 		if errno == 0:
@@ -63,8 +63,8 @@ def encap(pk_bytes):
 
 
 def decap(ct_bytes, sk_bytes):
-	with ffi.new('uint8_t[]', lib.CRYPTO_BYTES) as key,\
-	     ffi.from_buffer(ct_bytes) as c,\
+	with ffi.new('uint8_t[]', lib.CRYPTO_BYTES) as key,\\
+	     ffi.from_buffer(ct_bytes) as c,\\
 	     ffi.from_buffer(sk_bytes) as sk: # FIXME validate lengths
 		errno = lib.crypto_kem_dec(key, c, sk)
 		if errno == 0:
@@ -77,7 +77,45 @@ def decap(ct_bytes, sk_bytes):
 
 from pqc._lib.sign_{alg_prefix}.lib{alg_dir.name.replace("-", "_")}_clean import ffi, lib # TODO add optimized implementations
 
-raise NotImplementedError
+def keypair():
+	with ffi.new('uint8_t[]', lib.CRYPTO_PUBLICKEYBYTES) as pk,\\
+	     ffi.new('uint8_t[]', lib.CRYPTO_SECRETKEYBYTES) as sk:
+		errno = lib.crypto_sign_keypair(pk, sk)
+		if errno == 0:
+			return bytes(pk), bytes(sk)
+		else:
+			raise RuntimeError
+
+
+def sign(message, sk_bytes):
+	with ffi.new('CRYPTO_BYTES_t') as sig,\\
+	     ffi.new('size_t*') as siglen,\\
+	     ffi.from_buffer(message) as m,\\
+	     ffi.from_buffer(sk_bytes) as sk:
+		errno = lib.crypto_sign_signature(sig, siglen, m, len(m), sk)
+		if errno == 0:
+			return bytes(sig[0:siglen[0]])
+		else:
+			raise RuntimeError
+
+
+def verify(signature, message, pk_bytes):
+	with ffi.from_buffer(signature) as sig,\\
+	     ffi.from_buffer(message) as m,\\
+	     ffi.from_buffer(pk_bytes) as pk:
+		errno = lib.crypto_sign_verify(sig, len(sig), m, len(m), pk)
+		if errno == 0:
+			return
+		else:
+			raise ValueError("signature failed to verify.")
+
+
+def verify_bool(signature, message, pk_bytes):
+	with ffi.from_buffer(signature) as sig,\\
+	     ffi.from_buffer(message) as m,\\
+	     ffi.from_buffer(pk_bytes) as pk:
+		errno = lib.crypto_sign_verify(sig, len(sig), m, len(m), pk)
+		return bool(-errno)
 """ if alg_type == 'sign' else None)
 
 				for alg_impl_dir in (p for p in alg_dir.iterdir() if p.is_dir()):  # absolute path to implementation directory
@@ -147,6 +185,13 @@ for cdef in (re.sub(cdef_define_r, "\\\\1 ...", m[0]) for m in re.finditer(cdef_
 			continue
 	cdefs.append(re.sub(namespace_r, "\\\\2", cdef))
 	c_header_sources.append(f"#define {{m[2]}} {{m[1]}}")
+
+
+# Add internal utility fixed-array types for pypqc
+array_t_r = re.compile(rf'(?m)^#define ({{re.escape(namespace)}}(\\w+BYTES))\\s+(\\d+)')
+for m in re.finditer(array_t_r, api_src):
+	cdefs.append(f"typedef uint8_t {{m[2]}}_t[...];")
+	c_header_sources.append(f"typedef uint8_t {{m[2]}}_t[{{m[1]}}];")
 
 
 if 'SOURCES' in makefile_parsed:

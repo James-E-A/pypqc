@@ -60,6 +60,15 @@ for cdef in (re.sub(cdef_define_r, "\\1 ...", m[0]) for m in re.finditer(cdef_r,
 	c_header_sources.append(f"#define {m[2]} {m[1]}")
 
 
+# Add internal utility fixed-array types for pypqc
+array_t_r = re.compile(rf'(?m)^#define ({re.escape(namespace)}(\w+BYTES))\s+(\d+)')
+for m in re.finditer(array_t_r, api_src):
+	cdefs.append(f"typedef uint8_t {m[2]}_t[...];")
+	c_header_sources.append(f"typedef uint8_t {m[2]}_t[{m[1]}];")
+	print(cdefs[-1])
+	print(c_header_sources[-1])
+
+
 if 'SOURCES' in makefile_parsed:
 	for source in (Path(IMPL_DIR, s.strip()) for s in makefile_parsed['SOURCES'].split()):
 		if IS_WIN and source.suffix in {'.s', '.S', '.asm'}:

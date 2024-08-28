@@ -1,0 +1,26 @@
+[project]
+name = 'pypqc'
+version = '0.8.0-dev0'
+dependencies = [
+    'pypqc-cffi-bindings-libre',
+]
+classifiers = [
+    'License :: OSI Approved :: MIT License',
+    'License :: Public Domain',
+]
+license = {text = "MIT License"}
+
+[project.optional-dependencies]
+falcon = ['pypqc-cffi-bindings-falcon']
+hqc = ['pypqc-cffi-bindings-hqc']
+kyber = ['pypqc-cffi-bindings-kyber']
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[build-system]
+requires = [
+    'setuptools >= 49.5.0',
+    'wheel >= 0.30.0',
+]
+build-backend = "setuptools.build_meta"
