@@ -8,7 +8,7 @@ classifiers = [
     'License :: Other/Proprietary License',
     'License :: OSI Approved :: MIT License',
 ]
-license = {file = "LICENSE-Falcon.txt"}
+license = {file = "LICENSE-Falcon.md"}
 
 [tool.setuptools.packages.find]
 where = ["src"]

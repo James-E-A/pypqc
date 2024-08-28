@@ -12,7 +12,7 @@ import subprocess
 def main():
 	root = Path(__file__).parent.parent  # absolute path to monorepo root, may or may not equal cwd
 	assert (root / 'lib' / 'PQClean').exists()
-	for projdir in (root / 'projects').iterdir():  # absolute path to "project" dir, may or may not equal cwd
+	for projdir in (root / 'projects').glob('pypqc-cffi-bindings*'):  # absolute path to "project" dir, may or may not equal cwd
 		proj_packageroot = projdir / 'src'
 		(projdir / 'cffi_modules').mkdir(exist_ok=True)
 
@@ -21,16 +21,64 @@ def main():
 			if platform.system() == 'Windows':
 				# Git failed to check out the symlink properly.
 				# Known bug on Windows systems without Administrator access.
+				# (Of course, "developer mode" is of little use as it requires Administrator access to enable in the first place!)
 				# Polyfill the broken/missing checkout.
 				proj_libdir.unlink(missing_ok=True)
 				subprocess.check_call(["MKLINK", "/J", proj_libdir, Path('..', '..', 'lib')], shell=True, cwd=proj_libdir.parent)
+
+		assert (proj_libdir / 'PQClean').exists()
 
 		for alg_packagedir in (proj_packageroot / 'pqc' / '_lib').iterdir():
 			package = f'pqc._lib.{alg_packagedir.name}'
 			alg_type, alg_prefix = alg_packagedir.name.split('_')
 			for alg_dir in ((projdir / 'lib' / 'PQClean'
-			                 / f'crypto_{alg_type}').glob(f'{alg_prefix}*')
+							 / f'crypto_{alg_type}').glob(f'{alg_prefix}*')
 			):
+				(root / 'projects' / 'pypqc' / 'src' / 'pqc' / alg_type / f'{alg_dir.name.replace("-", "_")}.py').write_text(f"""\
+# AUTOMATICALLY GENERATED FILE.
+# RUN make.py IN THE PARENT MONOREPO TO REGENERATE THIS FILE.
+
+from pqc._lib.kem_{alg_prefix}.lib{alg_dir.name.replace("-", "_")}_clean import ffi, lib # TODO add optimized implementations
+
+
+def keypair():
+	with ffi.new('uint8_t[]', lib.CRYPTO_PUBLICKEYBYTES) as pk,\
+	     ffi.new('uint8_t[]', lib.CRYPTO_SECRETKEYBYTES) as sk:
+		errno = lib.crypto_kem_keypair(pk, sk)
+		if errno == 0:
+			return bytes(pk), bytes(sk)
+		else:
+			raise RuntimeError
+
+
+def encap(pk_bytes):
+	with ffi.new('uint8_t[]', lib.CRYPTO_CIPHERTEXTBYTES) as c,\
+	     ffi.new('uint8_t[]', lib.CRYPTO_BYTES) as key,\
+	     ffi.from_buffer(pk_bytes) as pk: # FIXME validate length
+		errno = lib.crypto_kem_enc(c, key, pk)
+		if errno == 0:
+			return bytes(c), bytes(key)
+		else:
+			raise RuntimeError
+
+
+def decap(ct_bytes, sk_bytes):
+	with ffi.new('uint8_t[]', lib.CRYPTO_BYTES) as key,\
+	     ffi.from_buffer(ct_bytes) as c,\
+	     ffi.from_buffer(sk_bytes) as sk: # FIXME validate lengths
+		errno = lib.crypto_kem_dec(key, c, sk)
+		if errno == 0:
+			return bytes(key)
+		else:
+			raise RuntimeError
+""" if alg_type == 'kem' else f"""\
+# AUTOMATICALLY GENERATED FILE.
+# RUN make.py IN THE PARENT MONOREPO TO REGENERATE THIS FILE.
+
+from pqc._lib.sign_{alg_prefix}.lib{alg_dir.name.replace("-", "_")}_clean import ffi, lib # TODO add optimized implementations
+
+raise NotImplementedError
+""" if alg_type == 'sign' else None)
 
 				for alg_impl_dir in (p for p in alg_dir.iterdir() if p.is_dir()):  # absolute path to implementation directory
 					if alg_impl_dir.name != 'clean':

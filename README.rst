@@ -25,7 +25,7 @@ McEliece, Kyber, and HQC are currently provided, all with the same interface.::
     
     
     # 2. Key encapsulation
-    ss, kem_ct = kemalg.encap(pk)
+    kem_ct, ss = kemalg.encap(pk)
     
     
     # 3. Key de-encapsulation
@@ -128,27 +128,28 @@ Getting started:
      (first `install it <https://packages.ubuntu.com/jammy/python/python3-venv>`_,
      if needed)
 
-1. Run ``python -m pip install .``
+1. Run ``python -m pip install build``
 
-   - Alternatively: you may get cleaner building with ``python -m build .``
-     (only after ``python -m pip install build``)
+2. Run ``python -m build projects/pypqc-cffi-bindings-libre -o dist``
+   to compile the baseline suite, which includes 1 KEM and 2 signature
+   algorithms. This will produce a wheel file in ``dist``, which you can
+   then install.
 
    - Editable / "develop" mode not supported currently (CFFI will have to
      `support this <https://setuptools.pypa.io/en/latest/userguide/extension.html#setuptools.command.build.SubCommand.editable_mode>`_
      before it's even on the table.)
 
-     - If you get error 1104 when trying to compile, make a folder ``C:\temp``, then try ``set "TMPDIR=C:\temp"`` and try again. (https://discuss.python.org/t/-/44077/5)
+   - If you get error 1104 when trying to compile, make a folder ``C:\temp``, then try ``set "TMPDIR=C:\temp"`` and try again. (https://discuss.python.org/t/-/44077/5)
 
-2. Run ``python -m pqc.demo`` to test it. If it prints "OK" and exits, the
-   functions are almost certainly not broken. (Ideally, run this from a
-   DIFFERENT directory, such as your home folder, so you can be sure it's
-   being imported properly and not being masked by the local copy.)
+3. Repeat step 2 for each set of bindings you want to compile.
 
-   - N.B. / FIXME: this function is currently NOT a full test suite;
-     it only does a single encap-decap cycle with
-     the default implementation of mceliece6960119.
-     It does NOT test any other version of McEliece,
-     or any signature algorithm.
+4. Once the bindings have been installed, you can do the same for the
+   ``pypqc`` package itself, which wraps the bindings in usable Python
+   functions.
+
+5. If you made any serious changes to the codebase, run ``python scripts/make.py``
+   to regenerate the files under ``projects/*bindings*/{cffi_modules,src/pqc/_lib}``
+   to reflect your changes, before running the build command.
 
 
 .. _cffi: https://cffi.readthedocs.io/en/release-1.16/

@@ -26,7 +26,9 @@ process, and during the lifetime of the standard, a nonexclusive, nontransferrab
 paid-up worldwide license solely for the purpose of modifying my submitted cryptosystem’s
 specifications (e.g., to protect against a newly discovered vulnerability) for incorporation into
 the standard.
+
 -----
+
 I, Carlos Aguilar Melchor, of ENSEEIHT, 2 rue Charles Camichel, 31000 Tolouse, FRANCE
 am the owner of the following patents and/or patent applications: “Cryptographic method for
 communicating confidential information” US9094189 B2, and “Procédé cryptographique de
@@ -55,7 +57,9 @@ process, and during the lifetime of the standard, a nonexclusive, nontransferrab
 paid-up worldwide license solely for the purpose of modifying my submitted cryptosystem’s
 specifications (e.g., to protect against a newly discovered vulnerability) for incorporation into
 the standard.
+
 -----
+
 I, Marion BLIN, interim Regional Delegate of CENTRE NATIONAL DE
 LA RECHERCHE SCIENTIFIQUE, 3 rue Michel Ange, 75794 PARIS
 cedex 19 FRANCE, am the authorized representative of the owner of
