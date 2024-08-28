@@ -128,9 +128,11 @@ Getting started:
      (first `install it <https://packages.ubuntu.com/jammy/python/python3-venv>`_,
      if needed)
 
-1. Run ``python -m pip install build``
+1. (Development branch) run ``git clone https://github.com/James-E-A/pypqc -b rewrite/2024-08-23 pypqc-rewrite-2024-08-23 && cd pypqc-rewrite-2024-08-23``
 
-2. Run ``python -m build projects/pypqc-cffi-bindings-libre -o dist``
+2. Run ``python -m pip install build``
+
+3. Run ``python -m build projects/pypqc-cffi-bindings-libre -o dist``
    to compile the baseline suite, which includes 1 KEM and 2 signature
    algorithms. This will produce a wheel file in ``dist``, which you can
    then install.
@@ -141,16 +143,21 @@ Getting started:
 
    - If you get error 1104 when trying to compile, make a folder ``C:\temp``, then try ``set "TMPDIR=C:\temp"`` and try again. (https://discuss.python.org/t/-/44077/5)
 
-3. Repeat step 2 for each set of bindings you want to compile.
+4. Repeat step 2 for each set of bindings you want to compile.
 
-4. Once the bindings have been installed, you can do the same for the
+5. Once the bindings have been installed, you can do the same for the
    ``pypqc`` package itself, which wraps the bindings in usable Python
    functions.
 
-5. If you made any serious changes to the codebase, run ``python scripts/make.py``
+6. If you made any serious changes to the codebase, run ``python scripts/make.py``
    to regenerate the files under ``projects/*bindings*/{cffi_modules,src/pqc/_lib}``
    to reflect your changes, before running the build command.
 
+
+.. _`McEliece Signatures`: https://inria.hal.science/inria-00072511
+.. _`Hybrid Encryption`: https://en.wikipedia.org/wiki/Hybrid_encryption
+.. _`KEM-TRANS`: https://www.ietf.org/staging/draft-prat-perret-lamps-cms-pq-kem-00.html
+.. _`message encapsulation`: https://en.wikipedia.org/wiki/Cryptographic_Message_Syntax
 
 .. _cffi: https://cffi.readthedocs.io/en/release-1.16/
 .. _wheel: https://wheel.readthedocs.io/
@@ -158,8 +165,3 @@ Getting started:
 .. _`Python Headers`: https://packages.ubuntu.com/jammy/python3-dev
 .. _build-essential: https://packages.ubuntu.com/jammy/build-essential
 .. _`'Development Tools'`: https://git.rockylinux.org/rocky/comps/-/blob/e6c8f29a7686326a731ea72b6caa06dabc7801b5/comps-rocky-9-lh.xml#L2169
-
-.. _`McEliece Signatures`: https://inria.hal.science/inria-00072511
-.. _`Hybrid Encryption`: https://en.wikipedia.org/wiki/Hybrid_encryption
-.. _`KEM-TRANS`: https://www.ietf.org/staging/draft-prat-perret-lamps-cms-pq-kem-00.html
-.. _`message encapsulation`: https://en.wikipedia.org/wiki/Cryptographic_Message_Syntax
