@@ -36,7 +36,7 @@ def main():
 					if alg_impl_dir.name != 'clean':
 						continue # FIXME
 
-					common_includes = ['fips202', 'randombytes', 'compat'] # FIXME
+					common_includes = ['fips202', 'randombytes', 'compat', 'crypto_declassify'] # FIXME
 
 					(projdir / 'cffi_modules' / f'{alg_dir.name}_{alg_impl_dir.name}.py').write_text(f"""\
 #!/usr/bin/env python3
@@ -86,7 +86,7 @@ libraries = []
 
 if 'SOURCES' in makefile_parsed:
 	for source in (Path(IMPL_DIR, s.strip()) for s in makefile_parsed['SOURCES'].split()):
-		if IS_WIN and source.suffix not in {{'.s', '.S', '.asm'}}:
+		if IS_WIN and source.suffix in {{'.s', '.S', '.asm'}}:
 			extra_objects.append(source)
 		else:
 			sources.append(source)
@@ -95,7 +95,8 @@ elif 'OBJECTS' in makefile_parsed:
 	for source in chain.from_iterable(IMPL_DIR.glob(Path(s.strip()).with_suffix('.*').name) for s in makefile_parsed['OBJECTS'].split()):
 		if source.suffix in {{'.h'}}:
 			depends.append(source)
-		if IS_WIN and source.suffix not in {{'.s', '.S', '.asm'}}:
+			continue
+		if IS_WIN and source.suffix in {{'.s', '.S', '.asm'}}:
 			extra_objects.append(source)
 		else:
 			sources.append(source)
@@ -105,13 +106,29 @@ for internal_libname in COMMON_INCLUDES:
 	for source in COMMON_DIR.glob(f'{{internal_libname}}*'):
 		if source.suffix in {{'.h'}}:
 			depends.append(source)
-		if IS_WIN and source.suffix not in {{'.s', '.S', '.asm'}}:
+			continue
+		if IS_WIN and source.suffix in {{'.s', '.S', '.asm'}}:
 			extra_objects.append(source)
 		else:
 			sources.append(source)
 
 
 extra_compile_args = [s.strip() for s in makefile_parsed['CFLAGS'].split()]
+
+
+# * ?????
+if libname.startswith('libmceliece'):
+	tmp = []
+	for i, source in enumerate(sources):
+		if source.stem.startswith('aes'):
+			tmp.append(i)
+	map_immed(sources.pop, reversed(sorted(tmp)))
+
+	tmp = []
+	for i, source in enumerate(depends):
+		if source.stem.startswith('aes'):
+			tmp.append(i)
+	map_immed(depends.pop, reversed(sorted(tmp)))
 
 
 # * Move "include" flags to setuptools
@@ -148,7 +165,7 @@ if platform.system() == 'Windows':
 	libraries.append('Advapi32')
 
 
-import pprint; pprint.pprint(locals())
+#import pprint; pprint.pprint(locals())
 map_immed(ffibuilder.cdef, cdefs)
 ##map_immed(ffibuilder.include, ffi_includes)  # Not working -- https://github.com/python-cffi/cffi/issues/43
 ffibuilder.set_source(

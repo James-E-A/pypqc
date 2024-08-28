@@ -2,7 +2,10 @@ recursive-include cffi_modules *.py
 recursive-include lib/PQClean/crypto_kem/mceliece* *
 recursive-include lib/PQClean/crypto_sign/dilithium* *
 recursive-include lib/PQClean/crypto_sign/sphincs* *
+include lib/PQClean/common/crypto_declassify*
+include lib/PQClean/common/compat*
 include lib/PQClean/common/fips202*
+include lib/PQClean/common/randombytes*
 
 #FIXME
 recursive-exclude lib/PQClean/crypto_*/*/aarch64 *
