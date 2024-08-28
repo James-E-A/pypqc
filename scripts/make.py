@@ -36,7 +36,7 @@ def main():
 					if alg_impl_dir.name != 'clean':
 						continue # FIXME
 
-					common_includes = ['fips202', 'randombytes', 'compat', 'crypto_declassify'] # FIXME
+					common_includes = ['fips202', 'randombytes', 'compat', 'crypto_declassify', 'sha2'] # FIXME
 
 					(projdir / 'cffi_modules' / f'{alg_dir.name}_{alg_impl_dir.name}.py').write_text(f"""\
 #!/usr/bin/env python3
@@ -169,7 +169,7 @@ if platform.system() == 'Windows':
 map_immed(ffibuilder.cdef, cdefs)
 ##map_immed(ffibuilder.include, ffi_includes)  # Not working -- https://github.com/python-cffi/cffi/issues/43
 ffibuilder.set_source(
-	f'{{PARENT_PACKAGENAME}}.{{libname}}',
+	f'{{PARENT_PACKAGENAME}}.{{libname.replace("-", "_")}}',
 	'\\n'.join(c_header_sources),
 	sources=[p.as_posix() for p in sources],
 	include_dirs=[p.as_posix() for p in include_dirs],
