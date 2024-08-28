@@ -1,8 +1,12 @@
 Usage
 =====
 
-Simply install from PyPI with ``pip install pypqc``, or see "Development" below
-if you want to tinker on the codebase!
+Simply install from PyPI with ``pip install "pypqc[falcon,hqc,kyber]"``,
+or see "Development" below if you want to tinker on the codebase!
+
+(If you are a stickler for `libre <https://www.gnu.org/philosophy/free-sw.en.html#clarifying>`_
+software, you can leave off the brackets in the above command to install
+only the subset of libraries available under an OSI-approved license.)
 
 KEMs
 ----

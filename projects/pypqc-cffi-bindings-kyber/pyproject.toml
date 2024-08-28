@@ -8,6 +8,7 @@ classifiers = [
     'License :: Free To Use But Restricted',
     'License :: Public Domain',
 ]
+license = {file = "LICENSE-Kyber.rst"}
 
 [tool.setuptools.packages.find]
 where = ["src"]

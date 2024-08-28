@@ -8,6 +8,7 @@ classifiers = [
     'License :: Other/Proprietary License',
     'License :: Public Domain',
 ]
+license = {file = "LICENSE-HQC.txt"}
 
 [tool.setuptools.packages.find]
 where = ["src"]

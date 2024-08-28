@@ -1,5 +1,6 @@
 recursive-include cffi_modules *.py
 recursive-include lib/PQClean/crypto_kem/kyber* *
+include lib/PQClean/common/sha2*
 
 #FIXME
 recursive-exclude lib/PQClean/crypto_*/*/aarch64 *
