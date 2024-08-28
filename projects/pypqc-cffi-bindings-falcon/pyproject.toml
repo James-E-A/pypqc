@@ -15,7 +15,7 @@ where = ["src"]
 [build-system]
 requires = [
     'cffi >= 1.14.5',
-    'setuptools >= 49.5.0',
+    'setuptools >= 49.5.0, < 70',
     'wheel >= 0.30.0',
 ]
 build-backend = "setuptools.build_meta"
