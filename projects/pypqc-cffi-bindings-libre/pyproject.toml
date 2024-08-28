@@ -8,6 +8,7 @@ classifiers = [
     'License :: OSI Approved :: MIT License',
     'License :: Public Domain',
 ]
+license = {text = "MIT License"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
