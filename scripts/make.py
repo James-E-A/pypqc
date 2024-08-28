@@ -77,7 +77,7 @@ libname = Path(makefile_parsed['LIBRARY' if IS_WIN else 'LIB']).stem
 api_src = (IMPL_DIR / 'api.h').read_text()
 
 c_header_sources = ['#include "api.h"']
-cdefs = [re.sub(r'(?<=^#define )(\\w+) (.*)', "\\\\1 ...", m[0]) for m in re.finditer(r'(?ms)^(?:\\w+ .*?;|#define \\w+ (?!").*?$)', api_src)]
+cdefs = [re.sub(r'(?<=^#define )(\\w+) (.*)', "\\\\1 ...", m[0]) for m in re.finditer(r'(?ms)^(?:\\w+ .*?;|#define \\w+[^\\S\\n]+(?=\\S)(?!").*?$)', api_src)]
 depends = []
 sources = []
 extra_objects = []
