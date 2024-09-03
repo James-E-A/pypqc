@@ -89,7 +89,7 @@ Development
 
 This package is developed as part of a Monorepo.
 
-See https://github.com/James-E-A/pypqc for development instructions and details.
+See https://github.com/James-E-A/pypqc/tree/rewrite/2024-08-23 for development instructions and details.
 
 
 .. _`McEliece Signatures`: https://inria.hal.science/inria-00072511
