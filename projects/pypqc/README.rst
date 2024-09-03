@@ -1,17 +1,24 @@
 Usage
 =====
 
-Simply install from PyPI with ``pip install "pypqc[falcon,hqc,kyber]"``,
+Simply install from PyPI with
+
+.. code-block:: cmd
+
+    pip install "pypqc[falcon,hqc,kyber]"
+
 or see "Development" below if you want to tinker on the codebase!
 
 (If you are a stickler for `libre <https://www.gnu.org/philosophy/free-sw.en.html#clarifying>`_
-software, you can leave off the brackets in the above command to install
-only the subset of libraries available under an OSI-approved license.)
+software, you can *leave off* the bracketed bit in the above command to install
+only the subset of libraries available under OSI-approved licenses.)
 
 KEMs
 ----
 
-McEliece, Kyber, and HQC are currently provided, all with the same interface.::
+McEliece, Kyber, and HQC are currently provided, all with the same easy-to-use interface:
+
+.. code-block:: python
 
     # Available: hqc_128, hqc_192, hqc_256,
     # kyber512, kyber768, kyber1024,
@@ -19,30 +26,30 @@ McEliece, Kyber, and HQC are currently provided, all with the same interface.::
     # mceliece6688128, mceliece6960119, mceliece8192128
     from pqc.kem import mceliece6960119 as kemalg
     
-    
     # 1. Keypair generation
     pk, sk = kemalg.keypair()
     
-    
     # 2. Key encapsulation
     kem_ct, ss = kemalg.encap(pk)
-    
     
     # 3. Key de-encapsulation
     ss_result = kemalg.decap(kem_ct, sk)
     assert ss_result == ss
 
 Capabilities *not* included in PQClean, such as `McEliece signatures`_,
-`Hybrid Encryption`_ or `KEM-TRANS`_, and `message encapsulation`_, are
-*not* going to be implemented in this library. (Exception: `Plaintext
-Confirmation <https://www.github.com/thomwiggers/mceliece-clean/issues/3>`_
-is on the agenda for inclusion even if upstream ultimately decides to exclude
-it.)
+`Hybrid Encryption`_ (`KEM-TRANS`_), and `message encapsulation`_, are
+*not* going to be implemented in this library as they're higher-level
+constructions.
+
+\*Exception: `McEliece w/ Plaintext Confirmation <https://www.github.com/thomwiggers/mceliece-clean/issues/3>`_
+is on the agenda for inclusion even if upstream ultimately decides to exclude it.
 
 Signature Algorithms
 --------------------
 
-SPHINCS+, Dilithium, and Falcon are provided, all with the same interface.::
+SPHINCS+, Dilithium, and Falcon are provided, all with the same easy-to-use interface:
+
+.. code-block:: python
 
     # Available: dilithium2, dilithium3, dilithium5,
     # falcon_512, falcon_padded_512, falcon_1024, falcon_padded_1024,
@@ -54,15 +61,12 @@ SPHINCS+, Dilithium, and Falcon are provided, all with the same interface.::
     # sphincs_shake_256f_simple, sphincs_shake_256s_simple
     from pqc.sign import sphincs_shake_256s_simple as sigalg
     
-    
     # 1. Keypair generation
     pk, sk = sigalg.keypair()
-    
     
     # 2. Signing
     # (detached signature)
     sig = sigalg.sign(MY_MESSAGE, sk)
-    
     
     # 3. Signature verification
     # (Returns None on success; raises ValueError on failure.)
@@ -73,7 +77,8 @@ SHA256 and SHAKE256 are included; Haraka is not. See https://github.com/PQClean/
 for more information.
 
 Regarding Falcon: the Compressed and Padded versions are included, and are able to
-``verify()`` each others' signatures. The CT version is not currently planned.
+``verify()`` each others' signatures. The CT version is not currently planned for
+support in any capacity, even verification.
 
 Development
 ===========
