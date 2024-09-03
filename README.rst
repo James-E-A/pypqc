@@ -172,7 +172,7 @@ Getting started:
 
    - If you get error 1104 when trying to compile on Windows, make a folder ``C:\temp``, then try ``set "TMPDIR=C:\temp"`` and try again. (https://discuss.python.org/t/-/44077/5)
 
-4. Repeat step 2 for each set of bindings you want to compile.
+4. Repeat step 3 for each set of bindings you want to compile.
 
 5. Once the bindings have been installed, you can do the same for the
    ``pypqc`` package itself, which wraps the bindings in usable Python
@@ -180,7 +180,7 @@ Getting started:
 
 6. If you made any serious changes to the codebase, run ``python scripts/make.py``
    to regenerate the files under ``projects/*bindings*/{cffi_modules,src/pqc/_lib}``
-   to reflect your changes, before running the build command.
+   to reflect your changes, before going back to step 3.
 
 
 .. _`McEliece Signatures`: https://web.archive.org/web/20190501070335/https://link.springer.com/content/pdf/10.1007/3-540-45682-1_10.pdf#%5B%7B%22num%22%3A43%2C%22gen%22%3A0%7D%2C%7B%22name%22%3A%22Fit%22%7D%5D
