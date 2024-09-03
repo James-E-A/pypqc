@@ -1,6 +1,8 @@
 Usage
 =====
 
+**Development version. You need a C compiler first.**
+
 Simply install from PyPI with
 
 .. code-block:: cmd
@@ -38,8 +40,10 @@ McEliece, Kyber, and HQC are currently provided, all with the same easy-to-use i
 
 Capabilities *not* included in PQClean, such as `McEliece signatures`_,
 `Hybrid Encryption`_ (`KEM-TRANS`_), and `message encapsulation`_, are
-*not* going to be implemented in this library as they're higher-level
-constructions.
+*not* going to be implemented in this library as they're all either
+higher-level constructions that could be implemented using this library,
+or are lower-level constructions that would require a serious cryptographic
+implementation effort.
 
 \*Exception: `McEliece w/ Plaintext Confirmation <https://www.github.com/thomwiggers/mceliece-clean/issues/3>`_
 is on the agenda for inclusion even if upstream ultimately decides to exclude it.

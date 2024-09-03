@@ -1,6 +1,8 @@
 Usage
 =====
 
+**Development version. You need a C compiler first.**
+
 Simply install from PyPI with
 
 .. code-block:: cmd
