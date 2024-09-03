@@ -1,6 +1,6 @@
 [project]
 name = 'pypqc-cffi-bindings-falcon'
-version = '0-dev0'
+version = '0.0.1-dev0'
 dependencies = [
     'cffi >= 1.0.0;platform_python_implementation != "PyPy"',
 ]
