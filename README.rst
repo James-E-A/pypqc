@@ -1,7 +1,10 @@
 Usage
 =====
 
-Simply install from PyPI with ``pip install "pypqc[falcon,hqc,kyber]"``,
+Simply install from PyPI with
+
+    pip install "pypqc[falcon,hqc,kyber]"
+
 or see "Development" below if you want to tinker on the codebase!
 
 (If you are a stickler for `libre <https://www.gnu.org/philosophy/free-sw.en.html#clarifying>`_
