@@ -9,6 +9,7 @@ classifiers = [
     'License :: Public Domain',
 ]
 license = {text = "MIT License"}
+readme = "README.md"
 
 [project.optional-dependencies]
 falcon = ['pypqc-cffi-bindings-falcon']

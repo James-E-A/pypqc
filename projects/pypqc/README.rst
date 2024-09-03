@@ -5,7 +5,7 @@ Simply install from PyPI with
 
 .. code-block:: cmd
 
-    pip install "pypqc[falcon,hqc,kyber]"
+    pip install --pre "pypqc[falcon,hqc,kyber]"
 
 or see "Development" below if you want to tinker on the codebase!
 
