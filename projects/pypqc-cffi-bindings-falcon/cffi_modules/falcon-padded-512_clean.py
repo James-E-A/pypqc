@@ -65,8 +65,6 @@ array_t_r = re.compile(rf'(?m)^#define ({re.escape(namespace)}(\w+BYTES))\s+(\d+
 for m in re.finditer(array_t_r, api_src):
 	cdefs.append(f"typedef uint8_t {m[2]}_t[...];")
 	c_header_sources.append(f"typedef uint8_t {m[2]}_t[{m[1]}];")
-	print(cdefs[-1])
-	print(c_header_sources[-1])
 
 
 if 'SOURCES' in makefile_parsed:
