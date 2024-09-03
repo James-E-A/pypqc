@@ -5,8 +5,8 @@ from pqc._lib.kem_hqc.libhqc_128_clean import ffi, lib # TODO add optimized impl
 
 
 def keypair():
-	with ffi.new('uint8_t[]', lib.CRYPTO_PUBLICKEYBYTES) as pk,\
-	     ffi.new('uint8_t[]', lib.CRYPTO_SECRETKEYBYTES) as sk:
+	with ffi.new('CRYPTO_PUBLICKEYBYTES_t') as pk,\
+	     ffi.new('CRYPTO_SECRETKEYBYTES_t') as sk:
 		errno = lib.crypto_kem_keypair(pk, sk)
 		if errno == 0:
 			return bytes(pk), bytes(sk)
@@ -15,8 +15,8 @@ def keypair():
 
 
 def encap(pk_bytes):
-	with ffi.new('uint8_t[]', lib.CRYPTO_CIPHERTEXTBYTES) as c,\
-	     ffi.new('uint8_t[]', lib.CRYPTO_BYTES) as key,\
+	with ffi.new('CRYPTO_CIPHERTEXTBYTES_t') as c,\
+	     ffi.new('CRYPTO_BYTES_t') as key,\
 	     ffi.from_buffer(pk_bytes) as pk: # FIXME validate length
 		errno = lib.crypto_kem_enc(c, key, pk)
 		if errno == 0:
@@ -26,7 +26,7 @@ def encap(pk_bytes):
 
 
 def decap(ct_bytes, sk_bytes):
-	with ffi.new('uint8_t[]', lib.CRYPTO_BYTES) as key,\
+	with ffi.new('CRYPTO_BYTES_t') as key,\
 	     ffi.from_buffer(ct_bytes) as c,\
 	     ffi.from_buffer(sk_bytes) as sk: # FIXME validate lengths
 		errno = lib.crypto_kem_dec(key, c, sk)

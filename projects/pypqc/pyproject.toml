@@ -1,6 +1,6 @@
 [project]
 name = 'pypqc'
-version = '0.8.0-dev0'
+version = '0.8.0-dev1'
 dependencies = [
     'pypqc-cffi-bindings-libre',
 ]

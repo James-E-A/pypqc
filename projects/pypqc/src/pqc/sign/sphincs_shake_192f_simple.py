@@ -4,8 +4,8 @@
 from pqc._lib.sign_sphincs.libsphincs_shake_192f_simple_clean import ffi, lib # TODO add optimized implementations
 
 def keypair():
-	with ffi.new('uint8_t[]', lib.CRYPTO_PUBLICKEYBYTES) as pk,\
-	     ffi.new('uint8_t[]', lib.CRYPTO_SECRETKEYBYTES) as sk:
+	with ffi.new('CRYPTO_PUBLICKEYBYTES_t') as pk,\
+	     ffi.new('CRYPTO_SECRETKEYBYTES_t') as sk:
 		errno = lib.crypto_sign_keypair(pk, sk)
 		if errno == 0:
 			return bytes(pk), bytes(sk)
