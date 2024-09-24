@@ -94,5 +94,5 @@ See https://github.com/James-E-A/pypqc/tree/rewrite/2024-08-23 for development i
 
 .. _`McEliece Signatures`: https://inria.hal.science/inria-00072511
 .. _`Hybrid Encryption`: https://en.wikipedia.org/wiki/Hybrid_encryption
-.. _`KEM-TRANS`: https://www.ietf.org/staging/draft-prat-perret-lamps-cms-pq-kem-00.html
+.. _`KEM-TRANS`: https://www.ietf.org/archive/id/draft-perret-prat-lamps-cms-pq-kem-00.html#name-kem-key-transport-mechanism
 .. _`message encapsulation`: https://en.wikipedia.org/wiki/Cryptographic_Message_Syntax

@@ -189,7 +189,7 @@ Getting started:
 
 .. _`McEliece Signatures`: https://web.archive.org/web/20190501070335/https://link.springer.com/content/pdf/10.1007/3-540-45682-1_10.pdf#%5B%7B%22num%22%3A43%2C%22gen%22%3A0%7D%2C%7B%22name%22%3A%22Fit%22%7D%5D
 .. _`Hybrid Encryption`: https://en.wikipedia.org/wiki/Hybrid_encryption
-.. _`KEM-TRANS`: https://www.ietf.org/staging/draft-prat-perret-lamps-cms-pq-kem-00.html
+.. _`KEM-TRANS`: https://www.ietf.org/archive/id/draft-perret-prat-lamps-cms-pq-kem-00.html#name-kem-key-transport-mechanism
 .. _`message encapsulation`: https://en.wikipedia.org/wiki/Cryptographic_Message_Syntax
 
 .. _cffi: https://cffi.readthedocs.io/en/release-1.16/
