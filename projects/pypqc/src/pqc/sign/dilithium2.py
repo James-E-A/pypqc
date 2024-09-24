@@ -41,4 +41,4 @@ def verify_bool(signature, message, pk_bytes):
 	     ffi.from_buffer(message) as m,\
 	     ffi.from_buffer(pk_bytes) as pk:
 		errno = lib.crypto_sign_verify(sig, len(sig), m, len(m), pk)
-		return bool(-errno)
+		return (errno == 0)
