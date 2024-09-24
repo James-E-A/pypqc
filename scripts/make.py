@@ -115,7 +115,7 @@ def verify_bool(signature, message, pk_bytes):
 	     ffi.from_buffer(message) as m,\\
 	     ffi.from_buffer(pk_bytes) as pk:
 		errno = lib.crypto_sign_verify(sig, len(sig), m, len(m), pk)
-		return bool(-errno)
+		return (errno == 0)
 """ if alg_type == 'sign' else None)
 
 				for alg_impl_dir in (p for p in alg_dir.iterdir() if p.is_dir()):  # absolute path to implementation directory
