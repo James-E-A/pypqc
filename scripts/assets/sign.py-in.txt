@@ -1,0 +1,95 @@
+#
+#   Python interface for PQClean Signatures C API
+#
+#  Part of the PyPQC bindings project
+#
+#  Originally written by: James Edington Administator
+#
+#  SPDX-License-Identifier: MIT OR Apache-2.0
+#
+
+from pqc._lib.sign_${alg_prefix_import}.lib${alg_lib_name_import} import ffi, lib
+
+__all__ = ["keypair", "sign", "verify", "verify_bool"]
+
+"""
+# ${alg_lib_name}
+
+>>> pk, sk = keypair()
+>>> import os; message = os.urandom(999)
+>>> sig = sign(message, sk)
+>>> verify(sig, message, pk)
+None
+>>> verify_bool(sig, message, pk)
+True
+>>> bad_message = message + b"\\x00"
+>>> verify(sig, bad_message, pk)
+Traceback (most recent call last):
+    ...
+ValueError: invalid signature
+>>> verify_bool(sig, bad_message(pk))
+False
+"""
+
+
+ffi_new_fast = ffi.new_allocator(should_clear_after_alloc=False)
+
+
+def ffi_from_buffer_strict(cdecl, python_buffer):
+	result = ffi.from_buffer(cdecl, python_buffer)
+
+	if len(result) < len(python_buffer):
+		# https://github.com/python-cffi/cffi/issues/156
+		# https://github.com/python-cffi/cffi/blob/v1.17.1/src/c/_cffi_backend.c#L7347
+		raise ValueError("buffer is too large ({len(pk_bytes)} bytes) for '{ffi.getctype(cdecl)}' ({len(pk)} bytes)")
+
+	return result
+
+
+def keypair():
+	with ffi_new_fast('CRYPTO_PUBLICKEYBYTES_t') as pk,\
+	     ffi_new_fast('CRYPTO_SECRETKEYBYTES_t') as sk:
+
+		errno = lib.crypto_sign_keypair(pk, sk)
+
+		if errno == 0:
+			return bytes(pk), bytes(sk)
+		else:
+			raise RuntimeError(f"{lib.crypto_sign_keypair}: {errno}")
+
+
+def sign(message, sk_bytes):
+	with ffi_new_fast('CRYPTO_BYTES_t') as sig,\
+	     ffi_new_fast('size_t*') as siglen,\
+	     ffi.from_buffer(message) as m,\
+	     ffi_from_buffer_strict('CRYPTO_SECRETKEYBYTES_t', sk_bytes) as sk:
+
+		errno = lib.crypto_sign_signature(sig, siglen, m, len(m), sk)
+
+		if errno == 0:
+			return bytes(sig[0:siglen[0]])
+		else:
+			raise RuntimeError(f"{lib.crypto_sign_signature}: {errno}")
+
+
+def verify(signature, message, pk_bytes):
+	with ffi.from_buffer(signature) as sig,\
+	     ffi.from_buffer(message) as m,\
+	     ffi_from_buffer_strict('CRYPTO_PUBLICKEYBYTES_t', pk_bytes) as pk:
+
+		errno = lib.crypto_sign_verify(sig, len(sig), m, len(m), pk)
+
+		if errno == 0:
+			return
+		else:
+			raise ValueError("invalid signature")
+
+
+def verify_bool(signature, message, pk_bytes):
+	with ffi.from_buffer(signature) as sig,\
+	     ffi.from_buffer(message) as m,\
+	     ffi_from_buffer_strict('CRYPTO_PUBLICKEYBYTES_t', pk_bytes) as pk:
+
+		errno = lib.crypto_sign_verify(sig, len(sig), m, len(m), pk)
+
+		return (errno == 0)

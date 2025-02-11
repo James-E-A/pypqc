@@ -1,0 +1,76 @@
+#
+#   Python interface for PQClean KEM C API
+#
+#  Part of the PyPQC bindings project
+#
+#  Originally written by: James Edington Administator
+#
+#  SPDX-License-Identifier: MIT OR Apache-2.0
+#
+
+from pqc._lib.kem_${alg_prefix_import}.lib${alg_lib_name_import} import ffi, lib
+
+__all__ = ["keypair", "encap", "decap"]
+
+"""
+# ${alg_lib_name}
+
+>>> pk, sk = keypair()
+>>> kem_ct, key = encap(pk)
+>>> key == decap(kem_ct, sk)
+True
+>>> import os; bad_ct = os.urandom(len(kem_ct))
+>>> 
+"""
+
+
+ffi_new_fast = ffi.new_allocator(should_clear_after_alloc=False)
+
+
+def ffi_from_buffer_strict(cdecl, python_buffer):
+	result = ffi.from_buffer(cdecl, python_buffer)
+
+	if len(result) < len(python_buffer):
+		# https://github.com/python-cffi/cffi/issues/156
+		# https://github.com/python-cffi/cffi/blob/v1.17.1/src/c/_cffi_backend.c#L7347
+		raise ValueError("buffer is too large ({len(pk_bytes)} bytes) for '{ffi.getctype(cdecl)}' ({len(pk)} bytes)")
+
+	return result
+
+
+def keypair():
+	with ffi_new_fast('CRYPTO_PUBLICKEYBYTES_t') as pk,\
+	     ffi_new_fast('CRYPTO_SECRETKEYBYTES_t') as sk:
+
+		errno = lib.crypto_kem_keypair(pk, sk)
+
+		if errno == 0:
+			return bytes(pk), bytes(sk)
+		else:
+			raise RuntimeError(f"{lib.crypto_kem_keypair}: {errno}")
+
+
+def encap(pk_bytes):
+	with ffi_new_fast('CRYPTO_CIPHERTEXTBYTES_t') as c,\
+	     ffi_new_fast('CRYPTO_BYTES_t') as key,\
+	     ffi_from_buffer_strict('CRYPTO_PUBLICKEYBYTES_t', pk_bytes) as pk:
+
+		errno = lib.crypto_kem_enc(c, key, pk)
+
+		if errno == 0:
+			return bytes(c), bytes(key)
+		else:
+			raise RuntimeError(f"{lib.crypto_kem_enc}: {errno}")
+
+
+def decap(ct_bytes, sk_bytes):
+	with ffi_new_fast('CRYPTO_BYTES_t') as key,\
+	     ffi_from_buffer_strict('CRYPTO_CIPHERTEXTBYTES_t', ct_bytes) as c,\
+	     ffi_from_buffer_strict('CRYPTO_SECRETKEYBYTES_t', sk_bytes) as sk:
+
+		errno = lib.crypto_kem_dec(key, c, sk)
+
+		if errno == 0:
+			return bytes(key)
+		else:
+			raise RuntimeError(f"{lib.crypto_kem_dec}: {errno}")

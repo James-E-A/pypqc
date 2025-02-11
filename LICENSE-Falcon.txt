@@ -1,0 +1,26 @@
+I, William Whyte, of 187 Ballardvale St. Suite A202, Wilmington MA 01803, U.S., am the owner or au-
+thorized representative of the owner, OnBoard Security, of the following patent(s) and/or patent applica-
+tions(s): US 7308097 B2 (“Digital signature and authentication method and apparatus”), and do hereby
+commit and agree to grant to any interested party on a worldwide basis, if the cryptosystem known as
+Falcon is selected for standardization, in consideration of its evaluation and selection by NIST, a non-
+exclusive license for the purpose of implementing the standard:
+
+without compensation and under reasonable terms and conditions that are demonstrably free of
+any unfair discrimination.
+
+I further do hereby commit and agree to license such party on the same basis with respect to any other
+patent application or patent hereafter granted to me, or owned or controlled by me, that is or may be
+necessary for the purpose of implementing the standard.
+
+I further do hereby commit and agree that I will include, in any documents transferring ownership of
+each patent and patent application, provisions to ensure that the commitments and assurances made by
+me are binding on the transferee and any future transferee.
+
+I further do hereby commit and agree that these commitments and assurances are intended by me to
+be binding on successors-in-interest of each patent and patent application, regardless of whether such
+provisions are included in the relevant transfer documents.
+
+I further do hereby grant to the U.S. Government, during the public review and the evaluation process,
+and during the lifetime of the standard, a nonexclusive, nontransferrable, irrevocable, paid-up worldwide
+license solely for the purpose of modifying my submitted cryptosystem’s specifications (e.g., to protect
+against a newly discovered vulnerability) for incorporation into the standard.
