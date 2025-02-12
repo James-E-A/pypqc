@@ -8,12 +8,12 @@
 #  SPDX-License-Identifier: MIT OR Apache-2.0
 #
 
-from pqc._lib.sign_${alg_prefix_import}.lib${alg_lib_name_import} import ffi, lib
+from ${internal_lib_module} import ffi, lib
 
 __all__ = ["keypair", "sign", "verify", "verify_bool"]
 
 """
-# ${alg_lib_name}
+# ${alg_name}
 
 >>> pk, sk = keypair()
 >>> import os; message = os.urandom(999)

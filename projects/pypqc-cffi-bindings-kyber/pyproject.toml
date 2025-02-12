@@ -1,0 +1,22 @@
+[project]
+name = 'pypqc-cffi-bindings-kyber'
+version = '0.0.2-dev0'
+dependencies = [
+    'cffi >= 1.12;platform_python_implementation != "PyPy"',
+]
+classifiers = [
+    'License :: Free To Use But Restricted',
+    'License :: Public Domain',
+]
+license = {file = "LICENSE-Kyber.rst"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[build-system]
+requires = [
+    'cffi >= 1.14.5',
+    'setuptools >= 49.5.0,<70',
+    'wheel >= 0.30.0',
+]
+build-backend = "setuptools.build_meta"

@@ -8,12 +8,12 @@
 #  SPDX-License-Identifier: MIT OR Apache-2.0
 #
 
-from pqc._lib.kem_${alg_prefix_import}.lib${alg_lib_name_import} import ffi, lib
+from ${internal_lib_module} import ffi, lib
 
 __all__ = ["keypair", "encap", "decap"]
 
 """
-# ${alg_lib_name}
+# ${alg_name}
 
 >>> pk, sk = keypair()
 >>> kem_ct, key = encap(pk)

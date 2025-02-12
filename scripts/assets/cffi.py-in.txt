@@ -68,9 +68,9 @@ namespace_re = re.compile(rf'({re.escape(namespace)}(\w+))')
 
 # * kwarg c_header_sources, kwarg cdefs
 
-for cdef in (re.sub(cdef_define_r, "\\1 ...", m[0]) for m in re.finditer(CDEF_RE, src)):
+for cdef in (re.sub(CDEF_DEFINE_RE, "\\1 ...", m[0]) for m in re.finditer(CDEF_RE, src)):
 	m = re.search(namespace_re, cdef)
-	cdefs.append(re.sub(namespace_r, "\\2", cdef))
+	cdefs.append(re.sub(namespace_re, "\\2", cdef))
 	c_header_sources.append(f"#define {m[2]} {m[1]}")
 
 # * kwarg sources, extra_objects
@@ -131,6 +131,14 @@ for i, arg in enumerate(extra_compile_args):
 			include_dirs.append(IMPL_DIR / extra_compile_args[i+1])
 			tmp.extend([i, i+1])
 pop_all(extra_compile_args, tmp)
+
+tmp = []
+for i, arg in enumerate(extra_compile_args):
+	if arg.startswith('-Werror'):
+		tmp.extend([i])
+	if arg == '/WX':
+		tmp.extend([i])
+pop_all(extra_compile_args.pop, tmp)
 
 if platform.system() == 'Windows':
 	# https://foss.heptapod.net/pypy/cffi/-/issues/516
