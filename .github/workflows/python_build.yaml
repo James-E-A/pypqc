@@ -14,14 +14,15 @@ jobs:
         run: python -m pip install "cibuildwheel"
       - name: build sdist
         run: >
-          python -c "import collections, functools, itertools, pathlib, subprocess, sys; collections.deque(map(lambda target: subprocess.check_call([sys.executable, '-m', 'build', '-o', pathlib.Path(sys.argv[2]), target]), functools.reduce(lambda acc, cur: itertools.chain.from_iterable(acc_.glob(cur) for acc_ in acc), pathlib.Path(sys.argv[1]).parts, [pathlib.Path()])), 0)"
-          ./projects/*
-          ./dist/
+          python -c "import collections, functools, itertools, pathlib, subprocess, sys; collections.deque(map(lambda target: subprocess.check_call([sys.executable, '-m', 'build', '-o', pathlib.Path(sys.argv[2]), '-s', target]), functools.reduce(lambda acc, cur: itertools.chain.from_iterable(acc_.glob(cur) for acc_ in acc), pathlib.Path(sys.argv[1]).parts, [pathlib.Path()])), 0)"
+          "./projects/*"
+          "./dist/"
       - name: upload sdist
         uses: actions/upload-artifact@v4
         with:
           name: sdist
           path: ./dist/*
+          if-no-files-found: error
 
   bdist:
     name: Binary build for ${{ matrix.py-impl }} on ${{ matrix.os }}
