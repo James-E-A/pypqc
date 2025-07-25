@@ -1,14 +1,11 @@
 Usage
 =====
 
-
-Simply install from PyPI with ``pip install "pypqc[kyber,falcon,hqc]"``, or
-see "Development" below if you want to tinker on the codebase!
-
+Simply install from PyPI with ``pip install "pypqc[kyber,falcon,hqc] >= 0.9" --extra-index-url "https://test.pypi.org/simple/"``,
+or see "Development" below if you want to tinker on the codebase!
 
 KEMs
 ----
-
 
 McEliece, ML-KEM (aka FIPS 203 or Kyber), and HQC are currently provided,
 all with the same interface.::
@@ -44,13 +41,12 @@ it.)
 Signature Algorithms
 --------------------
 
-SPHINCS+, Dilithium, and Falcon are provided, all with the same interface.::
+SPHINCS+, ML-DSA (aka FIPS 204 or Dilithium), and Falcon are currently provided,
+all with the same interface.::
 
-    import os; MESSAGE = os.urandom(42)
-    
-    # Available: ml_dsa_44, ml_dsa_65, ml_dsa_87,
-    # falcon_512, falcon_1024,
+    # Available: falcon_512, falcon_1024,
     # falcon_padded_512, falcon_padded_1024,
+    # ml_dsa_44, ml_dsa_65, ml_dsa_87,
     # sphincs_sha2_128f_simple, sphincs_sha2_128s_simple,
     # sphincs_shake_128f_simple, sphincs_shake_128s_simple,
     # sphincs_sha2_192f_simple, sphincs_sha2_192s_simple,
@@ -66,6 +62,7 @@ SPHINCS+, Dilithium, and Falcon are provided, all with the same interface.::
     
     # 2. Signing
     # (detached signature)
+    import os; MESSAGE = os.urandom(42)
     sig = sigalg.sign(MESSAGE, sk)
     
     
