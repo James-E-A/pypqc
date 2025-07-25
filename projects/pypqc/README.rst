@@ -13,7 +13,13 @@ KEMs
 McEliece, ML-KEM (aka FIPS 203 or Kyber), and HQC are currently provided,
 all with the same interface.::
 
-    from pqc.kem import mceliece6960119 as kemalg
+    # available: hqc_128, hqc_192, hqc_256,
+    # mceliece_348864, mceliece_460896, mceliece_6688128,
+    # mceliece_6960119, mceliece_8192128,
+    # mceliece_348864f, mceliece_460896f, mceliece_6688128f,
+    # mceliece_6960119f, mceliece_8192128f,
+    # ml_kem_512, ml_kem_768, ml_kem_1024
+    from pqc.kem import mceliece6960119f as kemalg
     
     
     # 1. Keypair generation
