@@ -1,0 +1,25 @@
+[project]
+name = 'pypqc-cffi-bindings-libre'
+version = '0.9.161721'
+dependencies = [
+    'cffi >= 1.0.0 ; platform_python_implementation != "PyPy"',
+]
+classifiers = [
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: MIT License',
+    'License :: Public Domain',
+    'Topic :: Security :: Cryptography',
+    'Topic :: Software Development :: Libraries',
+]
+
+[build-system]
+requires = [
+    'cffi >= 1.14.5',
+    # setuptools 70 and higher breaks any version of cffi prior to 1.17.1
+    'setuptools >= 49.5.0 , < 70',
+    'wheel >= 0.30.0',
+]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

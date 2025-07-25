@@ -1,0 +1,6 @@
+recursive-include cffi_modules *.py
+
+recursive-include lib/PQClean/crypto_*/falcon*/clean *
+
+# workaround for weird CFFI behavior, where it looks thru symlinks to psych itself out with "won't be automatically included in the manifest: the path must be inside the project root"
+recursive-include lib/PQClean/common *.h
