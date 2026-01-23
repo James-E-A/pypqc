@@ -133,7 +133,7 @@ void PQCLEAN_KYBER1024_CLEAN_poly_frommsg(poly *r, const uint8_t msg[KYBER_INDCP
     for (i = 0; i < KYBER_N / 8; i++) {
         for (j = 0; j < 8; j++) {
             r->coeffs[8*i+j] = 0;
-            cmov_int16(r->coeffs+8*i+j, ((KYBER_Q+1)/2), (msg[i] >> j)&1);
+            PQCLEAN_KYBER1024_CLEAN_cmov_int16(r->coeffs+8*i+j, ((KYBER_Q+1)/2), (msg[i] >> j)&1);
         }
     }
 }
